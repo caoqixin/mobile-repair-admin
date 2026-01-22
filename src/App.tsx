@@ -1,14 +1,13 @@
-import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated, I18nProvider, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
   AuthPage,
   ErrorComponent,
-  ThemedLayout,
-  ThemedSider,
   useNotificationProvider,
 } from "@refinedev/antd";
+import "@ant-design/v5-patch-for-react-19";
 import "@refinedev/antd/dist/reset.css";
 
 import routerProvider, {
@@ -37,11 +36,23 @@ import {
 import authProvider from "./providers/auth";
 import { dataProvider } from "./providers/data";
 import { supabaseClient } from "./providers/supabase-client";
+import { useTranslation } from "react-i18next";
+import { ThemedLayout } from "./components/layout";
+import { ThemedSider } from "./components/layout/sider";
+import { ThemedTitle } from "./components/layout/title";
+import { resources } from "./resources";
 
 function App() {
+  const { t, i18n } = useTranslation();
+
+  const i18nProvider: I18nProvider = {
+    translate: (key: string, options?: any) => t(key, options) as string,
+    changeLocale: (lang: string) => i18n.changeLanguage(lang),
+    getLocale: () => i18n.language,
+  };
+
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
@@ -52,28 +63,8 @@ function App() {
                 authProvider={authProvider}
                 routerProvider={routerProvider}
                 notificationProvider={useNotificationProvider}
-                resources={[
-                  {
-                    name: "blog_posts",
-                    list: "/blog-posts",
-                    create: "/blog-posts/create",
-                    edit: "/blog-posts/edit/:id",
-                    show: "/blog-posts/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                  {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                ]}
+                i18nProvider={i18nProvider}
+                resources={resources()}
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
@@ -90,6 +81,9 @@ function App() {
                         <ThemedLayout
                           Header={Header}
                           Sider={(props) => <ThemedSider {...props} fixed />}
+                          Title={(props) => (
+                            <ThemedTitle {...props} text="Luna Tech" />
+                          )}
                         >
                           <Outlet />
                         </ThemedLayout>
@@ -129,6 +123,8 @@ function App() {
                       element={
                         <AuthPage
                           type="login"
+                          registerLink={false}
+                          title="Luna Tech Admin"
                           formProps={{
                             initialValues: {
                               email: "info@refine.dev",
@@ -139,12 +135,13 @@ function App() {
                       }
                     />
                     <Route
-                      path="/register"
-                      element={<AuthPage type="register" />}
-                    />
-                    <Route
                       path="/forgot-password"
-                      element={<AuthPage type="forgotPassword" />}
+                      element={
+                        <AuthPage
+                          title="Luna Tech Admin"
+                          type="forgotPassword"
+                        />
+                      }
                     />
                   </Route>
                 </Routes>

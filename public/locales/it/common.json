@@ -1,0 +1,177 @@
+{
+  "pages": {
+    "login": {
+      "title": "Accedi al tuo account",
+      "signin": "Accedi",
+      "signup": "Iscriviti",
+      "divider": "oppure",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Indirizzo email non valido",
+        "requiredEmail": "L'email è obbligatoria",
+        "requiredPassword": "La password è obbligatoria"
+      },
+      "buttons": {
+        "submit": "Accedi",
+        "forgotPassword": "Password dimenticata?",
+        "noAccount": "Non hai un account?",
+        "rememberMe": "Ricordami"
+      }
+    },
+    "forgotPassword": {
+      "title": "Password dimenticata?",
+      "fields": {
+        "email": "Email"
+      },
+      "errors": {
+        "validEmail": "Indirizzo email non valido",
+        "requiredEmail": "L'email è obbligatoria"
+      },
+      "buttons": {
+        "submit": "Invia istruzioni di recupero"
+      }
+    },
+    "register": {
+      "title": "Registra un nuovo account",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Indirizzo email non valido",
+        "requiredEmail": "L'email è obbligatoria",
+        "requiredPassword": "La password è obbligatoria"
+      },
+      "buttons": {
+        "submit": "Registrati",
+        "haveAccount": "Hai già un account?"
+      }
+    },
+    "updatePassword": {
+      "title": "Aggiorna password",
+      "fields": {
+        "password": "Nuova Password",
+        "confirmPassword": "Conferma nuova password"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Le password non corrispondono",
+        "requiredPassword": "La password è obbligatoria",
+        "requiredConfirmPassword": "È necessario confermare la password"
+      },
+      "buttons": {
+        "submit": "Aggiorna"
+      }
+    },
+    "error": {
+      "info": "Potresti aver dimenticato di aggiungere il componente {{action}} alla risorsa {{resource}}.",
+      "404": "Spiacenti, la pagina che hai visitato non esiste.",
+      "resource404": "Assicurati di aver creato la risorsa {{resource}}.",
+      "backHome": "Torna alla Home"
+    }
+  },
+  "actions": {
+    "list": "Elenco",
+    "create": "Crea",
+    "edit": "Modifica",
+    "show": "Mostra"
+  },
+  "buttons": {
+    "create": "Crea",
+    "save": "Salva",
+    "logout": "Esci",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "cancel": "Annulla",
+    "confirm": "Sei sicuro?",
+    "filter": "Filtra",
+    "clear": "Pulisci",
+    "refresh": "Aggiorna",
+    "show": "Mostra",
+    "undo": "Annulla",
+    "import": "Importa",
+    "clone": "Clona",
+    "notAccessTitle": "Non hai il permesso di accedere"
+  },
+  "warnWhenUnsavedChanges": "Sei sicuro di voler uscire? Hai delle modifiche non salvate.",
+  "notifications": {
+    "success": "Operazione completata con successo",
+    "error": "Errore (codice di stato: {{statusCode}})",
+    "undoable": "Hai {{seconds}} secondi per annullare",
+    "createSuccess": "{{resource}} creato con successo",
+    "createError": "Errore durante la creazione di {{resource}} (codice di stato: {{statusCode}})",
+    "deleteSuccess": "{{resource}} eliminato con successo",
+    "deleteError": "Errore durante l'eliminazione di {{resource}} (codice di stato: {{statusCode}})",
+    "editSuccess": "{{resource}} modificato con successo",
+    "editError": "Errore durante la modifica di {{resource}} (codice di stato: {{statusCode}})",
+    "importProgress": "Importazione in corso: {{processed}}/{{total}}"
+  },
+  "loading": "Caricamento...",
+  "tags": {
+    "clone": "Clona"
+  },
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "posts": {
+    "posts": "Articoli",
+    "fields": {
+      "id": "Id",
+      "title": "Titolo",
+      "category": "Categoria",
+      "status": {
+        "title": "Stato",
+        "published": "Pubblicato",
+        "draft": "Bozza",
+        "rejected": "Rifiutato"
+      },
+      "content": "Contenuto",
+      "createdAt": "Creato il"
+    },
+    "titles": {
+      "create": "Crea Articolo",
+      "edit": "Modifica Articolo",
+      "list": "Articoli",
+      "show": "Mostra Articolo"
+    }
+  },
+  "table": {
+    "actions": "Azioni"
+  },
+  "documentTitle": {
+    "default": "refine",
+    "suffix": " | Refine",
+    "post": {
+      "list": "Articoli | Refine",
+      "show": "#{{id}} Mostra Articolo | Refine",
+      "edit": "#{{id}} Modifica Articolo | Refine",
+      "create": "Crea nuovo Articolo | Refine",
+      "clone": "#{{id}} Clona Articolo | Refine"
+    }
+  },
+  "autoSave": {
+    "success": "salvato",
+    "error": "errore salvataggio automatico",
+    "loading": "salvataggio in corso...",
+    "idle": "in attesa di modifiche"
+  },
+  "resources": {
+    "dashboard": "Dashboard",
+    "quote": "Preventivatore Rapido",
+    "repairOrders": "Ordini di Riparazione",
+    "salesOrders": "Vendita al Dettaglio",
+    "customers": "Anagrafica Clienti",
+    "inventory": "Gestione Magazzino",
+    "inventoryComponents": "Ricambi e Componenti",
+    "inventoryItems": "Articoli e Prodotti",
+    "suppliers": "Anagrafica Fornitori",
+    "transactions": "Movimenti di Cassa",
+    "settings": "Impostazioni Sistema",
+    "deviceModels": "Modelli Dispositivi",
+    "categories": "Categorie Prodotti",
+    "faults": "Tipologie di Guasto",
+    "profiles": "Gestione Staff"
+  }
+}

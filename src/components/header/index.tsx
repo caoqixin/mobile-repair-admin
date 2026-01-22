@@ -1,15 +1,20 @@
 import type { RefineThemedLayoutHeaderProps } from "@refinedev/antd";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, useTranslation } from "@refinedev/core";
 import {
   Layout as AntdLayout,
   Avatar,
+  Button,
+  Dropdown,
+  MenuProps,
   Space,
   Switch,
   theme,
   Typography,
 } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
+import { useTranslation as usei18nextTranslation } from "react-i18next";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -26,6 +31,9 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
   const { token } = useToken();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+  const { i18n } = usei18nextTranslation();
+  const { changeLocale } = useTranslation();
+  const currentLocale = i18n.language;
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
@@ -42,6 +50,19 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
     headerStyles.zIndex = 1;
   }
 
+  const menuItems: MenuProps["items"] = [...(i18n.languages || [])]
+    .sort()
+    .map((lang: string) => ({
+      key: lang,
+      onClick: () => changeLocale(lang),
+      icon: (
+        <span style={{ marginRight: 8 }}>
+          <Avatar size={16} src={`/images/flags/${lang}.svg`} />
+        </span>
+      ),
+      label: lang === "it" ? "Italiano" : "简体中文",
+    }));
+
   return (
     <AntdLayout.Header style={headerStyles}>
       <Space>
@@ -51,6 +72,21 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
           onChange={() => setMode(mode === "light" ? "dark" : "light")}
           defaultChecked={mode === "dark"}
         />
+        <Dropdown
+          menu={{
+            items: menuItems,
+            selectedKeys: currentLocale ? [currentLocale] : [],
+          }}
+        >
+          <Button type="text">
+            <Space>
+              <Avatar size={16} src={`/images/flags/${currentLocale}.svg`} />
+              {currentLocale === "it" ? "Italiano" : "简体中文"}
+              <DownOutlined />
+            </Space>
+          </Button>
+        </Dropdown>
+
         <Space style={{ marginLeft: "8px" }} size="middle">
           {user?.name && <Text strong>{user.name}</Text>}
           {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
