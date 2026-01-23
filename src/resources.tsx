@@ -1,11 +1,14 @@
 import {
   DashboardOutlined,
   DollarOutlined,
+  ImportOutlined,
   InboxOutlined,
   PhoneOutlined,
   ProductOutlined,
+  SafetyCertificateOutlined,
   SearchOutlined,
   SettingOutlined,
+  ShoppingCartOutlined,
   ShoppingOutlined,
   ToolOutlined,
   UsergroupAddOutlined,
@@ -39,6 +42,15 @@ export const resources = (): ResourceProps[] => {
         label: t("resources.repairOrders"),
         icon: <ToolOutlined />,
         color: "#1890ff",
+      },
+    },
+    {
+      name: "warranties",
+      list: "/warranties",
+      show: "/warranties/show/:id",
+      meta: {
+        label: t("resources.warranties"), // Garanzie
+        icon: <SafetyCertificateOutlined />,
       },
     },
     {
@@ -91,6 +103,30 @@ export const resources = (): ResourceProps[] => {
         label: t("resources.inventoryItems"),
         icon: <InboxOutlined />,
         parent: "inventory", // 在菜单中折叠
+      },
+    },
+    {
+      name: "purchase_orders",
+      list: "/supply-chain/orders",
+      create: "/supply-chain/orders/create",
+      show: "/supply-chain/orders/show/:id",
+      edit: "/supply-chain/orders/edit/:id",
+      meta: {
+        label: "进货单 (PO)",
+        icon: <ShoppingCartOutlined />,
+        parent: "inventory", // 归类到库存菜单下
+      },
+    },
+    {
+      name: "stock_entries",
+      list: "/supply-chain/entries",
+      create: "/supply-chain/entries/create",
+      show: "/supply-chain/entries/show/:id",
+      meta: {
+        label: "入库记录",
+        icon: <ImportOutlined />,
+        parent: "inventory",
+        canDelete: false, // 入库单严禁删除，保证账目可追溯
       },
     },
     {

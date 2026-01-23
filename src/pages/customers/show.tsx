@@ -5,6 +5,6 @@ import { Typography } from "antd";
 
 const { Title } = Typography;
 
-export const CategoryShow = () => {
+export const CustomerShow = () => {
   return <AntdShowInferencer />;
 };

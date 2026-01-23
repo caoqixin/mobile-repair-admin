@@ -172,6 +172,7 @@
     "deviceModels": "机型库",
     "categories": "产品分类",
     "faults": "故障列表",
-    "profiles": "员工与权限管理"
+    "profiles": "员工与权限管理",
+    "warranties": "保修管理"
   }
 }

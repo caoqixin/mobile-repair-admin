@@ -1,5 +1,5 @@
 import { AntdListInferencer } from "@refinedev/inferencer/antd";
 
-export const CategoryList = () => {
+export const CustomerList = () => {
   return <AntdListInferencer />;
 };

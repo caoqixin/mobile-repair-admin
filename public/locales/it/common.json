@@ -172,6 +172,7 @@
     "deviceModels": "Modelli Dispositivi",
     "categories": "Categorie Prodotti",
     "faults": "Tipologie di Guasto",
-    "profiles": "Gestione Staff"
+    "profiles": "Gestione Staff",
+    "warranties": "Gestione Garanzia"
   }
 }
