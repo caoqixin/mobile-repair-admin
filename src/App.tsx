@@ -21,12 +21,7 @@ import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
+import { CategoryCreate, CategoryEdit, CategoryList } from "./pages/categories";
 import authProvider from "./providers/auth";
 import { dataProvider } from "./providers/data";
 import { supabaseClient } from "./providers/supabase-client";
@@ -90,7 +85,7 @@ import {
   DeviceModelList,
   DeviceModelShow,
 } from "./pages/device-models";
-import { FaultCreate, FaultEdit, FaultList, FaultShow } from "./pages/faults";
+import { FaultCreate, FaultEdit, FaultList } from "./pages/faults";
 import { ProfileCreate, ProfileEdit, ProfileList } from "./pages/profiles";
 import { WarrantyList, WarrantyShow } from "./pages/warranties";
 
@@ -238,13 +233,11 @@ function App() {
                         <Route index element={<CategoryList />} />
                         <Route path="create" element={<CategoryCreate />} />
                         <Route path="edit/:id" element={<CategoryEdit />} />
-                        <Route path="show/:id" element={<CategoryShow />} />
                       </Route>
                       <Route path="faults">
                         <Route index element={<FaultList />} />
                         <Route path="create" element={<FaultCreate />} />
                         <Route path="edit/:id" element={<FaultEdit />} />
-                        <Route path="show/:id" element={<FaultShow />} />
                       </Route>
                       <Route path="staff">
                         <Route index element={<ProfileList />} />
@@ -287,6 +280,15 @@ function App() {
                         <AuthPage
                           title="Luna Tech Admin"
                           type="forgotPassword"
+                        />
+                      }
+                    />
+                    <Route
+                      path="/update-password"
+                      element={
+                        <AuthPage
+                          title="Luna Tech Admin"
+                          type="updatePassword"
                         />
                       }
                     />

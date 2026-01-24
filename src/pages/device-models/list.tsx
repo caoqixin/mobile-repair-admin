@@ -1,5 +1,115 @@
-import { AntdListInferencer } from "@refinedev/inferencer/antd";
-
+import {
+  List,
+  useTable,
+  EditButton,
+  DeleteButton,
+  ShowButton,
+  CreateButton,
+} from "@refinedev/antd";
+import { Button, Card, Form, Input, Space, Table } from "antd";
+import { BaseRecord, HttpError, useTranslate } from "@refinedev/core";
+import { IBrand } from "../../interface";
+import { SearchOutlined } from "@ant-design/icons";
 export const DeviceModelList = () => {
-  return <AntdListInferencer />;
+  const translate = useTranslate();
+
+  const { tableProps, searchFormProps } = useTable<
+    IBrand,
+    HttpError,
+    { name: string }
+  >({
+    syncWithLocation: true,
+    resource: "brands",
+    sorters: {
+      initial: [
+        {
+          field: "name",
+          order: "asc",
+        },
+      ],
+    },
+    onSearch: (values) => {
+      const { name } = values;
+
+      return [
+        {
+          field: "name",
+          operator: "contains", // Supabase 中对应 ilike %value%
+          value: name,
+        },
+      ];
+    },
+  });
+  return (
+    <List
+      resource="brands"
+      title={translate("resources.deviceModels")}
+      headerButtons={({ defaultButtons }) => (
+        <>
+          {defaultButtons}
+          <CreateButton />
+        </>
+      )}
+    >
+      <Card variant="borderless" style={{ marginBottom: "10px" }}>
+        <Form
+          {...searchFormProps}
+          layout="inline"
+          style={{
+            display: "flex",
+            gap: "5px",
+          }}
+        >
+          <Form.Item name="name" noStyle>
+            <Input
+              placeholder={translate("brands.fields.name") + " 搜索..."}
+              prefix={<SearchOutlined />}
+              style={{ width: 300 }}
+              allowClear // 允许点击 X 清空，清空后会自动重置表格
+              onClear={searchFormProps.form?.submit}
+            />
+          </Form.Item>
+          <Form.Item noStyle>
+            <Button
+              icon={<SearchOutlined />}
+              type="primary"
+              onClick={searchFormProps.form?.submit}
+            />
+          </Form.Item>
+        </Form>
+      </Card>
+      <Table
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+          position: ["bottomRight"],
+          size: "small",
+        }}
+        rowKey="id"
+      >
+        <Table.Column
+          dataIndex="name"
+          sorter
+          title={translate("brands.fields.name")}
+        />
+
+        <Table.Column
+          title={translate("table.actions")}
+          dataIndex="actions"
+          render={(_, record: BaseRecord) => (
+            <Space>
+              <ShowButton hideText size="small" recordItemId={record.id} />
+              <EditButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton
+                hideText
+                size="small"
+                resource="brands"
+                recordItemId={record.id}
+              />
+            </Space>
+          )}
+        />
+      </Table>
+    </List>
+  );
 };

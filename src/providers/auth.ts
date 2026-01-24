@@ -1,5 +1,6 @@
 import { AuthProvider } from "@refinedev/core";
 import { supabaseClient } from "./supabase-client";
+import { IProfile } from "../interface";
 
 const authProvider: AuthProvider = {
   login: async ({ email, password, providerName }) => {
@@ -100,7 +101,7 @@ const authProvider: AuthProvider = {
         email,
         {
           redirectTo: `${window.location.origin}/update-password`,
-        }
+        },
       );
 
       if (error) {
@@ -218,7 +219,12 @@ const authProvider: AuthProvider = {
     const user = await supabaseClient.auth.getUser();
 
     if (user) {
-      return user.data.user?.role;
+      const { data } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.data.user?.id);
+
+      return data;
     }
 
     return null;

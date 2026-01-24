@@ -164,6 +164,7 @@ export const resources = (): ResourceProps[] => {
       list: "/settings/models",
       create: "/settings/models/create",
       edit: "/settings/models/edit/:id",
+      show: "/settings/models/show/:id",
       meta: {
         label: t("resources.deviceModels"),
         parent: "settings",
