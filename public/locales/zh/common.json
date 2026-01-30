@@ -266,5 +266,108 @@
         }
       }
     }
+  },
+  "transactions": {
+    "fields": {
+      "created_at": "添加时间",
+      "type": "类型",
+      "amount": "金额",
+      "category": "分类",
+      "payment_method": "支付方式",
+      "description": "备注",
+      "profile": "经手人",
+      "repair": "维修单",
+      "sale": "销售单",
+      "associate": "关联订单",
+      "income": "收入",
+      "expense": "支出"
+    },
+    "title": "记一笔 (手动录入流水)"
+  },
+  "suppliers": {
+    "fields": {
+      "id": "ID",
+      "name": "供应商名称",
+      "website": "官网",
+      "description": "描述",
+      "created_at": "添加时间"
+    },
+    "form": {
+      "create": {
+        "title": "添加供应商"
+      }
+    }
+  },
+  "customers": {
+    "fields": {
+      "id": "ID",
+      "full_name": "客户名称",
+      "phone": "电话号码",
+      "email": "电子邮箱",
+      "notes": "备注",
+      "created_at": "添加时间"
+    },
+    "form": {
+      "create": {
+        "title": "录入客人"
+      },
+      "edit": {
+        "title": "修改客户档案 | "
+      }
+    }
+  },
+  "inventory_components": {
+    "fields": {
+      "id": "ID",
+      "sku": "SKU",
+      "name": "配件名称",
+      "category": "分类",
+      "supplier": "供应商",
+      "quality": "品质",
+      "stock": "库存数量",
+      "cost": "采购价格",
+      "repair_price": "维修价",
+      "partner_price": "同行价格",
+      "created_at": "添加时间",
+      "brand": "品牌",
+      "model": "手机型号"
+    },
+    "form": {
+      "create": {
+        "title": "录入配件"
+      },
+      "edit": {
+        "title": "修改配件信息"
+      }
+    }
+  },
+  "inventory_items": {
+    "fields": {
+      "id": "ID",
+      "sku": "SKU",
+      "name": "配件名称",
+      "category": "分类",
+      "stock": "库存数量",
+      "cost": "采购价格",
+      "retail_price": "零售价",
+      "created_at": "添加时间"
+    },
+    "form": {
+      "create": {
+        "title": "录入配件"
+      },
+      "edit": {
+        "title": "修改配件信息"
+      }
+    }
+  },
+  "purchase_orders": {
+    "fields": {
+      "readable_id": "单号",
+      "supplier": "供应商",
+      "status": "状态",
+      "total_estimated_cost": "预估总价 (€)",
+      "expected_arrival_date": "预计到货"
+    }
   }
 }

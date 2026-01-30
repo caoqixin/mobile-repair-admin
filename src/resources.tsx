@@ -87,6 +87,7 @@ export const resources = (): ResourceProps[] => {
       list: "/inventory_components",
       create: "/inventory_components/create",
       edit: "/inventory_components/edit/:id",
+      show: "/inventory_components/show/:id",
       meta: {
         label: t("resources.inventoryComponents"),
         icon: <InboxOutlined />,
@@ -99,10 +100,11 @@ export const resources = (): ResourceProps[] => {
       list: "/inventory_items",
       create: "/inventory_items/create",
       edit: "/inventory_items/edit/:id",
+      show: "/inventory_items/show/:id",
       meta: {
         label: t("resources.inventoryItems"),
         icon: <InboxOutlined />,
-        parent: "inventory", // 在菜单中折叠
+        parent: "inventory",
       },
     },
     {
@@ -114,7 +116,7 @@ export const resources = (): ResourceProps[] => {
       meta: {
         label: "进货单 (PO)",
         icon: <ShoppingCartOutlined />,
-        parent: "inventory", // 归类到库存菜单下
+        parent: "inventory",
       },
     },
     {

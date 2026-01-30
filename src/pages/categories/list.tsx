@@ -14,7 +14,7 @@ import { CATEGORY_TYPE_MAP } from "../../constants";
 
 export const CategoryList = () => {
   const translate = useTranslate();
-  const { tableProps } = useTable<ICategory>({
+  const { tableProps, setCurrentPage, pageCount } = useTable<ICategory>({
     syncWithLocation: true,
   });
 
@@ -54,7 +54,16 @@ export const CategoryList = () => {
           render={(_, record: BaseRecord) => (
             <Space>
               <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                onSuccess={() => {
+                  if (tableProps.dataSource?.length! <= 1) {
+                    setCurrentPage(pageCount - 1);
+                  }
+                }}
+              />
             </Space>
           )}
         />

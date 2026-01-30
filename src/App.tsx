@@ -72,12 +72,7 @@ import {
   StockEntriesList,
   StockEntriesShow,
 } from "./pages/stock-entries";
-import {
-  SupplierCreate,
-  SupplierEdit,
-  SupplierList,
-  SupplierShow,
-} from "./pages/suppliers";
+import { SupplierCreate, SupplierEdit, SupplierList } from "./pages/suppliers";
 import { TransactionsCreate, TransactionsList } from "./pages/transactions";
 import {
   DeviceModelCreate,
@@ -211,7 +206,6 @@ function App() {
                       <Route index element={<SupplierList />} />
                       <Route path="create" element={<SupplierCreate />} />
                       <Route path="edit/:id" element={<SupplierEdit />} />
-                      <Route path="show/:id" element={<SupplierShow />} />
                     </Route>
                     {/* 财务 */}
                     <Route path="/finance">

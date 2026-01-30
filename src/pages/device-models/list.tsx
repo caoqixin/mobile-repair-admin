@@ -13,7 +13,7 @@ import { SearchOutlined } from "@ant-design/icons";
 export const DeviceModelList = () => {
   const translate = useTranslate();
 
-  const { tableProps, searchFormProps } = useTable<
+  const { tableProps, searchFormProps, pageCount, setCurrentPage } = useTable<
     IBrand,
     HttpError,
     { name: string }
@@ -105,6 +105,11 @@ export const DeviceModelList = () => {
                 size="small"
                 resource="brands"
                 recordItemId={record.id}
+                onSuccess={() => {
+                  if (tableProps.dataSource?.length! <= 1) {
+                    setCurrentPage(pageCount - 1);
+                  }
+                }}
               />
             </Space>
           )}

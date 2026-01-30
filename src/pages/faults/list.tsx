@@ -11,7 +11,7 @@ import { IFault } from "../../interface";
 
 export const FaultList = () => {
   const translate = useTranslate();
-  const { tableProps } = useTable<IFault>({
+  const { tableProps, setCurrentPage, pageCount } = useTable<IFault>({
     syncWithLocation: true,
   });
 
@@ -46,7 +46,16 @@ export const FaultList = () => {
           render={(_, record: BaseRecord) => (
             <Space>
               <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                onSuccess={() => {
+                  if (tableProps.dataSource?.length! <= 1) {
+                    setCurrentPage(pageCount - 1);
+                  }
+                }}
+              />
             </Space>
           )}
         />

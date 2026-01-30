@@ -1,5 +1,41 @@
-import { AntdCreateInferencer } from "@refinedev/inferencer/antd";
+import { Create, useForm } from "@refinedev/antd";
+import { Form, Input, DatePicker } from "antd";
+import { useTranslate } from "@refinedev/core";
 
 export const SupplierCreate = () => {
-  return <AntdCreateInferencer />;
+  const translate = useTranslate();
+  const { formProps, saveButtonProps } = useForm();
+
+  return (
+    <Create
+      saveButtonProps={saveButtonProps}
+      title={translate("suppliers.form.create.title")}
+    >
+      <Form {...formProps} layout="vertical">
+        <Form.Item
+          label={translate("suppliers.fields.name")}
+          name={["name"]}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label={translate("suppliers.fields.website")}
+          name={["website"]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label={translate("suppliers.fields.description")}
+          name={["description"]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
+    </Create>
+  );
 };

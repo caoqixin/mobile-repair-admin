@@ -38,7 +38,7 @@ export const DeviceModelShow = () => {
   // 获取从表数据 (Models)
   // resource="models"
   // 过滤条件：只显示属于当前 Brand 的 models
-  const { tableProps, searchFormProps } = useTable<
+  const { tableProps, searchFormProps, pageCount, setCurrentPage } = useTable<
     IDeviceModel,
     HttpError,
     { name: string }
@@ -191,6 +191,11 @@ export const DeviceModelShow = () => {
                 size="small"
                 resource="models"
                 recordItemId={record.id}
+                onSuccess={() => {
+                  if (tableProps.dataSource?.length! <= 1) {
+                    setCurrentPage(pageCount - 1);
+                  }
+                }}
               />
             </Space>
           )}
