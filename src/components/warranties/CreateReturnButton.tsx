@@ -5,7 +5,6 @@ import {
   useCreate,
   useGetIdentity,
   useNavigation,
-  useTranslate,
 } from "@refinedev/core";
 
 type Props = {

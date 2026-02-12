@@ -36,7 +36,7 @@ import {
   StepBackwardOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
-import { ICustomer, IInventoryComponent, IRepairOrder } from "../../interface";
+import { ICustomer, IInventoryComponent } from "../../interface";
 import { CREATE_REPAIR_STATUS_OPTIONS } from "../../constants";
 
 export const RepairOrderCreate = () => {

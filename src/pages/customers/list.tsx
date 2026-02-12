@@ -1,4 +1,4 @@
-import { BaseRecord, CrudFilter, useCan, useTranslate } from "@refinedev/core";
+import { BaseRecord, useCan, useTranslate } from "@refinedev/core";
 import {
   useTable,
   List,

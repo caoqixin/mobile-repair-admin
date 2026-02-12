@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useShow } from "@refinedev/core";
 import { Show, DateField } from "@refinedev/antd";
 import {
@@ -15,8 +15,6 @@ import {
 import {
   PrinterOutlined,
   SafetyCertificateOutlined,
-  CheckCircleOutlined,
-  WarningOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 

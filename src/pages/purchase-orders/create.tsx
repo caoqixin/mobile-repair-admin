@@ -18,7 +18,7 @@ import {
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
-import { QUALITY, QUALITY_OPTIONS } from "../../constants";
+import { QUALITY_OPTIONS } from "../../constants";
 import { IInventoryComponent } from "../../interface";
 import { useInventoryOptions } from "../../hooks/useInventoryOptions";
 

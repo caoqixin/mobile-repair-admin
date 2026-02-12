@@ -16,7 +16,6 @@ import {
 import { useState } from "react";
 import { REPAIR_STATUS_OPTIONS } from "../../constants";
 import { ListLoader } from "../../components/loadings";
-import { useParsed } from "@refinedev/core";
 
 const { Text } = Typography;
 

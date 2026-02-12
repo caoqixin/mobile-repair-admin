@@ -5,8 +5,6 @@ import {
   I18nProvider,
   Refine,
 } from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import { ErrorComponent, useNotificationProvider } from "@refinedev/antd";
 import "@ant-design/v5-patch-for-react-19";
@@ -35,6 +33,7 @@ import { resources } from "./resources";
 import { customTitleHandler } from "./lib/customTitleHandler";
 import { accessControlProvider } from "./providers/accessControlProvider";
 import { AccessDenied } from "./components/error/auth";
+import { LayoutLoading } from "./components/loadings";
 
 // lazy load
 // Dashboard
@@ -300,208 +299,189 @@ function App() {
 
   return (
     <BrowserRouter>
-      <RefineKbarProvider>
-        <ColorModeContextProvider>
-          <AntdApp>
-            <DevtoolsProvider>
-              <Refine
-                dataProvider={dataProvider}
-                liveProvider={liveProvider(supabaseClient)}
-                authProvider={authProvider}
-                routerProvider={routerProvider}
-                notificationProvider={useNotificationProvider}
-                accessControlProvider={accessControlProvider}
-                i18nProvider={i18nProvider}
-                resources={resources()}
-                options={{
-                  syncWithLocation: true,
-                  warnWhenUnsavedChanges: true,
-                  projectId: "JXabbB-6wc3D6-tgE9yj",
-                  liveMode: "auto",
-                }}
+      <ColorModeContextProvider>
+        <AntdApp>
+          <Refine
+            dataProvider={dataProvider}
+            liveProvider={liveProvider(supabaseClient)}
+            authProvider={authProvider}
+            routerProvider={routerProvider}
+            notificationProvider={useNotificationProvider}
+            accessControlProvider={accessControlProvider}
+            i18nProvider={i18nProvider}
+            resources={resources}
+            options={{
+              syncWithLocation: true,
+              warnWhenUnsavedChanges: true,
+              projectId: "JXabbB-6wc3D6-tgE9yj",
+              liveMode: "auto",
+            }}
+          >
+            <Routes>
+              <Route
+                element={
+                  <Authenticated
+                    key="authenticated-inner"
+                    fallback={<CatchAllNavigate to="/login" />}
+                  >
+                    <ThemedLayout
+                      Header={Header}
+                      Sider={(props) => <ThemedSider {...props} fixed />}
+                      Title={(props) => (
+                        <ThemedTitle {...props} text="Luna Tech" />
+                      )}
+                    >
+                      <CanAccess fallback={<AccessDenied />}>
+                        <React.Suspense fallback={<LayoutLoading />}>
+                          <Outlet />
+                        </React.Suspense>
+                      </CanAccess>
+                    </ThemedLayout>
+                  </Authenticated>
+                }
               >
-                <Routes>
+                <Route index element={<Dashboard />} />
+
+                <Route path="/quote" element={<Quote />} />
+
+                <Route path="/repairs">
+                  <Route index element={<RepairOrderList />} />
+                  <Route path="create" element={<RepairOrderCreate />} />
+                  <Route path="edit/:id" element={<RepairOrderEdit />} />
+                  <Route path="show/:id" element={<RepairOrderShow />} />
+                </Route>
+                <Route path="/sales">
+                  <Route index element={<SalesOrderList />} />
+                  <Route path="create" element={<SalesOrderCreate />} />
+                  <Route path="show/:id" element={<SalesOrderShow />} />
+                </Route>
+                <Route path="/customers">
+                  <Route index element={<CustomerList />} />
+                  <Route path="create" element={<CustomerCreate />} />
+                  <Route path="edit/:id" element={<CustomerEdit />} />
+                  <Route path="show/:id" element={<CustomerShow />} />
+                </Route>
+                <Route path="/warranties">
+                  <Route index element={<WarrantyList />} />
+                  <Route path="show/:id" element={<WarrantyShow />} />
+                </Route>
+                <Route path="/inventory_components">
+                  <Route index element={<InventoryComponentsList />} />
                   <Route
-                    element={
-                      <Authenticated
-                        key="authenticated-inner"
-                        fallback={<CatchAllNavigate to="/login" />}
-                      >
-                        <ThemedLayout
-                          Header={Header}
-                          Sider={(props) => <ThemedSider {...props} fixed />}
-                          Title={(props) => (
-                            <ThemedTitle {...props} text="Luna Tech" />
-                          )}
-                        >
-                          <CanAccess fallback={<AccessDenied />}>
-                            <Outlet />
-                          </CanAccess>
-                        </ThemedLayout>
-                      </Authenticated>
-                    }
-                  >
-                    <Route index element={<Dashboard />} />
-
-                    <Route path="/quote" element={<Quote />} />
-
-                    <Route path="/repairs">
-                      <Route index element={<RepairOrderList />} />
-                      <Route path="create" element={<RepairOrderCreate />} />
-                      <Route path="edit/:id" element={<RepairOrderEdit />} />
-                      <Route path="show/:id" element={<RepairOrderShow />} />
-                    </Route>
-                    <Route path="/sales">
-                      <Route index element={<SalesOrderList />} />
-                      <Route path="create" element={<SalesOrderCreate />} />
-                      <Route path="show/:id" element={<SalesOrderShow />} />
-                    </Route>
-                    <Route path="/customers">
-                      <Route index element={<CustomerList />} />
-                      <Route path="create" element={<CustomerCreate />} />
-                      <Route path="edit/:id" element={<CustomerEdit />} />
-                      <Route path="show/:id" element={<CustomerShow />} />
-                    </Route>
-                    <Route path="/warranties">
-                      <Route index element={<WarrantyList />} />
-                      <Route path="show/:id" element={<WarrantyShow />} />
-                    </Route>
-                    <Route path="/inventory_components">
-                      <Route index element={<InventoryComponentsList />} />
-                      <Route
-                        path="create"
-                        element={<InventoryComponentsCreate />}
-                      />
-                      <Route
-                        path="edit/:id"
-                        element={<InventoryComponentsEdit />}
-                      />
-                      <Route
-                        path="show/:id"
-                        element={<InventoryComponentsShow />}
-                      />
-                    </Route>
-                    <Route path="/inventory_items">
-                      <Route index element={<InventoryItemsList />} />
-                      <Route path="create" element={<InventoryItemsCreate />} />
-                      <Route path="edit/:id" element={<InventoryItemsEdit />} />
-                      <Route path="show/:id" element={<InventoryItemsShow />} />
-                    </Route>
-                    {/* 供应链 */}
-                    <Route path="/supply-chain">
-                      <Route path="orders">
-                        <Route index element={<PurchaseOrderList />} />
-                        <Route
-                          path="create"
-                          element={<PurchaseOrderCreate />}
-                        />
-                        <Route
-                          path="edit/:id"
-                          element={<PurchaseOrderEdit />}
-                        />
-                        <Route
-                          path="show/:id"
-                          element={<PurchaseOrderShow />}
-                        />
-                      </Route>
-                      <Route path="entries">
-                        <Route index element={<StockEntriesList />} />
-                        <Route path="create" element={<StockEntriesCreate />} />
-                        <Route path="show/:id" element={<StockEntriesShow />} />
-                      </Route>
-                    </Route>
-
-                    {/* 供应商 */}
-                    <Route path="/suppliers">
-                      <Route index element={<SupplierList />} />
-                      <Route path="create" element={<SupplierCreate />} />
-                      <Route path="edit/:id" element={<SupplierEdit />} />
-                    </Route>
-                    {/* 财务 */}
-                    <Route path="/finance">
-                      <Route path="transactions">
-                        <Route index element={<TransactionsList />} />
-                        <Route path="create" element={<TransactionsCreate />} />
-                      </Route>
-                    </Route>
-
-                    {/* 设置 */}
-                    <Route path="/settings">
-                      <Route path="models">
-                        <Route index element={<DeviceModelList />} />
-                        <Route path="create" element={<DeviceModelCreate />} />
-                        <Route path="edit/:id" element={<DeviceModelEdit />} />
-                        <Route path="show/:id" element={<DeviceModelShow />} />
-                      </Route>
-                      <Route path="categories">
-                        <Route index element={<CategoryList />} />
-                        <Route path="create" element={<CategoryCreate />} />
-                        <Route path="edit/:id" element={<CategoryEdit />} />
-                      </Route>
-                      <Route path="faults">
-                        <Route index element={<FaultList />} />
-                        <Route path="create" element={<FaultCreate />} />
-                        <Route path="edit/:id" element={<FaultEdit />} />
-                      </Route>
-                      <Route path="staff">
-                        <Route index element={<ProfileList />} />
-                        <Route path="create" element={<ProfileCreate />} />
-                        <Route path="edit/:id" element={<ProfileEdit />} />
-                      </Route>
-                    </Route>
-
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
+                    path="create"
+                    element={<InventoryComponentsCreate />}
+                  />
                   <Route
-                    element={
-                      <Authenticated
-                        key="authenticated-outer"
-                        fallback={<Outlet />}
-                      >
-                        <NavigateToResource />
-                      </Authenticated>
-                    }
-                  >
-                    <Route
-                      path="/login"
-                      element={
-                        <AuthPage
-                          type="login"
-                          registerLink={false}
-                          title="Luna Tech Admin"
-                        />
-                      }
-                    />
-                    <Route
-                      path="/forgot-password"
-                      element={
-                        <AuthPage
-                          title="Luna Tech Admin"
-                          type="forgotPassword"
-                        />
-                      }
-                    />
-                    <Route
-                      path="/update-password"
-                      element={
-                        <AuthPage
-                          title="Luna Tech Admin"
-                          type="updatePassword"
-                        />
-                      }
-                    />
+                    path="edit/:id"
+                    element={<InventoryComponentsEdit />}
+                  />
+                  <Route
+                    path="show/:id"
+                    element={<InventoryComponentsShow />}
+                  />
+                </Route>
+                <Route path="/inventory_items">
+                  <Route index element={<InventoryItemsList />} />
+                  <Route path="create" element={<InventoryItemsCreate />} />
+                  <Route path="edit/:id" element={<InventoryItemsEdit />} />
+                  <Route path="show/:id" element={<InventoryItemsShow />} />
+                </Route>
+                {/* 供应链 */}
+                <Route path="/supply-chain">
+                  <Route path="orders">
+                    <Route index element={<PurchaseOrderList />} />
+                    <Route path="create" element={<PurchaseOrderCreate />} />
+                    <Route path="edit/:id" element={<PurchaseOrderEdit />} />
+                    <Route path="show/:id" element={<PurchaseOrderShow />} />
                   </Route>
-                </Routes>
+                  <Route path="entries">
+                    <Route index element={<StockEntriesList />} />
+                    <Route path="create" element={<StockEntriesCreate />} />
+                    <Route path="show/:id" element={<StockEntriesShow />} />
+                  </Route>
+                </Route>
 
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler handler={customTitleHandler} />
-              </Refine>
-              <DevtoolsPanel />
-            </DevtoolsProvider>
-          </AntdApp>
-        </ColorModeContextProvider>
-      </RefineKbarProvider>
+                {/* 供应商 */}
+                <Route path="/suppliers">
+                  <Route index element={<SupplierList />} />
+                  <Route path="create" element={<SupplierCreate />} />
+                  <Route path="edit/:id" element={<SupplierEdit />} />
+                </Route>
+                {/* 财务 */}
+                <Route path="/finance">
+                  <Route path="transactions">
+                    <Route index element={<TransactionsList />} />
+                    <Route path="create" element={<TransactionsCreate />} />
+                  </Route>
+                </Route>
+
+                {/* 设置 */}
+                <Route path="/settings">
+                  <Route path="models">
+                    <Route index element={<DeviceModelList />} />
+                    <Route path="create" element={<DeviceModelCreate />} />
+                    <Route path="edit/:id" element={<DeviceModelEdit />} />
+                    <Route path="show/:id" element={<DeviceModelShow />} />
+                  </Route>
+                  <Route path="categories">
+                    <Route index element={<CategoryList />} />
+                    <Route path="create" element={<CategoryCreate />} />
+                    <Route path="edit/:id" element={<CategoryEdit />} />
+                  </Route>
+                  <Route path="faults">
+                    <Route index element={<FaultList />} />
+                    <Route path="create" element={<FaultCreate />} />
+                    <Route path="edit/:id" element={<FaultEdit />} />
+                  </Route>
+                  <Route path="staff">
+                    <Route index element={<ProfileList />} />
+                    <Route path="create" element={<ProfileCreate />} />
+                    <Route path="edit/:id" element={<ProfileEdit />} />
+                  </Route>
+                </Route>
+
+                <Route path="*" element={<ErrorComponent />} />
+              </Route>
+              <Route
+                element={
+                  <Authenticated
+                    key="authenticated-outer"
+                    fallback={<Outlet />}
+                  >
+                    <NavigateToResource />
+                  </Authenticated>
+                }
+              >
+                <Route
+                  path="/login"
+                  element={
+                    <AuthPage
+                      type="login"
+                      registerLink={false}
+                      title="Luna Tech Admin"
+                    />
+                  }
+                />
+                <Route
+                  path="/forgot-password"
+                  element={
+                    <AuthPage title="Luna Tech Admin" type="forgotPassword" />
+                  }
+                />
+                <Route
+                  path="/update-password"
+                  element={
+                    <AuthPage title="Luna Tech Admin" type="updatePassword" />
+                  }
+                />
+              </Route>
+            </Routes>
+
+            <UnsavedChangesNotifier />
+            <DocumentTitleHandler handler={customTitleHandler} />
+          </Refine>
+        </AntdApp>
+      </ColorModeContextProvider>
     </BrowserRouter>
   );
 }

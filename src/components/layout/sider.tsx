@@ -74,7 +74,8 @@ export const ThemedSider: React.FC<RefineThemedLayoutSiderProps> = ({
     return tree.map((item: TreeMenuItem) => {
       const { key, name, children, meta, list } = item;
       const parentName = meta?.parent;
-      const label = item?.label ?? meta?.label ?? name;
+      const translateKey = meta?.translateKey;
+      const label = translate(translateKey);
       const icon = meta?.icon;
       const route = list;
 
@@ -174,6 +175,7 @@ export const ThemedSider: React.FC<RefineThemedLayoutSiderProps> = ({
         collapsed: siderCollapsed,
       });
     }
+
     return [...items, logout].filter(Boolean);
   };
 

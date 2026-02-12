@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from "@refinedev/core";
-import { Button, Tooltip, Space, Card, Typography } from "antd";
+import { Button, Space, Typography } from "antd";
 import {
   PlusCircleOutlined,
   ShoppingOutlined,
@@ -8,8 +8,6 @@ import {
   ScanOutlined,
   ThunderboltOutlined,
   ImportOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   RightOutlined,
   LeftOutlined,
 } from "@ant-design/icons";

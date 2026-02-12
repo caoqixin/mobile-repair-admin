@@ -1,5 +1,5 @@
 import { useShow, useTranslate, useUpdate } from "@refinedev/core";
-import { Show, DateField, EditButton } from "@refinedev/antd";
+import { Show, DateField } from "@refinedev/antd";
 import {
   Typography,
   Descriptions,

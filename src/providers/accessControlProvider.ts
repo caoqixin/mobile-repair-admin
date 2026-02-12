@@ -3,12 +3,30 @@ import {
   CanParams,
   CanReturnType,
 } from "@refinedev/core";
+import {
+  AbilityBuilder,
+  createMongoAbility,
+  MongoAbility,
+} from "@casl/ability";
 import { useAuthStore } from "../stores/authStore";
-// 定义允许的操作类型
-type ActionType = "list" | "show" | "create" | "edit" | "delete" | "clone";
+// ===  定义类型 ===
+// Refine 的标准操作 + 自定义操作
+type Action =
+  | "list"
+  | "show"
+  | "create"
+  | "edit"
+  | "delete"
+  | "clone"
+  | "manage";
+// 你的资源名称 (可以是字符串)
+type Subject = string | "all";
+
+// 定义 CASL Ability 类型
+type AppAbility = MongoAbility<[Action, Subject]>;
 
 // 1. 定义 Staff (技师/前台) 的通用权限集
-const STAFF_PERMISSIONS: Record<string, ActionType[]> = {
+const STAFF_PERMISSIONS: Record<string, Action[]> = {
   // === 业务操作 (SQL: FOR ALL) ===
   repair_orders: ["list", "show", "create", "edit", "delete"],
   customers: ["list", "show", "create", "edit"],
@@ -31,67 +49,65 @@ const STAFF_PERMISSIONS: Record<string, ActionType[]> = {
   quote: ["list"],
 };
 
-// 2. 定义角色规则矩阵
-const RBAC_RULES: Record<string, any> = {
-  // Admin 拥有上帝权限
-  admin: "ALL",
+// === 创建权限工厂函数 ===
+const defineAbilitiesFor = (role: string): AppAbility => {
+  const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
 
-  // 技师和前台共享 Staff 权限集
-  technician: STAFF_PERMISSIONS,
-  front_desk: STAFF_PERMISSIONS,
+  switch (role) {
+    case "admin":
+      // Admin 拥有所有权限 ('manage' 代表所有操作, 'all' 代表所有资源)
+      can("manage", "all");
+      break;
 
-  // 合作伙伴 (只能访问 Quote 页面)
-  partner: {
-    quote: ["list"],
-  },
+    case "technician":
+    case "front_desk":
+      // 遍历配置对象，动态注册规则
+      Object.entries(STAFF_PERMISSIONS).forEach(([resource, actions]) => {
+        // CASL 的 can 接受数组作为第一个参数: can(['create', 'read'], 'Post')
+        can(actions, resource);
+      });
+      break;
+
+    case "partner":
+      // 合作伙伴只能看 quote
+      can("list", "quote");
+      break;
+
+    default:
+      // 未知角色没有任何权限
+      break;
+  }
+
+  return build();
 };
 
 export const accessControlProvider: AccessControlProvider = {
-  // 这是一个同步检查，非常快
   can: async ({ resource, action }: CanParams): Promise<CanReturnType> => {
-    // 1. 从 Zustand Store 获取当前角色
+    // 1. 获取角色
     const role = useAuthStore.getState().user?.role;
 
-    // 如果未登录或无角色，拒绝访问
     if (!role) {
-      return { can: false, reason: "Unauthorized: No role found" };
-    }
-
-    // 2. Admin 直接放行
-    if (role === "admin" || RBAC_RULES[role] === "ALL") {
-      return { can: true };
-    }
-
-    // 3. 获取当前角色的权限配置
-    const permissions = RBAC_RULES[role];
-    if (!permissions) {
-      return { can: false, reason: `Role [${role}] has no definition` };
-    }
-
-    // 4. 获取具体资源的权限
-    const resourcePermissions = permissions[resource || ""];
-
-    // 如果该角色完全没配置这个资源 (例如 partner 访问 customers)
-    if (!resourcePermissions) {
       return {
         can: false,
-        reason: `Role [${role}] cannot access resource [${resource}]`,
+        reason: "Unauthorized: No role found",
       };
     }
 
-    // 5. 检查具体动作 (list, create, edit...)
-    if (
-      Array.isArray(resourcePermissions) &&
-      action &&
-      resourcePermissions.includes(action as ActionType)
-    ) {
-      return { can: true };
-    }
+    // 2. 针对当前角色生成 Ability 实例
+    // 注意：如果是大型应用，可以将 ability 实例存在 Store 或 Context 中以避免重复创建
+    // 但对于 AccessControlProvider 这种异步调用，即时创建也是性能可接受的
+    const ability = defineAbilitiesFor(role);
 
-    // 默认拒绝
+    // 3. 校验权限
+    // Refine 传入的 action 比如 "list", "create" 会直接被 CASL 匹配
+    // resource 比如 "repair_orders" 也会被匹配
+    const canAccess = ability.can(action as Action, resource || "");
+
     return {
-      can: false,
-      reason: `Role [${role}] is not allowed to perform [${action}] on [${resource}]`,
+      can: canAccess,
+      reason: canAccess
+        ? undefined
+        : `Role [${role}] is not allowed to perform [${action}] on [${resource}]`,
     };
   },
 };

@@ -1,5 +1,5 @@
 import { Create, useForm } from "@refinedev/antd";
-import { Form, Input, DatePicker } from "antd";
+import { Form, Input } from "antd";
 import { useTranslate } from "@refinedev/core";
 
 export const SupplierCreate = () => {
