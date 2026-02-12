@@ -4,7 +4,7 @@ import { useTranslate } from "@refinedev/core";
 
 export const InventoryItemsEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps, query } = useForm();
+  const { formProps, saveButtonProps, query, formLoading } = useForm();
 
   const Data = query?.data?.data;
 
@@ -15,7 +15,7 @@ export const InventoryItemsEdit = () => {
   });
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
+    <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
         <Row gutter={24}>
           <Col span={12}>
@@ -60,6 +60,9 @@ export const InventoryItemsEdit = () => {
               <Select
                 {...categorySelectProps}
                 allowClear
+                onSearch={undefined}
+                filterOption={true}
+                optionFilterProp="label"
                 placeholder="全部分类"
               />
             </Form.Item>

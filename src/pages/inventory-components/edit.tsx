@@ -10,6 +10,7 @@ import { Col, Form, Input, InputNumber, Row, Select } from "antd";
 import { useEffect, useState } from "react";
 import { QUALITY } from "../../constants";
 import { IComponentCompatibility } from "../../interface";
+import { useInventoryOptions } from "../../hooks/useInventoryOptions";
 
 export const InventoryComponentsEdit = () => {
   const translate = useTranslate();
@@ -27,7 +28,6 @@ export const InventoryComponentsEdit = () => {
   });
 
   // 用于联动：选了品牌后，机型下拉框只显示该品牌的机型
-  const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
   const [selectedModels, setSelectedModels] = useState<number[]>([]);
   const { mutate: deleteMany } = useDeleteMany<IComponentCompatibility>();
   const { mutate } = useCreateMany({
@@ -72,12 +72,14 @@ export const InventoryComponentsEdit = () => {
 
   const Data = query?.data?.data;
 
-  const { selectProps: categorySelectProps } = useSelect({
-    resource: "categories",
-    filters: [{ field: "type", operator: "eq", value: "component" }],
-    defaultValue: Data?.category_id,
-    optionLabel: "name",
-  });
+  const {
+    categorySelectProps,
+    brandSelectProps,
+    modelSelectProps,
+    handleBrandChange,
+    selectedBrand,
+    isModelLoading,
+  } = useInventoryOptions({ initialBrandId: Data?.brand_id });
 
   const { selectProps: supplierSelectProps } = useSelect({
     resource: "suppliers",
@@ -98,7 +100,7 @@ export const InventoryComponentsEdit = () => {
       ),
     );
 
-    setSelectedBrand(brandId[0]);
+    handleBrandChange(brandId[0]);
     setSelectedModels(modelId);
 
     form?.setFieldsValue({
@@ -106,26 +108,6 @@ export const InventoryComponentsEdit = () => {
       model_id: modelId,
     });
   }, [Data, form]);
-
-  // 获取品牌下拉数据
-  const { selectProps: brandSelectProps } = useSelect({
-    resource: "brands",
-    defaultValue: selectedBrand!,
-    optionLabel: "name",
-  });
-
-  // 获取机型下拉数据 (依赖选中的品牌)
-  const { selectProps: modelSelectProps } = useSelect({
-    resource: "models",
-    optionLabel: "name",
-    defaultValue: selectedModels,
-    filters: selectedBrand
-      ? [{ field: "brand_id", operator: "eq", value: selectedBrand }]
-      : [],
-    queryOptions: {
-      enabled: !!selectedBrand, // 只有选了品牌才加载机型
-    },
-  });
 
   const handleFinish = (values: any) => {
     const componentForm = {
@@ -227,7 +209,7 @@ export const InventoryComponentsEdit = () => {
                 allowClear
                 placeholder="先选品牌"
                 onChange={(val) => {
-                  setSelectedBrand(val as unknown as number);
+                  handleBrandChange(val as unknown as number);
                   form?.setFieldValue("model_id", null);
                 }}
               />

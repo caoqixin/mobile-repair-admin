@@ -18,12 +18,12 @@ import {
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
-import { QUALITY } from "../../constants";
+import { QUALITY, QUALITY_OPTIONS } from "../../constants";
 import { IInventoryComponent } from "../../interface";
+import { useInventoryOptions } from "../../hooks/useInventoryOptions";
 
 export const PurchaseOrderCreate = () => {
   // 用于联动：选了品牌后，机型下拉框只显示该品牌的机型
-  const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
   const [selectedModels, setSelectedModels] = useState<number[]>([]);
 
   // 用于purchase_order_items
@@ -49,6 +49,7 @@ export const PurchaseOrderCreate = () => {
     show: createModalShow,
     onFinish: createModalOnFinish,
     close,
+    open: createModalOpen,
   } = useModalForm({
     warnWhenUnsavedChanges: false,
     resource: "inventory_components",
@@ -69,6 +70,7 @@ export const PurchaseOrderCreate = () => {
     modalProps: createItemModalProps,
     formProps: createItemFormProps,
     show: createItemModalShow,
+    open: createItemModalOpen,
   } = useModalForm({
     warnWhenUnsavedChanges: false,
     resource: "inventory_items",
@@ -92,10 +94,22 @@ export const PurchaseOrderCreate = () => {
     },
   });
 
+  const {
+    categorySelectProps,
+    brandSelectProps,
+    modelSelectProps,
+    handleBrandChange,
+    selectedBrand,
+    isModelLoading,
+  } = useInventoryOptions();
+
   // 1. 获取供应商
   const { selectProps: supplierSelectProps } = useSelect({
     resource: "suppliers",
     optionLabel: "name",
+    pagination: {
+      mode: "off",
+    },
   });
 
   // 2. 获取配件 (支持搜索)
@@ -103,43 +117,26 @@ export const PurchaseOrderCreate = () => {
     resource: "inventory_components",
     optionLabel: "name",
     optionValue: "id",
+    pagination: {
+      mode: "off",
+    },
   });
 
   const { selectProps: itemSelectProps } = useSelect<IInventoryComponent>({
     resource: "inventory_items",
     optionLabel: "name",
     optionValue: "id",
+    pagination: {
+      mode: "off",
+    },
   });
 
-  // 3. 获取分类 (用于弹窗里的快速建档)
-  const { selectProps: categorySelectProps } = useSelect({
-    resource: "categories",
-    filters: [{ field: "type", operator: "eq", value: "component" }],
-    optionLabel: "name",
-  });
   const { selectProps: categoryItemSelectProps } = useSelect({
     resource: "categories",
     filters: [{ field: "type", operator: "eq", value: "item" }],
     optionLabel: "name",
-  });
-
-  // 获取品牌下拉数据
-  const { selectProps: brandSelectProps } = useSelect({
-    resource: "brands",
-    optionLabel: "name",
-    optionValue: "id",
-  });
-
-  // 获取机型下拉数据 (依赖选中的品牌)
-  const { selectProps: modelSelectProps } = useSelect({
-    resource: "models",
-    optionLabel: "name",
-    optionValue: "id",
-    filters: selectedBrand
-      ? [{ field: "brand_id", operator: "eq", value: selectedBrand }]
-      : [],
-    queryOptions: {
-      enabled: !!selectedBrand, // 只有选了品牌才加载机型
+    pagination: {
+      mode: "off",
     },
   });
 
@@ -208,7 +205,13 @@ export const PurchaseOrderCreate = () => {
                 name="supplier_id"
                 rules={[{ required: true }]}
               >
-                <Select {...supplierSelectProps} placeholder="选择供应商" />
+                <Select
+                  {...supplierSelectProps}
+                  onSearch={undefined}
+                  filterOption={true}
+                  optionFilterProp="label"
+                  placeholder="选择供应商"
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -302,6 +305,9 @@ export const PurchaseOrderCreate = () => {
                                           ? componentSelectProps
                                           : itemSelectProps)}
                                         labelInValue
+                                        onSearch={undefined}
+                                        filterOption={true}
+                                        optionFilterProp="label"
                                         placeholder={
                                           rowType === "component"
                                             ? "搜索维修配件..."
@@ -392,233 +398,244 @@ export const PurchaseOrderCreate = () => {
         </Form>
       </Create>
 
-      <Modal {...createModalProps}>
-        <Form
-          {...createFormProps}
-          onFinish={handleModalOnFinish}
-          layout="vertical"
-        >
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_components.fields.sku")}
-                name={["sku"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_components.fields.name")}
-                name={["name"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.category")}
-                name={["category_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...categorySelectProps}
-                  allowClear
-                  placeholder="全部分类"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.supplier")}
-                name={["supplier_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...supplierSelectProps}
-                  allowClear
-                  placeholder="全部供应商"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.brand")}
-                name={["brand_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...brandSelectProps}
-                  allowClear
-                  placeholder="先选品牌"
-                  onChange={(val) => {
-                    setSelectedBrand(val as unknown as number);
-                    form?.setFieldValue("model_id", null);
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.model")}
-                name={["model_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...modelSelectProps}
-                  mode="multiple"
-                  allowClear
-                  placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
-                  disabled={!selectedBrand}
-                  onChange={(val) => {
-                    setSelectedModels(val as unknown as number[]);
-                  }}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            label={translate("inventory_components.fields.quality")}
-            initialValue={"compatibile"}
-            name={["quality"]}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+      {createModalOpen && (
+        <Modal {...createModalProps} destroyOnHidden>
+          <Form
+            {...createFormProps}
+            onFinish={handleModalOnFinish}
+            layout="vertical"
           >
-            <Select
-              options={QUALITY.map((val) => ({
-                label: val,
-                value: val,
-              }))}
-            />
-          </Form.Item>
-          <Row gutter={24}>
-            <Col span={6}>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_components.fields.sku")}
+                  name={["sku"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_components.fields.name")}
+                  name={["name"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.category")}
+                  name={["category_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...categorySelectProps}
+                    allowClear
+                    placeholder="全部分类"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.supplier")}
+                  name={["supplier_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...supplierSelectProps}
+                    allowClear
+                    onSearch={undefined}
+                    filterOption={true}
+                    optionFilterProp="label"
+                    placeholder="全部供应商"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.brand")}
+                  name={["brand_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...brandSelectProps}
+                    allowClear
+                    onSearch={undefined}
+                    filterOption={true}
+                    optionFilterProp="label"
+                    placeholder="先选品牌"
+                    onChange={(val) => {
+                      handleBrandChange(val as unknown as number);
+                      form?.setFieldValue("model_id", null);
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.model")}
+                  name={["model_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...modelSelectProps}
+                    mode="multiple"
+                    allowClear
+                    onSearch={undefined}
+                    filterOption={true}
+                    optionFilterProp="label"
+                    placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
+                    disabled={!selectedBrand || isModelLoading}
+                    onChange={(val) => {
+                      setSelectedModels(val as unknown as number[]);
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item
+              label={translate("inventory_components.fields.quality")}
+              initialValue={"compatibile"}
+              name={["quality"]}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Select options={QUALITY_OPTIONS} />
+            </Form.Item>
+            <Row gutter={24}>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.cost")}
+                  name={["cost_price"]}
+                >
+                  <InputNumber min={0} prefix="€" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.repair_price")}
+                  name={["suggested_repair_price"]}
+                >
+                  <InputNumber min={0} prefix="€" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.partner_price")}
+                  name={["partner_repair_price"]}
+                >
+                  <InputNumber min={0} prefix="€" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
+      )}
+
+      {createItemModalOpen && (
+        <Modal {...createItemModalProps} destroyOnHidden>
+          <Form {...createItemFormProps} layout="vertical">
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_items.fields.sku")}
+                  name={["sku"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_items.fields.name")}
+                  name={["name"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_items.fields.category")}
+                  name={["category_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...categoryItemSelectProps}
+                    onSearch={undefined}
+                    filterOption={true}
+                    optionFilterProp="label"
+                    allowClear
+                    placeholder="全部分类"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Space>
               <Form.Item
-                label={translate("inventory_components.fields.cost")}
+                label={translate("inventory_items.fields.cost")}
                 name={["cost_price"]}
               >
-                <InputNumber min={0} prefix="€" />
+                <InputNumber min={0} placeholder="0.00" prefix="€" />
               </Form.Item>
-            </Col>
-            <Col span={6}>
               <Form.Item
-                label={translate("inventory_components.fields.repair_price")}
-                name={["suggested_repair_price"]}
+                label={translate("inventory_items.fields.retail_price")}
+                name={["retail_price"]}
               >
-                <InputNumber min={0} prefix="€" />
+                <InputNumber min={0} placeholder="0.00" prefix="€" />
               </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.partner_price")}
-                name={["partner_repair_price"]}
-              >
-                <InputNumber min={0} prefix="€" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-
-      <Modal {...createItemModalProps}>
-        <Form {...createItemFormProps} layout="vertical">
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_items.fields.sku")}
-                name={["sku"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_items.fields.name")}
-                name={["name"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_items.fields.category")}
-                name={["category_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...categoryItemSelectProps}
-                  allowClear
-                  placeholder="全部分类"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Space>
-            <Form.Item
-              label={translate("inventory_items.fields.cost")}
-              name={["cost_price"]}
-            >
-              <InputNumber min={0} placeholder="0.00" prefix="€" />
-            </Form.Item>
-            <Form.Item
-              label={translate("inventory_items.fields.retail_price")}
-              name={["retail_price"]}
-            >
-              <InputNumber min={0} placeholder="0.00" prefix="€" />
-            </Form.Item>
-          </Space>
-        </Form>
-      </Modal>
+            </Space>
+          </Form>
+        </Modal>
+      )}
     </>
   );
 };

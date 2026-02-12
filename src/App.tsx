@@ -1,12 +1,14 @@
-import { Authenticated, I18nProvider, Refine } from "@refinedev/core";
+import React from "react";
+import {
+  Authenticated,
+  CanAccess,
+  I18nProvider,
+  Refine,
+} from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
-import {
-  AuthPage,
-  ErrorComponent,
-  useNotificationProvider,
-} from "@refinedev/antd";
+import { ErrorComponent, useNotificationProvider } from "@refinedev/antd";
 import "@ant-design/v5-patch-for-react-19";
 import "@refinedev/antd/dist/reset.css";
 
@@ -30,59 +32,262 @@ import { ThemedLayout } from "./components/layout";
 import { ThemedSider } from "./components/layout/sider";
 import { ThemedTitle } from "./components/layout/title";
 import { resources } from "./resources";
-import { Dashboard } from "./pages/dashboard";
-import { Quote } from "./pages/quote/list";
-import {
-  RepairOrderCreate,
-  RepairOrderEdit,
-  RepairOrderList,
-  RepairOrderShow,
-} from "./pages/repair-orders";
-import {
-  SalesOrderCreate,
-  SalesOrderList,
-  SalesOrderShow,
-} from "./pages/sales-orders";
-import {
-  CustomerCreate,
-  CustomerEdit,
-  CustomerList,
-  CustomerShow,
-} from "./pages/customers";
-import {
-  InventoryComponentsCreate,
-  InventoryComponentsEdit,
-  InventoryComponentsList,
-  InventoryComponentsShow,
-} from "./pages/inventory-components";
-import {
-  InventoryItemsCreate,
-  InventoryItemsEdit,
-  InventoryItemsList,
-  InventoryItemsShow,
-} from "./pages/inventory-items";
-import {
-  PurchaseOrderCreate,
-  PurchaseOrderEdit,
-  PurchaseOrderList,
-  PurchaseOrderShow,
-} from "./pages/purchase-orders";
-import {
-  StockEntriesCreate,
-  StockEntriesList,
-  StockEntriesShow,
-} from "./pages/stock-entries";
-import { SupplierCreate, SupplierEdit, SupplierList } from "./pages/suppliers";
-import { TransactionsCreate, TransactionsList } from "./pages/transactions";
-import {
-  DeviceModelCreate,
-  DeviceModelEdit,
-  DeviceModelList,
-  DeviceModelShow,
-} from "./pages/device-models";
-import { FaultCreate, FaultEdit, FaultList } from "./pages/faults";
-import { ProfileCreate, ProfileEdit, ProfileList } from "./pages/profiles";
-import { WarrantyList, WarrantyShow } from "./pages/warranties";
+import { customTitleHandler } from "./lib/customTitleHandler";
+import { accessControlProvider } from "./providers/accessControlProvider";
+import { AccessDenied } from "./components/error/auth";
+
+// lazy load
+// Dashboard
+const Dashboard = React.lazy(() =>
+  import("./pages/dashboard").then((module) => ({ default: module.Dashboard })),
+);
+
+// Quote
+const Quote = React.lazy(() =>
+  import("./pages/quote/list").then((module) => ({ default: module.Quote })),
+);
+
+// Repair Orders
+const RepairOrderCreate = React.lazy(() =>
+  import("./pages/repair-orders").then((module) => ({
+    default: module.RepairOrderCreate,
+  })),
+);
+const RepairOrderEdit = React.lazy(() =>
+  import("./pages/repair-orders").then((module) => ({
+    default: module.RepairOrderEdit,
+  })),
+);
+const RepairOrderList = React.lazy(() =>
+  import("./pages/repair-orders").then((module) => ({
+    default: module.RepairOrderList,
+  })),
+);
+const RepairOrderShow = React.lazy(() =>
+  import("./pages/repair-orders").then((module) => ({
+    default: module.RepairOrderShow,
+  })),
+);
+
+// Sales Orders
+const SalesOrderCreate = React.lazy(() =>
+  import("./pages/sales-orders").then((module) => ({
+    default: module.SalesOrderCreate,
+  })),
+);
+const SalesOrderList = React.lazy(() =>
+  import("./pages/sales-orders").then((module) => ({
+    default: module.SalesOrderList,
+  })),
+);
+const SalesOrderShow = React.lazy(() =>
+  import("./pages/sales-orders").then((module) => ({
+    default: module.SalesOrderShow,
+  })),
+);
+
+// Customers
+const CustomerCreate = React.lazy(() =>
+  import("./pages/customers").then((module) => ({
+    default: module.CustomerCreate,
+  })),
+);
+const CustomerEdit = React.lazy(() =>
+  import("./pages/customers").then((module) => ({
+    default: module.CustomerEdit,
+  })),
+);
+const CustomerList = React.lazy(() =>
+  import("./pages/customers").then((module) => ({
+    default: module.CustomerList,
+  })),
+);
+const CustomerShow = React.lazy(() =>
+  import("./pages/customers").then((module) => ({
+    default: module.CustomerShow,
+  })),
+);
+
+// Inventory Components
+const InventoryComponentsCreate = React.lazy(() =>
+  import("./pages/inventory-components").then((module) => ({
+    default: module.InventoryComponentsCreate,
+  })),
+);
+const InventoryComponentsEdit = React.lazy(() =>
+  import("./pages/inventory-components").then((module) => ({
+    default: module.InventoryComponentsEdit,
+  })),
+);
+const InventoryComponentsList = React.lazy(() =>
+  import("./pages/inventory-components").then((module) => ({
+    default: module.InventoryComponentsList,
+  })),
+);
+const InventoryComponentsShow = React.lazy(() =>
+  import("./pages/inventory-components").then((module) => ({
+    default: module.InventoryComponentsShow,
+  })),
+);
+
+// Inventory Items
+const InventoryItemsCreate = React.lazy(() =>
+  import("./pages/inventory-items").then((module) => ({
+    default: module.InventoryItemsCreate,
+  })),
+);
+const InventoryItemsEdit = React.lazy(() =>
+  import("./pages/inventory-items").then((module) => ({
+    default: module.InventoryItemsEdit,
+  })),
+);
+const InventoryItemsList = React.lazy(() =>
+  import("./pages/inventory-items").then((module) => ({
+    default: module.InventoryItemsList,
+  })),
+);
+const InventoryItemsShow = React.lazy(() =>
+  import("./pages/inventory-items").then((module) => ({
+    default: module.InventoryItemsShow,
+  })),
+);
+
+// Purchase Orders
+const PurchaseOrderCreate = React.lazy(() =>
+  import("./pages/purchase-orders").then((module) => ({
+    default: module.PurchaseOrderCreate,
+  })),
+);
+const PurchaseOrderEdit = React.lazy(() =>
+  import("./pages/purchase-orders").then((module) => ({
+    default: module.PurchaseOrderEdit,
+  })),
+);
+const PurchaseOrderList = React.lazy(() =>
+  import("./pages/purchase-orders").then((module) => ({
+    default: module.PurchaseOrderList,
+  })),
+);
+const PurchaseOrderShow = React.lazy(() =>
+  import("./pages/purchase-orders").then((module) => ({
+    default: module.PurchaseOrderShow,
+  })),
+);
+
+// Stock Entries
+const StockEntriesCreate = React.lazy(() =>
+  import("./pages/stock-entries").then((module) => ({
+    default: module.StockEntriesCreate,
+  })),
+);
+const StockEntriesList = React.lazy(() =>
+  import("./pages/stock-entries").then((module) => ({
+    default: module.StockEntriesList,
+  })),
+);
+const StockEntriesShow = React.lazy(() =>
+  import("./pages/stock-entries").then((module) => ({
+    default: module.StockEntriesShow,
+  })),
+);
+
+// Suppliers
+const SupplierCreate = React.lazy(() =>
+  import("./pages/suppliers").then((module) => ({
+    default: module.SupplierCreate,
+  })),
+);
+const SupplierEdit = React.lazy(() =>
+  import("./pages/suppliers").then((module) => ({
+    default: module.SupplierEdit,
+  })),
+);
+const SupplierList = React.lazy(() =>
+  import("./pages/suppliers").then((module) => ({
+    default: module.SupplierList,
+  })),
+);
+
+// Transactions
+const TransactionsCreate = React.lazy(() =>
+  import("./pages/transactions").then((module) => ({
+    default: module.TransactionsCreate,
+  })),
+);
+const TransactionsList = React.lazy(() =>
+  import("./pages/transactions").then((module) => ({
+    default: module.TransactionsList,
+  })),
+);
+
+// Device Models
+const DeviceModelCreate = React.lazy(() =>
+  import("./pages/device-models").then((module) => ({
+    default: module.DeviceModelCreate,
+  })),
+);
+const DeviceModelEdit = React.lazy(() =>
+  import("./pages/device-models").then((module) => ({
+    default: module.DeviceModelEdit,
+  })),
+);
+const DeviceModelList = React.lazy(() =>
+  import("./pages/device-models").then((module) => ({
+    default: module.DeviceModelList,
+  })),
+);
+const DeviceModelShow = React.lazy(() =>
+  import("./pages/device-models").then((module) => ({
+    default: module.DeviceModelShow,
+  })),
+);
+
+// Faults
+const FaultCreate = React.lazy(() =>
+  import("./pages/faults").then((module) => ({ default: module.FaultCreate })),
+);
+const FaultEdit = React.lazy(() =>
+  import("./pages/faults").then((module) => ({ default: module.FaultEdit })),
+);
+const FaultList = React.lazy(() =>
+  import("./pages/faults").then((module) => ({ default: module.FaultList })),
+);
+
+// Profiles
+const ProfileCreate = React.lazy(() =>
+  import("./pages/profiles").then((module) => ({
+    default: module.ProfileCreate,
+  })),
+);
+const ProfileEdit = React.lazy(() =>
+  import("./pages/profiles").then((module) => ({
+    default: module.ProfileEdit,
+  })),
+);
+const ProfileList = React.lazy(() =>
+  import("./pages/profiles").then((module) => ({
+    default: module.ProfileList,
+  })),
+);
+
+// Warranties
+const WarrantyList = React.lazy(() =>
+  import("./pages/warranties").then((module) => ({
+    default: module.WarrantyList,
+  })),
+);
+const WarrantyShow = React.lazy(() =>
+  import("./pages/warranties").then((module) => ({
+    default: module.WarrantyShow,
+  })),
+);
+
+// Auth Page
+const AuthPage = React.lazy(() =>
+  import("./components/pages/auth").then((module) => ({
+    default: module.AuthPage,
+  })),
+);
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -105,12 +310,14 @@ function App() {
                 authProvider={authProvider}
                 routerProvider={routerProvider}
                 notificationProvider={useNotificationProvider}
+                accessControlProvider={accessControlProvider}
                 i18nProvider={i18nProvider}
                 resources={resources()}
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
                   projectId: "JXabbB-6wc3D6-tgE9yj",
+                  liveMode: "auto",
                 }}
               >
                 <Routes>
@@ -127,12 +334,15 @@ function App() {
                             <ThemedTitle {...props} text="Luna Tech" />
                           )}
                         >
-                          <Outlet />
+                          <CanAccess fallback={<AccessDenied />}>
+                            <Outlet />
+                          </CanAccess>
                         </ThemedLayout>
                       </Authenticated>
                     }
                   >
                     <Route index element={<Dashboard />} />
+
                     <Route path="/quote" element={<Quote />} />
 
                     <Route path="/repairs">
@@ -259,12 +469,6 @@ function App() {
                           type="login"
                           registerLink={false}
                           title="Luna Tech Admin"
-                          formProps={{
-                            initialValues: {
-                              email: "info@refine.dev",
-                              password: "refine-supabase",
-                            },
-                          }}
                         />
                       }
                     />
@@ -291,7 +495,7 @@ function App() {
 
                 <RefineKbar />
                 <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
+                <DocumentTitleHandler handler={customTitleHandler} />
               </Refine>
               <DevtoolsPanel />
             </DevtoolsProvider>

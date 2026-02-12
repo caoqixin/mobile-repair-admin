@@ -1,4 +1,3 @@
-import { AntdEditInferencer } from "@refinedev/inferencer/antd";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, DatePicker } from "antd";
 import { useTranslate } from "@refinedev/core";

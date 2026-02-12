@@ -1,12 +1,7 @@
-import React from "react";
-import {
-  List,
-  useTable,
-  ShowButton,
-  DateField,
-  NumberField,
-} from "@refinedev/antd";
-import { Table, Tag, Space, Typography, Avatar } from "antd";
+import { List, useTable, ShowButton, DateField } from "@refinedev/antd";
+import { Table, Tag, Typography } from "antd";
+import { PAYMENT_MAP } from "../../constants";
+import { PaymentMethod } from "../../interface";
 
 const { Text } = Typography;
 
@@ -15,7 +10,7 @@ export const SalesOrderList = () => {
     syncWithLocation: true,
     meta: {
       // 关联查询：客户信息、销售员信息
-      select: "*, profiles(full_name)",
+      select: "*, profiles(full_name,email)",
     },
     sorters: {
       initial: [
@@ -28,13 +23,8 @@ export const SalesOrderList = () => {
   });
 
   // 支付方式颜色映射
-  const getPaymentTag = (method: string) => {
-    const map: any = {
-      cash: { color: "green", icon: "💶" },
-      card: { color: "blue", icon: "💳" },
-      transfer: { color: "purple", icon: "🏦" },
-    };
-    const conf = map[method] || { color: "default", icon: "" };
+  const getPaymentTag = (method: PaymentMethod) => {
+    const conf = PAYMENT_MAP[method] || { color: "default", icon: "" };
     return (
       <Tag color={conf.color}>
         {conf.icon} {method.toUpperCase()}
@@ -69,13 +59,15 @@ export const SalesOrderList = () => {
 
         <Table.Column
           title="销售员"
-          render={(_, record: any) => record.profiles?.full_name}
+          render={(_, record: any) =>
+            record.profiles?.full_name ?? record.profiles?.email
+          }
         />
 
         <Table.Column
           dataIndex="created_at"
           title="时间"
-          render={(val) => <DateField value={val} format="MM-DD HH:mm" />}
+          render={(val) => <DateField value={val} format="MM/DD/YYYY HH:mm" />}
         />
 
         <Table.Column

@@ -1,19 +1,15 @@
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Radio } from "antd";
 import { useTranslate } from "@refinedev/core";
-import { CATEGORY_TYPE_MAP } from "../../constants";
-import { CategoryType } from "../../interface";
+import { CATEGORY_OPTIONS } from "../../constants";
 
 export const CategoryEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, formLoading } = useForm();
 
-  const options = Object.entries(CATEGORY_TYPE_MAP).map(([value, label]) => ({
-    label,
-    value: value as CategoryType,
-  }));
   return (
     <Edit
+      isLoading={formLoading}
       title={translate("categories.form.edit.title")}
       saveButtonProps={saveButtonProps}
     >
@@ -51,7 +47,7 @@ export const CategoryEdit = () => {
         >
           <Radio.Group
             defaultValue={"component"}
-            options={options}
+            options={CATEGORY_OPTIONS}
             optionType="button"
             buttonStyle="solid"
           />

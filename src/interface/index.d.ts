@@ -14,6 +14,7 @@ export type OrderStatus =
   | "repairing" // 维修中
   | "waiting_parts" // 等待配件
   | "completed" // 维修完成
+  | "delivered" // 已取件
   | "cancelled"; // 已取消
 
 export type PaymentMethod = "cash" | "card" | "transfer" | "wechat" | "alipay";
@@ -21,6 +22,7 @@ export type PaymentMethod = "cash" | "card" | "transfer" | "wechat" | "alipay";
 export type PartQuality =
   | "compatibile"
   | "originale"
+  | "rigenerato"
   | "service_pack_original"
   | "incell"
   | "hard_oled"
@@ -28,7 +30,7 @@ export type PartQuality =
 
 export type PoStatus = "draft" | "ordered" | "received" | "cancelled";
 
-export type StockEntryType = "purchase" | "return" | "adjustment";
+export type StockEntryType = "purchase" | "return" | "adjust" | "repair";
 
 export type TransactionType = "income" | "expense";
 
@@ -36,19 +38,22 @@ export type WarrantyStatus = "active" | "expired" | "voided" | "claimed";
 
 export type CategoryType = "component" | "item";
 
+export interface StatusTag {
+  label: string;
+  color: string;
+}
+
 /**
  * ==========================================
  * 2. 核心实体定义 (Tables)
  * ==========================================
  */
-
 // 2.1 员工与权限 (profiles)
 export interface IProfile {
   id: string; // uuid
   email: string;
-  full_name: string;
+  full_name?: string;
   role: UserRole;
-  avatar_url?: string | null;
   created_at: string;
 }
 

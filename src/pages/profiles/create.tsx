@@ -2,19 +2,14 @@ import { Create, useForm } from "@refinedev/antd";
 import { Form, Input, notification, Select } from "antd";
 import { useNavigation, useTranslate } from "@refinedev/core";
 import { IProfile, UserRole } from "../../interface";
-import { USER_ROLE_MAP } from "../../constants";
 import { supabaseClient } from "../../providers/supabase-client";
+import { PROFILE_OPTIONS } from "../../constants";
 export const ProfileCreate = () => {
   const { list } = useNavigation();
   const translate = useTranslate();
   const { formProps, saveButtonProps, form } = useForm<IProfile>({
     warnWhenUnsavedChanges: false,
   });
-
-  const options = Object.entries(USER_ROLE_MAP).map(([value, label]) => ({
-    label,
-    value: value as UserRole,
-  }));
 
   const handleOnFinish = async (values: any) => {
     try {
@@ -28,21 +23,18 @@ export const ProfileCreate = () => {
       }
 
       // 执行邀请逻辑
-      const { data, error } = await supabaseClient.functions.invoke(
-        "invite-user",
-        {
-          body: {
-            email: values.email,
-            full_name: values.full_name,
-            role: values.role,
-            redirectTo: `${window.location.origin}/update-password`,
-          },
-          headers: {
-            // 强制指定 Token，确保万无一失
-            Authorization: `Bearer ${session.access_token}`,
-          },
+      const { error } = await supabaseClient.functions.invoke("invite-user", {
+        body: {
+          email: values.email,
+          full_name: values.full_name,
+          role: values.role,
+          redirectTo: `${window.location.origin}/update-password`,
         },
-      );
+        headers: {
+          // 强制指定 Token，确保万无一失
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
 
       if (error) {
         // 解析详细的错误信息
@@ -118,7 +110,10 @@ export const ProfileCreate = () => {
             },
           ]}
         >
-          <Select<UserRole> options={options} defaultValue={"front_desk"} />
+          <Select<UserRole>
+            options={PROFILE_OPTIONS}
+            defaultValue={"front_desk"}
+          />
         </Form.Item>
       </Form>
     </Create>

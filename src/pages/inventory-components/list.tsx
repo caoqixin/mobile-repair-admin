@@ -1,7 +1,6 @@
 import {
   List,
   useTable,
-  useSelect,
   EditButton,
   ShowButton,
   DeleteButton,
@@ -20,17 +19,24 @@ import {
   Button,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useTranslate, CrudFilters, HttpError } from "@refinedev/core";
-import { useState } from "react";
+import { useTranslate, HttpError, useCan } from "@refinedev/core";
 import { IInventoryComponent } from "../../interface";
+import { ListLoader } from "../../components/loadings";
+import { useInventoryOptions } from "../../hooks/useInventoryOptions";
 
 export const InventoryComponentsList = () => {
   const translate = useTranslate();
-
-  // 用于联动：选了品牌后，机型下拉框只显示该品牌的机型
-  const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
-
-  const { tableProps, searchFormProps } = useTable<
+  const { data: canDelete } = useCan({
+    resource: "inventory_components",
+    action: "delete",
+  });
+  const {
+    tableProps,
+    searchFormProps,
+    tableQuery: { isLoading },
+    setCurrentPage,
+    pageCount,
+  } = useTable<
     IInventoryComponent,
     HttpError,
     { q: string; category_id: number; brand_id: number; model_id: number }
@@ -43,73 +49,46 @@ export const InventoryComponentsList = () => {
         "*, categories(id, name), suppliers(id, name), component_compatibility!inner(model_id,models!inner(brand_id))",
     },
     onSearch: (params) => {
-      const filters: CrudFilters = [];
       const { q, category_id, model_id, brand_id } = params;
 
-      // 1. 关键词搜索 (同时搜名称和SKU)
-
-      filters.push({
-        operator: "or",
-        value: [
-          { field: "name", operator: "contains", value: q },
-          { field: "sku", operator: "contains", value: q },
-        ],
-      });
-
-      // 2. 分类筛选
-      filters.push({
-        field: "category_id",
-        operator: "eq",
-        value: category_id,
-      });
-
-      // 3. 机型筛选 (核心逻辑)
-      // 通过 component_compatibility 表中的 model_id 进行筛选
-      // Supabase Data Provider 支持这种嵌套过滤语法
-      filters.push({
-        field: "component_compatibility.models.brand_id",
-        operator: "eq",
-        value: brand_id,
-      });
-
-      filters.push({
-        field: "component_compatibility.model_id",
-        operator: "eq",
-        value: model_id,
-      });
-
-      return filters;
+      return [
+        {
+          operator: "or",
+          value: [
+            { field: "name", operator: "contains", value: q },
+            { field: "sku", operator: "contains", value: q },
+          ],
+        },
+        {
+          field: "category_id",
+          operator: "eq",
+          value: category_id,
+        },
+        {
+          field: "component_compatibility.models.brand_id",
+          operator: "eq",
+          value: brand_id,
+        },
+        {
+          field: "component_compatibility.model_id",
+          operator: "eq",
+          value: model_id,
+        },
+      ];
     },
   });
 
-  // 获取分类下拉数据 (仅限 component 类型)
-  const { selectProps: categorySelectProps } = useSelect({
-    resource: "categories",
-    filters: [{ field: "type", operator: "eq", value: "component" }],
-    optionLabel: "name",
-    optionValue: "id",
-  });
+  const {
+    categorySelectProps,
+    brandSelectProps,
+    modelSelectProps,
+    handleBrandChange,
+    selectedBrand,
+  } = useInventoryOptions();
 
-  // 获取品牌下拉数据
-  const { selectProps: brandSelectProps } = useSelect({
-    resource: "brands",
-    optionLabel: "name",
-    optionValue: "id",
-  });
-
-  // 获取机型下拉数据 (依赖选中的品牌)
-  const { selectProps: modelSelectProps } = useSelect({
-    resource: "models",
-
-    optionLabel: "name",
-    optionValue: "id",
-    filters: selectedBrand
-      ? [{ field: "brand_id", operator: "eq", value: selectedBrand }]
-      : [],
-    queryOptions: {
-      enabled: !!selectedBrand, // 只有选了品牌才加载机型
-    },
-  });
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>
@@ -127,9 +106,14 @@ export const InventoryComponentsList = () => {
         >
           <Row gutter={16}>
             <Col span={6}>
-              <Form.Item label="搜索" name="q">
+              <Form.Item
+                label={translate("inventory_components.search.label.query")}
+                name="q"
+              >
                 <Input
-                  placeholder="搜索名称或SKU..."
+                  placeholder={translate(
+                    "inventory_components.search.placeholder.query",
+                  )}
                   prefix={<SearchOutlined />}
                   allowClear
                   onClear={searchFormProps.form?.submit}
@@ -138,37 +122,64 @@ export const InventoryComponentsList = () => {
             </Col>
             <Col span={4}>
               <Form.Item
-                label={translate("resources.categories")}
+                label={translate("inventory_components.search.label.category")}
                 name="category_id"
               >
                 <Select
                   {...categorySelectProps}
                   allowClear
-                  placeholder="全部分类"
+                  placeholder={translate(
+                    "inventory_components.search.placeholder.category",
+                  )}
+                  onSearch={undefined}
+                  filterOption={true}
+                  optionFilterProp="label"
                   onClear={searchFormProps.form?.submit}
                 />
               </Form.Item>
             </Col>
             <Col span={4}>
-              <Form.Item label="品牌筛选" name="brand_id">
+              <Form.Item
+                label={translate("inventory_components.search.label.brand")}
+                name="brand_id"
+              >
                 <Select
                   {...brandSelectProps}
                   allowClear
                   onClear={searchFormProps.form?.submit}
-                  placeholder="先选品牌"
+                  placeholder={translate(
+                    "inventory_components.search.placeholder.brand",
+                  )}
+                  onSearch={undefined}
+                  filterOption={true}
+                  optionFilterProp="label"
                   onChange={(val) => {
-                    setSelectedBrand(val as unknown as number);
+                    handleBrandChange(val as unknown as number);
                     searchFormProps.form?.setFieldValue("model_id", null);
                   }}
                 />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="适用机型" name="model_id">
+              <Form.Item
+                label={translate("inventory_components.search.label.model")}
+                name="model_id"
+              >
                 <Select
                   {...modelSelectProps}
                   allowClear
-                  placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
+                  onSearch={undefined}
+                  filterOption={true}
+                  optionFilterProp="label"
+                  placeholder={
+                    selectedBrand
+                      ? translate(
+                          "inventory_components.search.placeholder.model",
+                        )
+                      : translate(
+                          "inventory_components.search.placeholder.noModel",
+                        )
+                  }
                   disabled={!selectedBrand}
                 />
               </Form.Item>
@@ -180,7 +191,7 @@ export const InventoryComponentsList = () => {
                   icon={<SearchOutlined />}
                   onClick={searchFormProps.form?.submit}
                 >
-                  查询
+                  {translate("inventory_components.search.label.button")}
                 </Button>
               </Form.Item>
             </Col>
@@ -218,7 +229,9 @@ export const InventoryComponentsList = () => {
           title={translate("inventory_components.fields.stock")}
           render={(val) => (
             <Tag color={val > 0 ? "green" : "red"}>
-              {val > 0 ? `${val} 在库` : "缺货"}
+              {val > 0
+                ? `${val} ${translate("inventory_components.fields.inStock")}`
+                : translate("inventory_components.fields.outStock")}
             </Tag>
           )}
           sorter
@@ -263,7 +276,18 @@ export const InventoryComponentsList = () => {
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />
               <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

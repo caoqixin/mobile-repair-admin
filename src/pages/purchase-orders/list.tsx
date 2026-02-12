@@ -9,16 +9,20 @@ import {
 import { Space, Table } from "antd";
 import { getStatusColor } from "../../lib/utils";
 import { useTranslate } from "@refinedev/core";
+import { ListLoader } from "../../components/loadings";
 
 export const PurchaseOrderList = () => {
   const translate = useTranslate();
-  const { tableProps } = useTable({
+  const {
+    tableProps,
+    tableQuery: { isLoading },
+  } = useTable({
     syncWithLocation: true,
     meta: {
       select: "*, suppliers(id, name), profiles(full_name)", // 关联查询供应商和创建人
     },
     sorters: {
-      initial: [
+      permanent: [
         {
           field: "readable_id",
           order: "desc",
@@ -26,6 +30,10 @@ export const PurchaseOrderList = () => {
       ],
     },
   });
+
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>
@@ -63,9 +71,10 @@ export const PurchaseOrderList = () => {
           title={translate("table.actions")}
           render={(_, record: any) => (
             <Space>
-              {record.status !== "received" && (
-                <EditButton hideText size="small" recordItemId={record.id} />
-              )}
+              {record.status !== "received" &&
+                record.status !== "cancelled" && (
+                  <EditButton hideText size="small" recordItemId={record.id} />
+                )}
 
               <ShowButton hideText size="small" recordItemId={record.id} />
             </Space>

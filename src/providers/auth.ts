@@ -1,31 +1,12 @@
 import { AuthProvider } from "@refinedev/core";
 import { supabaseClient } from "./supabase-client";
+import { useAuthStore } from "../stores/authStore";
 import { IProfile } from "../interface";
 
 const authProvider: AuthProvider = {
-  login: async ({ email, password, providerName }) => {
+  login: async ({ email, password }) => {
     // sign in with oauth
     try {
-      if (providerName) {
-        const { data, error } = await supabaseClient.auth.signInWithOAuth({
-          provider: providerName,
-        });
-
-        if (error) {
-          return {
-            success: false,
-            error,
-          };
-        }
-
-        if (data?.url) {
-          return {
-            success: true,
-            redirectTo: "/",
-          };
-        }
-      }
-
       // sign in with email and password
       const { data, error } = await supabaseClient.auth.signInWithPassword({
         email,
@@ -40,9 +21,30 @@ const authProvider: AuthProvider = {
       }
 
       if (data?.user) {
+        // 登录成功，查询 profiles 表获取角色
+        const { data: profile } = await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single<IProfile>();
+
+        // 保存到全局 Zustand
+        if (profile) {
+          useAuthStore.getState().setAuth(profile);
+        }
+
+        const role = profile?.role;
+        let redirectTo;
+
+        // 2. 预判跳转路径
+        if (role === "front_desk") redirectTo = "/sales/create";
+        else if (role === "technician") redirectTo = "/repairs";
+        else if (role === "partner") redirectTo = "/quote";
+        else if (role === "admin") redirectTo = "/";
+
         return {
           success: true,
-          redirectTo: "/",
+          redirectTo: redirectTo,
         };
       }
     } catch (error: any) {
@@ -174,6 +176,8 @@ const authProvider: AuthProvider = {
       };
     }
 
+    // 登出时清空 Zustand
+    useAuthStore.getState().clearAuth();
     return {
       success: true,
       redirectTo: "/",
@@ -188,7 +192,10 @@ const authProvider: AuthProvider = {
       const { data } = await supabaseClient.auth.getSession();
       const { session } = data;
 
+      // 🛑 情况 A: Cookie 被删或失效
       if (!session) {
+        // 强制清理 Zustand，确保 UI 状态一致
+        useAuthStore.getState().clearAuth();
         return {
           authenticated: false,
           error: {
@@ -199,7 +206,34 @@ const authProvider: AuthProvider = {
           redirectTo: "/login",
         };
       }
+
+      // ✅ 情况 B: Cookie 存在 (Session 有效)
+      // 检查 Zustand 是否为空 (例如用户刷新了页面)
+
+      const user = useAuthStore.getState().user;
+
+      if (!user) {
+        // Zustand 为空，我们需要重新拉取用户信息来"水合"(Hydrate) Store
+        const { data: profile, error } = await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single<IProfile>();
+
+        if (error || !profile) {
+          // 如果 Session 有效但查不到 Profile (罕见数据错误)，也视为认证失败
+          return {
+            authenticated: false,
+            redirectTo: "/login",
+            logout: true,
+          };
+        }
+
+        // 恢复 Zustand 状态
+        useAuthStore.getState().setAuth(profile);
+      }
     } catch (error: any) {
+      useAuthStore.getState().clearAuth();
       return {
         authenticated: false,
         error: error || {
@@ -216,27 +250,29 @@ const authProvider: AuthProvider = {
     };
   },
   getPermissions: async () => {
-    const user = await supabaseClient.auth.getUser();
-
-    if (user) {
-      const { data } = await supabaseClient
-        .from("profiles")
-        .select("role")
-        .eq("id", user.data.user?.id);
-
-      return data;
-    }
+    const user = useAuthStore.getState().user;
+    if (user) return user;
 
     return null;
   },
   getIdentity: async () => {
+    // 可以直接从 store 取，非常快
+    const user = useAuthStore.getState().user;
+    if (user) return user;
+
     const { data } = await supabaseClient.auth.getUser();
 
     if (data?.user) {
-      return {
-        ...data.user,
-        name: data.user.email,
-      };
+      const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", data.user.id)
+        .single<IProfile>();
+
+      // 保存到全局 Zustand
+      useAuthStore.getState().setAuth(profile!);
+
+      return profile;
     }
 
     return null;

@@ -10,7 +10,6 @@
     "@refinedev/cli": "^2.16.48",
     "@refinedev/core": "^5.0.8",
     "@refinedev/devtools": "^2.0.1",
-    "@refinedev/inferencer": "^7.0.0",
     "@refinedev/kbar": "^2.0.0",
     "@refinedev/react-router": "^2.0.0",
     "@refinedev/supabase": "^6.0.0",
@@ -25,7 +24,8 @@
     "react-i18next": "^16.5.3",
     "react-live": "^4.1.8",
     "react-router": "^7.0.2",
-    "recharts": "^3.7.0"
+    "recharts": "^3.7.0",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -39,6 +39,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5"

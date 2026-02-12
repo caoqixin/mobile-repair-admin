@@ -1,22 +1,18 @@
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Select } from "antd";
 import { useTranslate } from "@refinedev/core";
-import { IProfile, UserRole } from "../../interface";
-import { USER_ROLE_MAP } from "../../constants";
+import { IProfile } from "../../interface";
+import { PROFILE_OPTIONS } from "../../constants";
 
 export const ProfileEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps } = useForm<IProfile>({
+  const { formProps, saveButtonProps, formLoading } = useForm<IProfile>({
     warnWhenUnsavedChanges: true,
   });
 
-  const options = Object.entries(USER_ROLE_MAP).map(([value, label]) => ({
-    label,
-    value: value as UserRole,
-  }));
-
   return (
     <Edit
+      isLoading={formLoading}
       title={translate("profiles.form.edit.title")}
       saveButtonProps={saveButtonProps}
     >
@@ -46,11 +42,6 @@ export const ProfileEdit = () => {
         <Form.Item
           label={translate("profiles.fields.full_name")}
           name={["full_name"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
         >
           <Input />
         </Form.Item>
@@ -63,7 +54,7 @@ export const ProfileEdit = () => {
             },
           ]}
         >
-          <Select options={options} />
+          <Select options={PROFILE_OPTIONS} />
         </Form.Item>
       </Form>
     </Edit>

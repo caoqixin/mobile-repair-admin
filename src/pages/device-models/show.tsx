@@ -16,7 +16,13 @@ import {
   InputNumber,
   Card,
 } from "antd";
-import { useShow, useTranslate, useParsed, HttpError } from "@refinedev/core";
+import {
+  useShow,
+  useTranslate,
+  useParsed,
+  HttpError,
+  useCan,
+} from "@refinedev/core";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useModalForm } from "@refinedev/antd";
 import { IDeviceModel } from "../../interface";
@@ -25,6 +31,19 @@ const { Title, Text } = Typography;
 
 export const DeviceModelShow = () => {
   const translate = useTranslate();
+
+  const { data: canCreate } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+  const { data: canEdit } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+  const { data: canDelete } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
   const { id } = useParsed(); // 获取当前 URL 中的 Brand ID
 
   // 获取主表数据 (Brand)
@@ -92,6 +111,7 @@ export const DeviceModelShow = () => {
 
   return (
     <Show
+      canEdit={canEdit?.can}
       isLoading={isLoading}
       title={`${brand?.name} | ${translate("brands.models.title")}`}
     >
@@ -138,13 +158,16 @@ export const DeviceModelShow = () => {
           </Form.Item>
         </Form>
 
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => showCreateModal()}
-        >
-          {translate("buttons.create")} {translate("brands.models.fields.name")}
-        </Button>
+        {canCreate?.can && (
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => showCreateModal()}
+          >
+            {translate("buttons.create")}{" "}
+            {translate("brands.models.fields.name")}
+          </Button>
+        )}
       </Card>
 
       {/* --- B. Models 列表区域 --- */}
@@ -180,23 +203,27 @@ export const DeviceModelShow = () => {
           render={(_, record: any) => (
             <Space>
               {/* 点击编辑按钮，触发 Edit Modal */}
-              <RefineEditButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                onClick={() => showEditModal(record.id)}
-              />
-              <DeleteButton
-                hideText
-                size="small"
-                resource="models"
-                recordItemId={record.id}
-                onSuccess={() => {
-                  if (tableProps.dataSource?.length! <= 1) {
-                    setCurrentPage(pageCount - 1);
-                  }
-                }}
-              />
+              {canEdit?.can && (
+                <RefineEditButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  onClick={() => showEditModal(record.id)}
+                />
+              )}
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  resource="models"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

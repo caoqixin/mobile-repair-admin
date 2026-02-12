@@ -1,5 +1,5 @@
 import { useShow, useTranslate, useOne } from "@refinedev/core";
-import { Show, TextField, NumberField, DateField } from "@refinedev/antd";
+import { Show, DateField } from "@refinedev/antd";
 import {
   Card,
   Col,
@@ -11,7 +11,6 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { PartQuality } from "../../interface";
 import {
   AppstoreOutlined,
   BarcodeOutlined,
@@ -19,18 +18,7 @@ import {
   MobileOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
-
-const getQualityColor = (quality: PartQuality) => {
-  const map: Record<PartQuality, string> = {
-    compatibile: "green",
-    originale: "blue",
-    service_pack_original: "orange",
-    incell: "red",
-    hard_oled: "green",
-    soft_oled: "orange",
-  };
-  return map[quality];
-};
+import { getQualityColor } from "../../lib/utils";
 
 export const InventoryComponentsShow = () => {
   const translate = useTranslate();

@@ -6,7 +6,7 @@ export const DeviceModelEdit = () => {
   const translate = useTranslate();
   const { id } = useParsed();
 
-  const { formProps, saveButtonProps } = useForm({
+  const { formProps, saveButtonProps, formLoading } = useForm({
     resource: "brands",
     action: "edit",
     id,
@@ -18,6 +18,7 @@ export const DeviceModelEdit = () => {
 
   return (
     <Edit
+      isLoading={formLoading}
       title={translate("brands.form.edit.title")}
       saveButtonProps={saveButtonProps}
     >

@@ -58,6 +58,8 @@ export const TransactionsCreate = () => {
                 options={[
                   { label: "现金 (Cash)", value: "cash" },
                   { label: "刷卡 (Card)", value: "card" },
+                  { label: "微信支付 (WePay)", value: "wechat" },
+                  { label: "支付宝 (Alipay)", value: "alipay" },
                   { label: "银行转账 (Transfer)", value: "transfer" },
                 ]}
               />
@@ -87,6 +89,10 @@ export const TransactionsCreate = () => {
             <Form.Item
               label={translate("transactions.fields.category")}
               name="category"
+              // 将组件输出的数组 ["Salary"] 转换回字符串 "Salary"
+              getValueFromEvent={(value) => {
+                return Array.isArray(value) ? value[0] : value;
+              }}
               rules={[{ required: true, message: "请选择或输入类别" }]}
               help="例如：Rent (房租), Salary (工资), Utilities (水电), Food (餐费)"
             >
@@ -94,12 +100,12 @@ export const TransactionsCreate = () => {
                 mode="tags" // 允许用户手动输入列表里没有的选项
                 placeholder="选择或输入类别"
                 options={[
-                  { label: "房租 (Rent)", value: "Rent" },
-                  { label: "员工工资 (Salary)", value: "Salary" },
-                  { label: "水电网费 (Utilities)", value: "Utilities" },
-                  { label: "采购 (Purchase)", value: "Purchase" },
-                  { label: "退款 (Refund)", value: "Refund" },
-                  { label: "其它 (Other)", value: "Other" },
+                  { label: "房租 (Rent)", value: "房租" },
+                  { label: "员工工资 (Salary)", value: "员工工资" },
+                  { label: "水电网费 (Utilities)", value: "水电网费" },
+                  { label: "采购 (Purchase)", value: "采购" },
+                  { label: "退款 (Refund)", value: "退款" },
+                  { label: "其它 (Other)", value: "其它" },
                 ]}
                 maxCount={1} // 限制只能选一个tag，变相实现“可输入的单选”
               />

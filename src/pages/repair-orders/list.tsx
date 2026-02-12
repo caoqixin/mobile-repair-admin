@@ -5,21 +5,18 @@ import {
   EditButton,
   DateField,
 } from "@refinedev/antd";
-import { Table, Tag, Space, Typography, Input, Form, Tabs } from "antd";
+import { Table, Tag, Space, Typography, Input, Form, Tabs, Button } from "antd";
 import {
-  ToolOutlined,
   UserOutlined,
   MobileOutlined,
   SearchOutlined,
-  SyncOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
   ThunderboltOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { REPAIR_STATUS_OPTIONS } from "../../constants";
+import { ListLoader } from "../../components/loadings";
+import { useParsed } from "@refinedev/core";
 
 const { Text } = Typography;
 
@@ -27,10 +24,15 @@ export const RepairOrderList = () => {
   // 定义当前选中的 Tab
   const [activeTab, setActiveTab] = useState<"active" | "history">("active");
 
-  const { tableProps, searchFormProps } = useTable({
+  const {
+    tableProps,
+    searchFormProps,
+    tableQuery: { isLoading },
+  } = useTable({
     syncWithLocation: true,
     meta: {
-      select: "*, customers(full_name, phone), models(name)", // 关联查询
+      select:
+        "*, repair_orders_search_text, customers(full_name, phone), models(name)", // 关联查询
     },
     sorters: {
       initial: [
@@ -47,7 +49,7 @@ export const RepairOrderList = () => {
         {
           field: "status",
           operator: "ne", // neq = Not Equal
-          value: activeTab === "active" ? "completed" : undefined,
+          value: activeTab === "active" ? "delivered" : undefined,
         },
         // 且 排除已取消 (Cancelled)
         {
@@ -62,24 +64,20 @@ export const RepairOrderList = () => {
           field: "status",
           operator: "in", // in 操作符通常比较稳定
           value:
-            activeTab === "history" ? ["completed", "cancelled"] : undefined,
+            activeTab === "history" ? ["delivered", "cancelled"] : undefined,
         },
       ],
     },
     onSearch: (params: any) => {
-      const filters: any[] = [];
       const { q } = params;
-      if (q) {
-        filters.push({
-          operator: "or",
-          value: [
-            { field: "readable_id", operator: "contains", value: q },
-            { field: "imei_sn", operator: "contains", value: q },
-            { field: "customers.full_name", operator: "contains", value: q }, // 支持搜客户名
-          ],
-        });
-      }
-      return filters;
+
+      return [
+        {
+          field: "repair_orders_search_text", // 直接搜这个虚拟列
+          operator: "contains",
+          value: q,
+        },
+      ];
     },
   });
 
@@ -94,9 +92,15 @@ export const RepairOrderList = () => {
 
   // Tab 切换处理
   const handleTabChange = (key: string) => {
+    searchFormProps.form?.setFieldValue("q", undefined);
+    searchFormProps.form?.submit();
     setActiveTab(key as "active" | "history");
     // useTable 的 filters 依赖 activeTab 状态，状态变了会自动刷新
   };
+
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>
@@ -132,10 +136,18 @@ export const RepairOrderList = () => {
             placeholder="搜索单号 / IMEI / 客户名..."
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
+            allowClear
+            onClear={searchFormProps.form?.submit}
           />
         </Form.Item>
         <Form.Item>
-          <button type="submit" style={{ display: "none" }} />
+          <Button
+            type="primary"
+            onClick={searchFormProps.form?.submit}
+            icon={<SearchOutlined />}
+          >
+            查询
+          </Button>
         </Form.Item>
       </Form>
 
@@ -188,11 +200,16 @@ export const RepairOrderList = () => {
         <Table.Column
           title="费用"
           dataIndex="total_price"
-          render={(val) =>
+          render={(val, record) =>
             val === 0 ? (
               <Tag color="green">保修/免费</Tag>
             ) : (
-              `€ ${Number(val).toFixed(2)}`
+              <Space direction="vertical">
+                <Text>€ {Number(val).toFixed(2)}</Text>
+                {record?.status === "delivered" && (
+                  <Text type="secondary">{record?.payment_method}</Text>
+                )}
+              </Space>
             )
           }
         />
@@ -207,7 +224,7 @@ export const RepairOrderList = () => {
           title="操作"
           render={(_, record: any) => (
             <Space>
-              {record.status != "completed" && (
+              {record.status != "delivered" && (
                 <EditButton hideText size="small" recordItemId={record.id} />
               )}
               <ShowButton hideText size="small" recordItemId={record.id} />

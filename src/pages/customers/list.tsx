@@ -1,4 +1,4 @@
-import { BaseRecord, CrudFilter, useTranslate } from "@refinedev/core";
+import { BaseRecord, CrudFilter, useCan, useTranslate } from "@refinedev/core";
 import {
   useTable,
   List,
@@ -9,9 +9,20 @@ import {
 } from "@refinedev/antd";
 import { Table, Space, Form, Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { ListLoader } from "../../components/loadings";
 export const CustomerList = () => {
   const translate = useTranslate();
-  const { tableProps, setCurrentPage, pageCount, searchFormProps } = useTable({
+  const { data: canDelete } = useCan({
+    resource: "customers",
+    action: "delete",
+  });
+  const {
+    tableProps,
+    setCurrentPage,
+    pageCount,
+    searchFormProps,
+    tableQuery: { isLoading },
+  } = useTable({
     syncWithLocation: true,
     onSearch: (params: any) => {
       const { q } = params;
@@ -28,6 +39,10 @@ export const CustomerList = () => {
     },
   });
 
+  if (isLoading) {
+    return <ListLoader />;
+  }
+
   return (
     <List>
       {/* 搜索栏 */}
@@ -37,13 +52,14 @@ export const CustomerList = () => {
             placeholder="搜索手机号码/用户名..."
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
+            allowClear
+            onClear={searchFormProps.form?.submit}
           />
         </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={searchFormProps.form?.submit}>
             查询
           </Button>
-          <button type="submit" style={{ display: "none" }} />
         </Form.Item>
       </Form>
 
@@ -72,16 +88,18 @@ export const CustomerList = () => {
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />
               <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                onSuccess={() => {
-                  if (tableProps.dataSource?.length! <= 1) {
-                    setCurrentPage(pageCount - 1);
-                  }
-                }}
-              />
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

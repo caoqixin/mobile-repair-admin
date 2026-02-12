@@ -26,7 +26,7 @@ export const WarrantyShow = () => {
   const { query } = useShow({
     meta: {
       select:
-        "*, repair_orders(readable_id, problem_description, models(name)),  customers(full_name, phone, email)",
+        "*, repair_orders!warranties_repair_order_id_fkey(readable_id, problem_description, models(name)),  customers(full_name, phone, email)",
     },
   });
   const { data, isLoading } = query;
@@ -166,7 +166,9 @@ export const WarrantyShow = () => {
             }}
           >
             <Text type="secondary">
-              Luna Tech Digital Service · Via Roma 123, Milano · +39 333 1234567
+              {import.meta.env.VITE_APP_STORE_NAME} ·{" "}
+              {import.meta.env.VITE_APP_STORE_ADDRESS} ·{" "}
+              {import.meta.env.VITE_APP_STORE_TEL}
             </Text>
           </div>
         </Card>

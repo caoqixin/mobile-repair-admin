@@ -3,10 +3,11 @@ import { Form, Input } from "antd";
 import { useTranslate } from "@refinedev/core";
 export const FaultEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, formLoading } = useForm();
 
   return (
     <Edit
+      isLoading={formLoading}
       title={translate("faults.form.edit.title")}
       saveButtonProps={saveButtonProps}
     >

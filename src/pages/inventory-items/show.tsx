@@ -1,5 +1,3 @@
-import { AntdShowInferencer } from "@refinedev/inferencer/antd";
-
 import { useShow, useTranslate, useOne } from "@refinedev/core";
 import { Show, DateField } from "@refinedev/antd";
 import {
@@ -66,7 +64,7 @@ export const InventoryItemsShow = () => {
           <Tag color={categoryIsLoading ? "default" : "cyan"}>
             {categoryIsLoading
               ? "Loading..."
-              : categoryData?.data?.name || "Uncategorized"}
+              : categoryData?.name || "Uncategorized"}
           </Tag>
         </div>
       </div>
@@ -81,7 +79,7 @@ export const InventoryItemsShow = () => {
           >
             <Descriptions
               column={1}
-              labelStyle={{ fontWeight: "bold", width: "140px" }}
+              styles={{ label: { fontWeight: "bold", width: "140px" } }}
             >
               <Descriptions.Item label={translate("inventory_items.fields.id")}>
                 <Text copyable>{record?.id}</Text>

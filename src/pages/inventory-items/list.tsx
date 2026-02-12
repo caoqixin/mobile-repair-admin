@@ -21,17 +21,25 @@ import {
   Button,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useTranslate, CrudFilters, HttpError } from "@refinedev/core";
+import { useTranslate, HttpError, useCan } from "@refinedev/core";
 import { IInventoryItem } from "../../interface";
+import { ListLoader } from "../../components/loadings";
 
 export const InventoryItemsList = () => {
   const translate = useTranslate();
 
-  const { tableProps, searchFormProps } = useTable<
-    IInventoryItem,
-    HttpError,
-    { q: string; category_id: number }
-  >({
+  const { data: canDelete } = useCan({
+    resource: "inventory_items",
+    action: "delete",
+  });
+
+  const {
+    tableProps,
+    searchFormProps,
+    setCurrentPage,
+    pageCount,
+    tableQuery: { isLoading },
+  } = useTable<IInventoryItem, HttpError, { q: string; category_id: number }>({
     syncWithLocation: true,
     resource: "inventory_items",
     meta: {
@@ -63,7 +71,14 @@ export const InventoryItemsList = () => {
     filters: [{ field: "type", operator: "eq", value: "item" }],
     optionLabel: "name",
     optionValue: "id",
+    pagination: {
+      mode: "off",
+    },
   });
+
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>
@@ -75,9 +90,14 @@ export const InventoryItemsList = () => {
         >
           <Row gutter={16} align="bottom">
             <Col span={8}>
-              <Form.Item label="搜索商品" name="q">
+              <Form.Item
+                label={translate("inventory_items.search.label.query")}
+                name="q"
+              >
                 <Input
-                  placeholder="输入名称或 SKU..."
+                  placeholder={translate(
+                    "inventory_items.search.placeholder.query",
+                  )}
                   prefix={<SearchOutlined />}
                   allowClear
                   onClear={searchFormProps.form?.submit}
@@ -87,13 +107,18 @@ export const InventoryItemsList = () => {
             </Col>
             <Col span={6}>
               <Form.Item
-                label={translate("inventory_items.fields.category")}
+                label={translate("inventory_items.search.label.category")}
                 name="category_id"
               >
                 <Select
                   {...categorySelectProps}
                   allowClear
-                  placeholder="全部分类"
+                  placeholder={translate(
+                    "inventory_items.search.placeholder.category",
+                  )}
+                  onSearch={undefined}
+                  filterOption={true}
+                  optionFilterProp="label"
                   onClear={searchFormProps.form?.submit}
                 />
               </Form.Item>
@@ -157,7 +182,18 @@ export const InventoryItemsList = () => {
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />
               <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

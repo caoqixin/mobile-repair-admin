@@ -15,21 +15,16 @@ import { DownOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
 import { useTranslation as usei18nextTranslation } from "react-i18next";
+import { IProfile } from "../../interface";
 
 const { Text } = Typography;
 const { useToken } = theme;
-
-type IUser = {
-  id: number;
-  name: string;
-  avatar: string;
-};
 
 export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
   sticky = true,
 }) => {
   const { token } = useToken();
-  const { data: user } = useGetIdentity<IUser>();
+  const { data: user } = useGetIdentity<IProfile>();
   const { mode, setMode } = useContext(ColorModeContext);
   const { i18n } = usei18nextTranslation();
   const { changeLocale } = useTranslation();
@@ -88,8 +83,7 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
         </Dropdown>
 
         <Space style={{ marginLeft: "8px" }} size="middle">
-          {user?.name && <Text strong>{user.name}</Text>}
-          {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
+          {user && <Text strong>{user.full_name || user.email}</Text>}
         </Space>
       </Space>
     </AntdLayout.Header>

@@ -180,7 +180,7 @@
       "id": "ID",
       "email": "邮箱",
       "role": "角色",
-      "full_name": "员工",
+      "full_name": "员工名称",
       "created_at": "激活时间"
     },
     "form": {
@@ -188,7 +188,7 @@
         "title": "添加员工账号"
       },
       "edit": {
-        "title": "修改员工 | "
+        "title": "修改员工资料"
       }
     }
   },
@@ -330,7 +330,25 @@
       "partner_price": "同行价格",
       "created_at": "添加时间",
       "brand": "品牌",
-      "model": "手机型号"
+      "model": "手机型号",
+      "inStock": "有货",
+      "outStock": "缺货"
+    },
+    "search": {
+      "label": {
+        "query": "搜索",
+        "category": "分类",
+        "brand": "品牌筛选",
+        "model": "适用机型",
+        "button": "查询"
+      },
+      "placeholder": {
+        "query": "搜索名称或SKU...",
+        "category": "选择分类",
+        "brand": "选择品牌",
+        "model": "选择适用机型",
+        "noModel": "先选择品牌"
+      }
     },
     "form": {
       "create": {
@@ -352,6 +370,16 @@
       "retail_price": "零售价",
       "created_at": "添加时间"
     },
+    "search": {
+      "label": {
+        "query": "搜索商品",
+        "category": "分类"
+      },
+      "placeholder": {
+        "query": "搜索名称或SKU...",
+        "category": "选择分类"
+      }
+    },
     "form": {
       "create": {
         "title": "录入配件"
@@ -369,5 +397,6 @@
       "total_estimated_cost": "预估总价 (€)",
       "expected_arrival_date": "预计到货"
     }
-  }
+  },
+  "quote": {}
 }

@@ -24,7 +24,7 @@ export const StockEntriesShow = () => {
     meta: {
       // 深度嵌套查询：查出主表 + 用户 + 子表 + 子表关联的配件/商品详情
       select:
-        "*, profiles(full_name), stock_entry_items(*, inventory_components(sku, name), inventory_items(sku, name))",
+        "*, profiles(full_name, email), stock_entry_items(*, inventory_components(sku, name), inventory_items(sku, name))",
     },
   });
   const { data, isLoading } = query;
@@ -51,7 +51,7 @@ export const StockEntriesShow = () => {
             <Tag color="blue">{record?.type?.toUpperCase()}</Tag>
           </Descriptions.Item>
           <Descriptions.Item label="操作人">
-            {record?.profiles?.full_name}
+            {record?.profiles?.full_name} {record?.profiles?.email}
           </Descriptions.Item>
           <Descriptions.Item label="创建时间">
             <DateField value={record?.created_at} format="DD/MM/YYYY" />

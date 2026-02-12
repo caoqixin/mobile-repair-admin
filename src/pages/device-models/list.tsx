@@ -7,17 +7,33 @@ import {
   CreateButton,
 } from "@refinedev/antd";
 import { Button, Card, Form, Input, Space, Table } from "antd";
-import { BaseRecord, HttpError, useTranslate } from "@refinedev/core";
+import { BaseRecord, HttpError, useCan, useTranslate } from "@refinedev/core";
 import { IBrand } from "../../interface";
 import { SearchOutlined } from "@ant-design/icons";
+import { ListLoader } from "../../components/loadings";
 export const DeviceModelList = () => {
   const translate = useTranslate();
 
-  const { tableProps, searchFormProps, pageCount, setCurrentPage } = useTable<
-    IBrand,
-    HttpError,
-    { name: string }
-  >({
+  const { data: canCreate } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+  const { data: canEdit } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+  const { data: canDelete } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+
+  const {
+    tableProps,
+    searchFormProps,
+    pageCount,
+    setCurrentPage,
+    tableQuery: { isLoading },
+  } = useTable<IBrand, HttpError, { name: string }>({
     syncWithLocation: true,
     resource: "brands",
     sorters: {
@@ -40,6 +56,11 @@ export const DeviceModelList = () => {
       ];
     },
   });
+
+  if (isLoading) {
+    return <ListLoader />;
+  }
+
   return (
     <List
       resource="brands"
@@ -47,7 +68,7 @@ export const DeviceModelList = () => {
       headerButtons={({ defaultButtons }) => (
         <>
           {defaultButtons}
-          <CreateButton />
+          {canCreate?.can && <CreateButton />}
         </>
       )}
     >
@@ -99,18 +120,22 @@ export const DeviceModelList = () => {
           render={(_, record: BaseRecord) => (
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton
-                hideText
-                size="small"
-                resource="brands"
-                recordItemId={record.id}
-                onSuccess={() => {
-                  if (tableProps.dataSource?.length! <= 1) {
-                    setCurrentPage(pageCount - 1);
-                  }
-                }}
-              />
+              {canEdit?.can && (
+                <EditButton hideText size="small" recordItemId={record.id} />
+              )}
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  resource="brands"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

@@ -4,7 +4,6 @@ import {
   DateField,
   NumberField,
   FilterDropdown,
-  useSelect,
 } from "@refinedev/antd";
 import { Table, Tag, Select, Typography } from "antd";
 import { useTranslate, useNavigation } from "@refinedev/core";
@@ -14,6 +13,8 @@ import {
   ArrowDownOutlined,
 } from "@ant-design/icons";
 import { ITransaction } from "../../interface";
+import { ListLoader } from "../../components/loadings";
+import { FinancialStats } from "../../components/transactions/FinancialStats";
 
 const { Text } = Typography;
 
@@ -21,7 +22,10 @@ export const TransactionsList = () => {
   const translate = useTranslate();
   const { show } = useNavigation();
 
-  const { tableProps } = useTable<ITransaction>({
+  const {
+    tableProps,
+    tableQuery: { isLoading },
+  } = useTable<ITransaction>({
     syncWithLocation: true,
     resource: "transactions",
     sorters: {
@@ -34,12 +38,17 @@ export const TransactionsList = () => {
     },
     meta: {
       select:
-        "*, profiles(full_name), repair_orders(readable_id), sales_orders(readable_id)",
+        "*, profiles(full_name, email), repair_orders(readable_id), sales_orders(readable_id)",
     },
   });
 
+  if (isLoading) {
+    return <ListLoader />;
+  }
+
   return (
     <List resource="transactions">
+      <FinancialStats />
       <Table
         {...tableProps}
         pagination={{
@@ -94,6 +103,7 @@ export const TransactionsList = () => {
 
         {/* 金额列 */}
         <Table.Column
+          width={120}
           dataIndex="amount"
           title={translate("transactions.fields.amount")}
           align="right"
@@ -119,6 +129,7 @@ export const TransactionsList = () => {
 
         {/* 类别 */}
         <Table.Column
+          width={120}
           dataIndex="category"
           title={translate("transactions.fields.category")}
           render={(value) => <Tag>{value}</Tag>}
@@ -126,6 +137,7 @@ export const TransactionsList = () => {
 
         {/* 支付方式 */}
         <Table.Column
+          width={120}
           dataIndex="payment_method"
           title={translate("transactions.fields.payment_method")}
           render={(value) => <Tag color="blue">{value}</Tag>}
@@ -161,6 +173,9 @@ export const TransactionsList = () => {
         <Table.Column
           dataIndex={["profiles", "full_name"]}
           title={translate("transactions.fields.profile")}
+          render={(_, record) =>
+            record?.profiles?.full_name ?? record?.profiles?.email
+          }
         />
 
         {/* 备注 */}

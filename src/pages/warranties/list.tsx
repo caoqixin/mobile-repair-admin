@@ -1,23 +1,58 @@
-import React from "react";
 import { List, useTable, ShowButton, DateField } from "@refinedev/antd";
-import { Table, Tag, Space, Typography, Progress, Tooltip } from "antd";
 import {
-  SafetyCertificateOutlined,
+  Table,
+  Tag,
+  Space,
+  Typography,
+  Progress,
+  Tooltip,
+  Form,
+  Input,
+  Button,
+} from "antd";
+import {
   UserOutlined,
   HistoryOutlined,
-  ClockCircleOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
+
+import { ToolOutlined } from "@ant-design/icons";
+import { ListLoader } from "../../components/loadings";
+import { CreateReturnButton } from "../../components/warranties/CreateReturnButton";
 
 const { Text } = Typography;
 
 export const WarrantyList = () => {
-  const { tableProps } = useTable({
+  const {
+    tableProps,
+    searchFormProps,
+    tableQuery: { isLoading },
+  } = useTable({
     syncWithLocation: true,
     meta: {
       // 关联查询：维修单号、客户姓名
-      select: "*, repair_orders(readable_id), customers(full_name)",
-      orderBy: { created_at: "desc" },
+      select:
+        "*, repair_orders!warranties_repair_order_id_fkey(readable_id, model_id, imei_sn, problem_description), customers!inner(full_name, phone)",
+    },
+    sorters: {
+      initial: [
+        {
+          field: "created_at",
+          order: "desc",
+        },
+      ],
+    },
+    onSearch: (params: any) => {
+      const { q } = params;
+
+      return [
+        {
+          field: "customers.phone",
+          operator: "contains",
+          value: q,
+        },
+      ];
     },
   });
 
@@ -34,14 +69,39 @@ export const WarrantyList = () => {
     const map: any = {
       active: { color: "success", label: "生效中 (Active)" },
       expired: { color: "default", label: "已过期 (Expired)" },
-      void: { color: "error", label: "作废 (Void)" },
+      voided: { color: "error", label: "作废 (Void)" },
+      claimed: { color: "processing", label: "返修中 (Claimed)" },
     };
     const conf = map[status] || { color: "default", label: status };
     return <Tag color={conf.color}>{conf.label}</Tag>;
   };
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>
+      {/* 搜索栏 */}
+      <Form {...searchFormProps} layout="inline" style={{ marginBottom: 20 }}>
+        <Form.Item name="q">
+          <Input
+            placeholder="搜索用户手机号码..."
+            prefix={<SearchOutlined />}
+            style={{ width: 300 }}
+            allowClear
+            onClear={searchFormProps.form?.submit}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            onClick={searchFormProps.form?.submit}
+            icon={<SearchOutlined />}
+          >
+            查询
+          </Button>
+        </Form.Item>
+      </Form>
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="readable_id"
@@ -63,7 +123,10 @@ export const WarrantyList = () => {
           render={(_, record: any) => (
             <Space>
               <UserOutlined />
-              {record.customers?.full_name}
+              <Space direction="vertical">
+                {record.customers?.full_name}
+                {record.customers?.phone}
+              </Space>
             </Space>
           )}
         />
@@ -117,11 +180,14 @@ export const WarrantyList = () => {
           title="售后记录"
           dataIndex="claim_count"
           align="center"
-          render={(val) =>
+          render={(val, record) =>
             val > 0 ? (
-              <Tag color="orange" icon={<HistoryOutlined />}>
-                {val} 次
-              </Tag>
+              <Space direction="vertical">
+                <Tag color="orange" icon={<HistoryOutlined />}>
+                  {val} 次
+                </Tag>
+                <DateField value={record.last_claim_date} format="DD/MM/YYYY" />
+              </Space>
             ) : (
               <Text type="secondary">-</Text>
             )
@@ -129,13 +195,17 @@ export const WarrantyList = () => {
         />
 
         <Table.Column
-          title="查看"
+          title="操作"
           render={(_, record: any) => (
-            <ShowButton hideText size="small" recordItemId={record.id} />
+            <Space>
+              <ShowButton hideText size="small" recordItemId={record.id} />
+              {record.status === "active" && (
+                <CreateReturnButton record={record} />
+              )}
+            </Space>
           )}
         />
       </Table>
     </List>
   );
 };
-import { ToolOutlined } from "@ant-design/icons";

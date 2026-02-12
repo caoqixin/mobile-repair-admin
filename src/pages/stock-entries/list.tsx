@@ -3,17 +3,19 @@ import { Table, Tag, Space, Input, Form, Button } from "antd";
 import { SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { IStockEntry } from "../../interface";
 import { HttpError } from "@refinedev/core";
+import { ListLoader } from "../../components/loadings";
+import { getTypeTag } from "../../lib/utils";
 
 export const StockEntriesList = () => {
-  const { tableProps, searchFormProps } = useTable<
-    IStockEntry,
-    HttpError,
-    { q: string }
-  >({
+  const {
+    tableProps,
+    searchFormProps,
+    tableQuery: { isLoading },
+  } = useTable<IStockEntry, HttpError, { q: string }>({
     syncWithLocation: true,
     meta: {
       // 关联查询操作人姓名
-      select: "*, profiles(full_name)",
+      select: "*, profiles(full_name,email)",
     },
     sorters: {
       initial: [
@@ -36,16 +38,9 @@ export const StockEntriesList = () => {
     },
   });
 
-  // 入库类型颜色映射
-  const getTypeTag = (type: string) => {
-    const map: any = {
-      purchase: { color: "blue", label: "采购入库" },
-      return: { color: "orange", label: "退货入库" },
-      adjustment: { color: "green", label: "盘盈入库" },
-      repair: { color: "skyblue", label: "维修订单" },
-    };
-    return map[type] || { color: "default", label: type };
-  };
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>
@@ -90,7 +85,9 @@ export const StockEntriesList = () => {
           render={(_, record: any) => (
             <Space>
               <UserOutlined />
-              {record.profiles?.full_name}
+              <Space direction="vertical">
+                {record.profiles?.full_name} {record.profiles?.email}
+              </Space>
             </Space>
           )}
         />

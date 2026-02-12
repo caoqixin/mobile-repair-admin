@@ -1,4 +1,4 @@
-import { BaseRecord, useTranslate } from "@refinedev/core";
+import { BaseRecord, useCan, useTranslate } from "@refinedev/core";
 import {
   useTable,
   List,
@@ -8,15 +8,39 @@ import {
 } from "@refinedev/antd";
 import { Table, Space } from "antd";
 import { IFault } from "../../interface";
+import { ListLoader } from "../../components/loadings";
 
 export const FaultList = () => {
   const translate = useTranslate();
-  const { tableProps, setCurrentPage, pageCount } = useTable<IFault>({
+
+  const { data: canCreate } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+  const { data: canEdit } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+  const { data: canDelete } = useCan({
+    resource: "device_models",
+    action: "create",
+  });
+
+  const {
+    tableProps,
+    setCurrentPage,
+    pageCount,
+    tableQuery: { isLoading },
+  } = useTable<IFault>({
     syncWithLocation: true,
   });
 
+  if (isLoading) {
+    return <ListLoader />;
+  }
+
   return (
-    <List>
+    <List canCreate={canCreate?.can}>
       <Table
         {...tableProps}
         pagination={{
@@ -45,17 +69,21 @@ export const FaultList = () => {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <Space>
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                onSuccess={() => {
-                  if (tableProps.dataSource?.length! <= 1) {
-                    setCurrentPage(pageCount - 1);
-                  }
-                }}
-              />
+              {canEdit?.can && (
+                <EditButton hideText size="small" recordItemId={record.id} />
+              )}
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

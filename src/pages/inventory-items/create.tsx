@@ -17,6 +17,7 @@ export const InventoryItemsCreate = () => {
     filters: [{ field: "type", operator: "eq", value: "item" }],
     optionLabel: "name",
     optionValue: "id",
+    pagination: { mode: "off" },
   });
 
   return (
@@ -68,7 +69,12 @@ export const InventoryItemsCreate = () => {
               <Select
                 {...categorySelectProps}
                 allowClear
-                placeholder="全部分类"
+                onSearch={undefined}
+                filterOption={true}
+                optionFilterProp="label"
+                placeholder={translate(
+                  "inventory_items.search.placeholder.category",
+                )}
               />
             </Form.Item>
           </Col>
@@ -77,18 +83,21 @@ export const InventoryItemsCreate = () => {
           <Form.Item
             label={translate("inventory_items.fields.stock")}
             name={["stock_quantity"]}
+            initialValue={0}
           >
             <InputNumber min={0} placeholder="0" />
           </Form.Item>
           <Form.Item
             label={translate("inventory_items.fields.cost")}
             name={["cost_price"]}
+            initialValue={0}
           >
             <InputNumber min={0} placeholder="0.00" prefix="€" />
           </Form.Item>
           <Form.Item
             label={translate("inventory_items.fields.retail_price")}
             name={["retail_price"]}
+            initialValue={0}
           >
             <InputNumber min={0} placeholder="0.00" prefix="€" />
           </Form.Item>

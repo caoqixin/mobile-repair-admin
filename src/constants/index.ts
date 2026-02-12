@@ -1,16 +1,6 @@
-import { CategoryType, UserRole } from "../interface";
-
-export const USER_ROLE_MAP: Record<UserRole, string> = {
-  admin: "管理员",
-  technician: "技术员",
-  front_desk: "前台",
-  partner: "合作伙伴",
-};
-
-export const CATEGORY_TYPE_MAP: Record<CategoryType, string> = {
-  component: "维修配件",
-  item: "前台配件",
-};
+export * from "./maps";
+export * from "./color";
+export * from "./options";
 
 export const QUALITY = [
   "compatibile",
@@ -22,7 +12,6 @@ export const QUALITY = [
 ] as const;
 
 // 维修状态映射配置
-
 export const CREATE_REPAIR_STATUS_OPTIONS = [
   { label: "待检测 (Pending Check)", value: "pending_check", color: "orange" },
   { label: "待报价 (Pending Quote)", value: "pending_quote", color: "gold" },
@@ -49,5 +38,6 @@ export const REPAIR_STATUS_OPTIONS = [
     color: "purple",
   },
   { label: "已完成 (Completed)", value: "completed", color: "green" },
+  { label: "已取件 (Ritirato)", value: "delivered", color: "blue" },
   { label: "已取消 (Cancelled)", value: "cancelled", color: "red" },
 ];

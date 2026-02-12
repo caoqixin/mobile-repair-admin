@@ -2,6 +2,7 @@ import { DateField, Show, ShowButton } from "@refinedev/antd";
 import { useShow, useTranslate } from "@refinedev/core";
 import { Card, Descriptions, Space, Table, Tag, Typography } from "antd";
 import { MobileOutlined, ToolOutlined } from "@ant-design/icons";
+import { getRepairStatusTag } from "../../lib/utils";
 
 const { Text } = Typography;
 
@@ -15,20 +16,6 @@ export const CustomerShow = () => {
       select: "*, repair_orders(*, models(name))",
     },
   });
-
-  const getStatusTag = (status: string) => {
-    const map: any = {
-      pending_check: { color: "orange", label: "待检测" },
-      pending_quote: { color: "gold", label: "待报价" },
-      approved: { color: "lime", label: "已批准" },
-      repairing: { color: "blue", label: "维修中" },
-      waiting_parts: { color: "purple", label: "待配件" },
-      completed: { color: "green", label: "已完成" },
-      cancelled: { color: "red", label: "已取消" },
-    };
-    const conf = map[status] || { color: "default", label: status };
-    return <Tag color={conf.color}>{conf.label}</Tag>;
-  };
 
   return (
     <Show isLoading={isLoading} title="客户档案">
@@ -93,13 +80,19 @@ export const CustomerShow = () => {
           <Table.Column
             title="故障描述"
             dataIndex="problem_description"
-            ellipsis={true}
+            render={(val: string) =>
+              val.split(",").map((desc) => <Tag key={desc}>{desc}</Tag>)
+            }
           />
 
           <Table.Column
             title="状态"
             dataIndex="status"
-            render={(val) => getStatusTag(val)}
+            render={(val) => {
+              const conf = getRepairStatusTag(val);
+
+              return <Tag color={conf.color}>{conf.label}</Tag>;
+            }}
           />
 
           <Table.Column
@@ -117,7 +110,7 @@ export const CustomerShow = () => {
           <Table.Column
             title="日期"
             dataIndex="created_at"
-            render={(val) => <DateField value={val} format="YYYY-MM-DD" />}
+            render={(val) => <DateField value={val} format="DD/MM/YYYY" />}
           />
 
           <Table.Column

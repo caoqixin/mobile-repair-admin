@@ -8,8 +8,7 @@ const { Title, Text } = Typography;
 export const SalesOrderShow = () => {
   const { query } = useShow({
     meta: {
-      select:
-        "*, profiles(full_name), sales_order_items(*, inventory_items(name, sku))",
+      select: "*, sales_order_items(*, inventory_items(name, sku))",
     },
   });
   const { data, isLoading } = query;

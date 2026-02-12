@@ -21,6 +21,8 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { QUALITY } from "../../constants";
 import { IInventoryComponent } from "../../interface";
+import { FormLoader } from "../../components/loadings";
+import { deepEqual } from "../../lib/utils";
 
 export const PurchaseOrderEdit = () => {
   const translate = useTranslate();
@@ -120,6 +122,9 @@ export const PurchaseOrderEdit = () => {
     resource: "suppliers",
     optionLabel: "name",
     defaultValue: record?.supplier_id,
+    pagination: {
+      mode: "off",
+    },
   });
 
   const { selectProps: componentSelectProps } = useSelect<IInventoryComponent>({
@@ -127,12 +132,18 @@ export const PurchaseOrderEdit = () => {
     optionLabel: "name",
     optionValue: "id",
     onSearch: (value) => [{ field: "name", operator: "contains", value }],
+    queryOptions: {
+      enabled: record?.status === "draft",
+    },
   });
 
   const { selectProps: itemSelectProps } = useSelect<IInventoryComponent>({
     resource: "inventory_items",
     optionLabel: "name",
     optionValue: "id",
+    queryOptions: {
+      enabled: record?.status === "draft",
+    },
   });
 
   // 辅助 Select Props
@@ -140,15 +151,24 @@ export const PurchaseOrderEdit = () => {
     resource: "categories",
     filters: [{ field: "type", operator: "eq", value: "component" }],
     optionLabel: "name",
+    queryOptions: {
+      enabled: record?.status === "draft",
+    },
   });
   const { selectProps: categoryItemSelectProps } = useSelect({
     resource: "categories",
     filters: [{ field: "type", operator: "eq", value: "item" }],
     optionLabel: "name",
+    queryOptions: {
+      enabled: record?.status === "draft",
+    },
   });
   const { selectProps: brandSelectProps } = useSelect({
     resource: "brands",
     optionLabel: "name",
+    queryOptions: {
+      enabled: record?.status === "draft",
+    },
   });
   const { selectProps: modelSelectProps } = useSelect({
     resource: "models",
@@ -156,7 +176,7 @@ export const PurchaseOrderEdit = () => {
     filters: selectedBrand
       ? [{ field: "brand_id", operator: "eq", value: selectedBrand }]
       : [],
-    queryOptions: { enabled: !!selectedBrand },
+    queryOptions: { enabled: !!selectedBrand && record?.status === "draft" },
   });
 
   // --- 计算总价 ---
@@ -179,35 +199,51 @@ export const PurchaseOrderEdit = () => {
     };
 
     // 调用 Refine 默认的 onFinish 更新 PO 主信息
-    await onFinish(purchaseOrderFormData);
+    const result = await onFinish(purchaseOrderFormData);
 
-    // 2. 处理 Items (全量替换策略：简单且健壮)
-    if (record?.id) {
-      const oldIds = record.purchase_order_items.map((i: any) => i.id);
+    // 如果状态为ordered received cancelled 不在处理items
+    if (result?.data?.status === "draft") {
+      // 2. 处理 Items (全量替换策略：简单且健壮)
+      if (record?.id) {
+        // 待插入新数据
+        const newItems = values.items.map((item: any) => ({
+          purchase_order_id: record.id,
+          [item.type === "component" ? "component_id" : "item_id"]:
+            item.component_id.value,
+          product_name: item.component_id.label, // 保存快照名称
+          quantity: item.quantity,
+          unit_cost: item.unit_cost,
+        }));
 
-      // A. 删除旧数据
-      if (oldIds.length > 0) {
-        await deleteItems({
-          resource: "purchase_order_items",
-          ids: oldIds,
-        });
-      }
+        // 旧的数据
+        const oldItems = record.purchase_order_items.map((item: any) => ({
+          purchase_order_id: item?.purchase_order_id,
+          product_name: item.product_name,
+          quantity: item.quantity,
+          unit_cost: item.unit_cost,
+          [item.component_id ? "component_id" : "item_id"]:
+            item.component_id ?? item.item_id,
+        }));
 
-      // B. 插入新数据
-      const newItems = values.items.map((item: any) => ({
-        purchase_order_id: record.id,
-        [item.type === "component" ? "component_id" : "item_id"]:
-          item.component_id.value,
-        product_name: item.component_id.label, // 保存快照名称
-        quantity: item.quantity,
-        unit_cost: item.unit_cost,
-      }));
+        // 如果新老数据不一致
+        if (!deepEqual(newItems, oldItems)) {
+          const oldIds = record.purchase_order_items.map((i: any) => i.id);
+          // A. 删除旧数据
+          if (oldIds.length > 0) {
+            await deleteItems({
+              resource: "purchase_order_items",
+              ids: oldIds,
+            });
+          }
+          // B. 插入新数据
 
-      if (newItems.length > 0) {
-        await createItems({
-          resource: "purchase_order_items",
-          values: newItems,
-        });
+          if (newItems.length > 0) {
+            await createItems({
+              resource: "purchase_order_items",
+              values: newItems,
+            });
+          }
+        }
       }
     }
   };
@@ -230,7 +266,7 @@ export const PurchaseOrderEdit = () => {
     createModalClose();
   };
 
-  if (query?.isLoading) return <Spin />;
+  if (query?.isLoading) return <FormLoader />;
 
   return (
     <>
@@ -252,7 +288,13 @@ export const PurchaseOrderEdit = () => {
                 name="supplier_id"
                 rules={[{ required: true }]}
               >
-                <Select {...supplierSelectProps} />
+                <Select
+                  {...supplierSelectProps}
+                  disabled={record?.status !== "draft"}
+                  onSearch={undefined}
+                  filterOption={true}
+                  optionFilterProp="label"
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -275,9 +317,10 @@ export const PurchaseOrderEdit = () => {
               >
                 <Select
                   options={[
-                    { label: "Draft", value: "draft" },
-                    { label: "Ordered", value: "ordered" },
-                    { label: "Received", value: "received" },
+                    { label: "Draft (草稿)", value: "draft" },
+                    { label: "Ordered (已下单)", value: "ordered" },
+                    { label: "Received (已收货)", value: "received" },
+                    { label: "Cancelled (已取消)", value: "cancelled" },
                   ]}
                 />
               </Form.Item>
@@ -333,6 +376,7 @@ export const PurchaseOrderEdit = () => {
                                         {...(isComponent
                                           ? componentSelectProps
                                           : itemSelectProps)}
+                                        disabled={record?.status !== "draft"}
                                         labelInValue
                                         showSearch
                                         filterOption={false} // 使用服务端搜索
@@ -344,6 +388,7 @@ export const PurchaseOrderEdit = () => {
                                       icon={<PlusOutlined />}
                                       type="primary"
                                       ghost
+                                      disabled={record?.status !== "draft"}
                                       style={{ marginTop: 30 }}
                                       onClick={() =>
                                         isComponent
@@ -365,7 +410,11 @@ export const PurchaseOrderEdit = () => {
                           name={[name, "quantity"]}
                           rules={[{ required: true }]}
                         >
-                          <InputNumber min={1} style={{ width: "100%" }} />
+                          <InputNumber
+                            disabled={record?.status !== "draft"}
+                            min={1}
+                            style={{ width: "100%" }}
+                          />
                         </Form.Item>
                       </Col>
                       <Col span={6}>
@@ -376,6 +425,7 @@ export const PurchaseOrderEdit = () => {
                           rules={[{ required: true }]}
                         >
                           <InputNumber
+                            disabled={record?.status !== "draft"}
                             min={0}
                             prefix="€"
                             style={{ width: "100%" }}
@@ -385,24 +435,26 @@ export const PurchaseOrderEdit = () => {
                     </Row>
                   </Card>
                 ))}
-                <Flex align="center" justify="center" gap="small">
-                  <Button
-                    type="dashed"
-                    onClick={() => add({ type: "component", quantity: 1 })}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    添加维修配件
-                  </Button>
-                  <Button
-                    type="dashed"
-                    onClick={() => add({ type: "item", quantity: 1 })}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    添加前台配件
-                  </Button>
-                </Flex>
+                {query?.data?.data.status === "draft" && (
+                  <Flex align="center" justify="center" gap="small">
+                    <Button
+                      type="dashed"
+                      onClick={() => add({ type: "component", quantity: 1 })}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      添加维修配件
+                    </Button>
+                    <Button
+                      type="dashed"
+                      onClick={() => add({ type: "item", quantity: 1 })}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      添加前台配件
+                    </Button>
+                  </Flex>
+                )}
               </>
             )}
           </Form.List>
@@ -416,234 +468,237 @@ export const PurchaseOrderEdit = () => {
         </Form>
       </Edit>
 
-      {/* 复用 Create 中的 Modal 代码结构 */}
-      <Modal {...createModalProps}>
-        <Form
-          {...createFormProps}
-          onFinish={handleModalOnFinish}
-          layout="vertical"
-        >
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_components.fields.sku")}
-                name={["sku"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_components.fields.name")}
-                name={["name"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.category")}
-                name={["category_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...categorySelectProps}
-                  allowClear
-                  placeholder="全部分类"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.supplier")}
-                name={["supplier_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...supplierSelectProps}
-                  allowClear
-                  placeholder="全部供应商"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.brand")}
-                name={["brand_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...brandSelectProps}
-                  allowClear
-                  placeholder="先选品牌"
-                  onChange={(val) => {
-                    setSelectedBrand(val as unknown as number);
-                    form?.setFieldValue("model_id", null);
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.model")}
-                name={["model_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...modelSelectProps}
-                  mode="multiple"
-                  allowClear
-                  placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
-                  disabled={!selectedBrand}
-                  onChange={(val) => {
-                    setSelectedModels(val as unknown as number[]);
-                  }}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            label={translate("inventory_components.fields.quality")}
-            initialValue={"compatibile"}
-            name={["quality"]}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+      {record?.status === "draft" && (
+        <Modal {...createModalProps}>
+          <Form
+            {...createFormProps}
+            onFinish={handleModalOnFinish}
+            layout="vertical"
           >
-            <Select
-              options={QUALITY.map((val) => ({
-                label: val,
-                value: val,
-              }))}
-            />
-          </Form.Item>
-          <Row gutter={24}>
-            <Col span={6}>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_components.fields.sku")}
+                  name={["sku"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_components.fields.name")}
+                  name={["name"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.category")}
+                  name={["category_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...categorySelectProps}
+                    allowClear
+                    placeholder="全部分类"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.supplier")}
+                  name={["supplier_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...supplierSelectProps}
+                    allowClear
+                    placeholder="全部供应商"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.brand")}
+                  name={["brand_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...brandSelectProps}
+                    allowClear
+                    placeholder="先选品牌"
+                    onChange={(val) => {
+                      setSelectedBrand(val as unknown as number);
+                      form?.setFieldValue("model_id", null);
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.model")}
+                  name={["model_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...modelSelectProps}
+                    mode="multiple"
+                    allowClear
+                    placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
+                    disabled={!selectedBrand}
+                    onChange={(val) => {
+                      setSelectedModels(val as unknown as number[]);
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item
+              label={translate("inventory_components.fields.quality")}
+              initialValue={"compatibile"}
+              name={["quality"]}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Select
+                options={QUALITY.map((val) => ({
+                  label: val,
+                  value: val,
+                }))}
+              />
+            </Form.Item>
+            <Row gutter={24}>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.cost")}
+                  name={["cost_price"]}
+                >
+                  <InputNumber min={0} prefix="€" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.repair_price")}
+                  name={["suggested_repair_price"]}
+                >
+                  <InputNumber min={0} prefix="€" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_components.fields.partner_price")}
+                  name={["partner_repair_price"]}
+                >
+                  <InputNumber min={0} prefix="€" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
+      )}
+
+      {record?.status === "draft" && (
+        <Modal {...createItemModalProps}>
+          <Form {...createItemFormProps} layout="vertical">
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_items.fields.sku")}
+                  name={["sku"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label={translate("inventory_items.fields.name")}
+                  name={["name"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={6}>
+                <Form.Item
+                  label={translate("inventory_items.fields.category")}
+                  name={["category_id"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...categoryItemSelectProps}
+                    allowClear
+                    placeholder="全部分类"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Space>
               <Form.Item
-                label={translate("inventory_components.fields.cost")}
+                label={translate("inventory_items.fields.cost")}
                 name={["cost_price"]}
               >
-                <InputNumber min={0} prefix="€" />
+                <InputNumber min={0} placeholder="0.00" prefix="€" />
               </Form.Item>
-            </Col>
-            <Col span={6}>
               <Form.Item
-                label={translate("inventory_components.fields.repair_price")}
-                name={["suggested_repair_price"]}
+                label={translate("inventory_items.fields.retail_price")}
+                name={["retail_price"]}
               >
-                <InputNumber min={0} prefix="€" />
+                <InputNumber min={0} placeholder="0.00" prefix="€" />
               </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_components.fields.partner_price")}
-                name={["partner_repair_price"]}
-              >
-                <InputNumber min={0} prefix="€" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-
-      <Modal {...createItemModalProps}>
-        <Form {...createItemFormProps} layout="vertical">
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_items.fields.sku")}
-                name={["sku"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={translate("inventory_items.fields.name")}
-                name={["name"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={6}>
-              <Form.Item
-                label={translate("inventory_items.fields.category")}
-                name={["category_id"]}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  {...categoryItemSelectProps}
-                  allowClear
-                  placeholder="全部分类"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Space>
-            <Form.Item
-              label={translate("inventory_items.fields.cost")}
-              name={["cost_price"]}
-            >
-              <InputNumber min={0} placeholder="0.00" prefix="€" />
-            </Form.Item>
-            <Form.Item
-              label={translate("inventory_items.fields.retail_price")}
-              name={["retail_price"]}
-            >
-              <InputNumber min={0} placeholder="0.00" prefix="€" />
-            </Form.Item>
-          </Space>
-        </Form>
-      </Modal>
+            </Space>
+          </Form>
+        </Modal>
+      )}
     </>
   );
 };

@@ -1,14 +1,12 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   useList,
   useCreate,
-  useCreateMany, // 引入批量创建 Hook
+  useCreateMany,
   useGetIdentity,
   useNavigation,
-  useTranslate,
   useInvalidate,
 } from "@refinedev/core";
-import { useSelect } from "@refinedev/antd";
 import {
   Row,
   Col,
@@ -16,10 +14,7 @@ import {
   Input,
   List,
   Button,
-  Avatar,
   Typography,
-  Divider,
-  Select,
   Radio,
   Statistic,
   Empty,
@@ -33,7 +28,6 @@ import {
   PlusOutlined,
   MinusOutlined,
   ShoppingCartOutlined,
-  UserAddOutlined,
   BarcodeOutlined,
   DeleteOutlined,
   PayCircleOutlined,
@@ -45,8 +39,7 @@ import { IInventoryItem } from "../../interface";
 const { Text, Title } = Typography;
 
 export const SalesOrderCreate = () => {
-  const t = useTranslate();
-  const { list, create } = useNavigation();
+  const { list } = useNavigation();
   const { data: user } = useGetIdentity();
   const invalidate = useInvalidate();
 
@@ -266,22 +259,10 @@ export const SalesOrderCreate = () => {
                           style={{ cursor: "pointer", overflow: "hidden" }}
                           styles={{ body: { padding: 12 } }}
                         >
-                          <div
-                            style={{
-                              height: 80,
-                              background: "#f0f2f5",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              marginBottom: 10,
-                              borderRadius: 4,
-                            }}
-                          >
+                          <Text strong ellipsis style={{ display: "block" }}>
                             <ShoppingOutlined
                               style={{ fontSize: 28, color: "#bfbfbf" }}
-                            />
-                          </div>
-                          <Text strong ellipsis style={{ display: "block" }}>
+                            />{" "}
                             {item.name}
                           </Text>
                           <Text type="secondary" style={{ fontSize: 12 }}>

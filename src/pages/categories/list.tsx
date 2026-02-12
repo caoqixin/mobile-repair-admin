@@ -1,5 +1,4 @@
-import { AntdListInferencer } from "@refinedev/inferencer/antd";
-import { BaseRecord, useTranslate } from "@refinedev/core";
+import { BaseRecord, useCan, useTranslate } from "@refinedev/core";
 import {
   useTable,
   List,
@@ -11,15 +10,37 @@ import {
 import { Table, Space } from "antd";
 import { CategoryType, ICategory } from "../../interface";
 import { CATEGORY_TYPE_MAP } from "../../constants";
+import { ListLoader } from "../../components/loadings";
 
 export const CategoryList = () => {
+  const { data: canCreate } = useCan({
+    resource: "categories",
+    action: "create",
+  });
+  const { data: canEdit } = useCan({
+    resource: "categories",
+    action: "create",
+  });
+  const { data: canDelete } = useCan({
+    resource: "categories",
+    action: "create",
+  });
   const translate = useTranslate();
-  const { tableProps, setCurrentPage, pageCount } = useTable<ICategory>({
+  const {
+    tableProps,
+    setCurrentPage,
+    pageCount,
+    tableQuery: { isLoading },
+  } = useTable<ICategory>({
     syncWithLocation: true,
   });
 
+  if (isLoading) {
+    return <ListLoader />;
+  }
+
   return (
-    <List>
+    <List canCreate={canCreate?.can}>
       <Table
         {...tableProps}
         pagination={{
@@ -53,17 +74,21 @@ export const CategoryList = () => {
           dataIndex="actions"
           render={(_, record: BaseRecord) => (
             <Space>
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton
-                hideText
-                size="small"
-                recordItemId={record.id}
-                onSuccess={() => {
-                  if (tableProps.dataSource?.length! <= 1) {
-                    setCurrentPage(pageCount - 1);
-                  }
-                }}
-              />
+              {canEdit?.can && (
+                <EditButton hideText size="small" recordItemId={record.id} />
+              )}
+              {canDelete?.can && (
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  onSuccess={() => {
+                    if (tableProps.dataSource?.length! <= 1) {
+                      setCurrentPage(pageCount - 1);
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         />

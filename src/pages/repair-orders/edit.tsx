@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 import { useCreateMany, useDeleteMany } from "@refinedev/core";
 import {
@@ -12,25 +12,27 @@ import {
   Button,
   Card,
   Tag,
-  Space,
   Typography,
+  Radio,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { IInventoryComponent } from "../../interface";
 // 假设您的常量定义在这里，如果不一样请调整引用
 import { REPAIR_STATUS_OPTIONS } from "../../constants";
+import { deepEqual } from "../../lib/utils";
 
 export const RepairOrderEdit = () => {
   // 1. 数据更新 Hooks
   const { mutateAsync: deleteParts } = useDeleteMany();
   const { mutateAsync: createParts } = useCreateMany();
 
-  const { form, formProps, saveButtonProps, query, onFinish } = useForm({
-    meta: {
-      select:
-        "*, repair_order_parts(*, inventory_components(name, suggested_repair_price))",
-    },
-  });
+  const { form, formProps, saveButtonProps, query, onFinish, formLoading } =
+    useForm({
+      meta: {
+        select:
+          "*, repair_order_parts(*, inventory_components(name, suggested_repair_price))",
+      },
+    });
 
   const record = query?.data?.data;
 
@@ -50,7 +52,7 @@ export const RepairOrderEdit = () => {
   // 3. 回显数据处理
   useEffect(() => {
     if (record) {
-      // 🔥 关键修复：将 ID 转换为 { value, label } 格式，解决显示 UUID 问题
+      // 将 ID 转换为 { value, label } 格式，解决显示 UUID 问题
       const formattedParts = record.repair_order_parts?.map((p: any) => ({
         component_id: {
           value: p.component_id,
@@ -72,6 +74,9 @@ export const RepairOrderEdit = () => {
 
   // 4. 自动计算逻辑 (与 Create 页面保持一致)
   useEffect(() => {
+    if (parts?.length == 0) {
+      return;
+    }
     // 只有当 parts 真的发生变化（且不是初始化空值时），才去覆盖 total_price
     // 注意：编辑模式下，这里需要谨慎，避免页面刚加载就覆盖了数据库里原本可能包含人工费的总价
     // 这里我们做一个简单判断：如果 parts 列表被修改过，则触发计算
@@ -84,21 +89,11 @@ export const RepairOrderEdit = () => {
       return sum + price * qty;
     }, 0);
 
-    // form?.setFieldValue("total_price", partsSum);
-
-    // *注：为了编辑体验更好，您可以选择不自动覆盖，或者仅在总价为0时覆盖。
-    // 这里为了响应"根据create内容调整"，我保留自动计算，但建议您根据实际需求决定是否注释掉下面这一行
     form?.setFieldValue("total_price", partsSum);
   }, [parts, form]);
 
   // 5. 自定义提交
   const handleFinish = async (values: any) => {
-    // 计算配件成本 (仅用于记录)
-    const partsCost = (values.parts || []).reduce(
-      (sum: number, p: any) => sum + Number(p.unit_price) * (p.quantity || 1),
-      0,
-    );
-
     // A. 更新主表
     await onFinish({
       status: values.status,
@@ -109,11 +104,6 @@ export const RepairOrderEdit = () => {
 
     // B. 处理配件 (全删全加策略)
     if (record?.id) {
-      const oldIds = record.repair_order_parts?.map((p: any) => p.id) || [];
-      if (oldIds.length > 0) {
-        await deleteParts({ resource: "repair_order_parts", ids: oldIds });
-      }
-
       const newParts =
         values.parts?.map((p: any) => ({
           repair_order_id: record.id,
@@ -123,14 +113,39 @@ export const RepairOrderEdit = () => {
           unit_price: p.unit_price,
         })) || [];
 
-      if (newParts.length > 0) {
-        await createParts({ resource: "repair_order_parts", values: newParts });
+      const oldParts =
+        record.repair_order_parts?.map((p: any) => ({
+          repair_order_id: p.repair_order_id,
+          component_id: p.component_id?.value || p.component_id,
+          quantity: p.quantity,
+          unit_price: p.unit_price,
+        })) || [];
+
+      // 如果新老配件一致不需要任何操作
+      if (!deepEqual(oldParts, newParts)) {
+        // 如果不一致
+        //1. 删除老的所有配件
+        const oldIds = record.repair_order_parts?.map((p: any) => p.id) || [];
+        if (oldIds.length > 0) {
+          await deleteParts({ resource: "repair_order_parts", ids: oldIds });
+        }
+
+        // 2. 添加新的所有配件
+        if (newParts.length > 0) {
+          await createParts({
+            resource: "repair_order_parts",
+            values: newParts,
+          });
+        }
       }
     }
   };
 
   return (
-    <Edit saveButtonProps={{ ...saveButtonProps, onClick: form.submit }}>
+    <Edit
+      isLoading={formLoading}
+      saveButtonProps={{ ...saveButtonProps, onClick: form.submit }}
+    >
       <Form {...formProps} layout="vertical" onFinish={handleFinish}>
         <Row gutter={24}>
           <Col span={16}>
@@ -255,7 +270,6 @@ export const RepairOrderEdit = () => {
 
           <Col span={8}>
             <Card title="财务结算" variant="borderless">
-              {/* 移除了 labor_cost，改为 total_price */}
               <Form.Item
                 label="订单总价 (€)"
                 name="total_price"
@@ -277,6 +291,22 @@ export const RepairOrderEdit = () => {
                   size="large"
                 />
               </Form.Item>
+
+              {record?.status === "completed" && (
+                <Form.Item
+                  label="支付方式"
+                  name="payment_method"
+                  initialValue="cash"
+                >
+                  <Radio.Group buttonStyle="solid">
+                    <Radio.Button value="cash">现金</Radio.Button>
+                    <Radio.Button value="card">刷卡</Radio.Button>
+                    <Radio.Button value="alipay">支付宝</Radio.Button>
+                    <Radio.Button value="wechat">微信支付</Radio.Button>
+                    <Radio.Button value="transfer">转账</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              )}
 
               <Divider />
               <div style={{ textAlign: "right" }}>

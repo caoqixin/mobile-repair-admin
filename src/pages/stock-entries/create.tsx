@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Create, useForm, useSelect } from "@refinedev/antd";
-import { useCreateMany, useGetIdentity, useTranslate } from "@refinedev/core";
+import { useCreateMany, useGetIdentity } from "@refinedev/core";
 import {
   Form,
   Input,
@@ -25,7 +25,6 @@ import {
 import { IInventoryComponent } from "../../interface";
 
 export const StockEntriesCreate = () => {
-  const translate = useTranslate();
   const { data: user } = useGetIdentity();
   const [totalCost, setTotalCost] = useState(0);
   const itemsRef = useRef([]);
@@ -60,7 +59,7 @@ export const StockEntriesCreate = () => {
       // 2. 准备子表数据 (stock_entry_items)
       const finalData = itemsRef.current.map((item: any) => ({
         ...item,
-        entry_id: data.data.id,
+        entry_id: entryId,
       }));
 
       // 3. 批量插入子表
@@ -144,7 +143,7 @@ export const StockEntriesCreate = () => {
             >
               <Select
                 options={[
-                  { label: "Adjustment (库存盘盈)", value: "adjustment" },
+                  { label: "Adjustment (库存盘盈)", value: "adjust" },
                   { label: "Customer Return (客户退货)", value: "return" },
                 ]}
               />

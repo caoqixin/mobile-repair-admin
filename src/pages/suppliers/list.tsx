@@ -9,12 +9,22 @@ import {
   TagField,
 } from "@refinedev/antd";
 import { Table, Space } from "antd";
+import { ListLoader } from "../../components/loadings";
 
 export const SupplierList = () => {
   const translate = useTranslate();
-  const { tableProps, setCurrentPage, pageCount } = useTable({
+  const {
+    tableProps,
+    setCurrentPage,
+    pageCount,
+    tableQuery: { isLoading },
+  } = useTable({
     syncWithLocation: true,
   });
+
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
     <List>

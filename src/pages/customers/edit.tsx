@@ -4,10 +4,11 @@ import { Form, Input } from "antd";
 
 export const CustomerEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps, query } = useForm();
+  const { formProps, saveButtonProps, query, formLoading } = useForm();
 
   return (
     <Edit
+      isLoading={formLoading}
       saveButtonProps={saveButtonProps}
       title={`${translate("customers.form.edit.title")}${
         query?.data?.data.full_name

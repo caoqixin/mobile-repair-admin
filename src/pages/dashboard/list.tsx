@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useList, useNavigation } from "@refinedev/core";
 import {
   Row,
@@ -15,15 +15,12 @@ import {
   Modal,
   Space,
   Button,
-  Divider,
   Badge,
   Skeleton,
 } from "antd";
 import {
   DollarCircleOutlined,
   ToolOutlined,
-  GoldOutlined,
-  ShoppingOutlined,
   SyncOutlined,
   HistoryOutlined,
   BarChartOutlined,
@@ -31,7 +28,6 @@ import {
   RightOutlined,
   TrophyFilled,
   CalendarOutlined,
-  AppstoreOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
 import {
@@ -41,7 +37,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   PieChart,
   Pie,
   Legend,
@@ -186,6 +181,7 @@ export const Dashboard = () => {
         color: COLORS.primary,
       },
       { name: "已完成", value: map["completed"] || 0, color: COLORS.success },
+      { name: "已取机", value: map["delivered"] || 0, color: COLORS.cyan },
       { name: "已取消", value: map["cancelled"] || 0, color: "#d9d9d9" },
     ].filter((i) => i.value > 0);
   }, [statusData]);

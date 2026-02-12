@@ -9,9 +9,8 @@ import {
   Row,
   Col,
   Divider,
-  Statistic,
 } from "antd";
-import { ToolOutlined, UserOutlined, MobileOutlined } from "@ant-design/icons";
+import { UserOutlined, MobileOutlined } from "@ant-design/icons";
 import { REPAIR_STATUS_OPTIONS } from "../../constants";
 
 const { Title, Text } = Typography;
@@ -20,7 +19,7 @@ export const RepairOrderShow = () => {
   const { query } = useShow({
     meta: {
       select:
-        "*, customers(full_name, phone), models(name), repair_order_parts(*, inventory_components(name, sku)), profiles(full_name)",
+        "*, customers(full_name, phone), models(name), repair_order_parts(*, inventory_components(name, sku)), profiles(full_name,email)",
     },
   });
   const { data, isLoading } = query;
@@ -106,13 +105,20 @@ export const RepairOrderShow = () => {
                 <DateField value={record?.created_at} format="DD/MM/YYYY" />
               </Descriptions.Item>
               <Descriptions.Item label="技师">
-                {record?.profiles?.full_name}
+                {record?.profiles?.full_name ?? record?.profiles?.email}
               </Descriptions.Item>
             </Descriptions>
           </Card>
 
           <Card title="财务结算" variant="borderless">
             <Descriptions column={1} bordered size="small">
+              {record?.status === "delivered" && (
+                <Descriptions.Item label="支付方式 (Metodo di Pagamento)">
+                  <Text strong style={{ color: "#3f8600", fontSize: 16 }}>
+                    {record?.payment_method}
+                  </Text>
+                </Descriptions.Item>
+              )}
               <Descriptions.Item label="维修费用 (Total)">
                 <Text strong style={{ color: "#3f8600", fontSize: 16 }}>
                   € {Number(record?.total_price).toFixed(2)}

@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_STORE_NAME: string;
   readonly VITE_APP_STORE_ADDRESS: string;
   readonly VITE_APP_STORE_TEL: string;
+  readonly VITE_APP_NAME: string;
 }
 
 interface ImportMeta {

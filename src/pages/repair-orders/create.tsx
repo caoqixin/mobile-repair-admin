@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Create,
   useStepsForm,
@@ -6,7 +6,7 @@ import {
   useModalForm,
   SaveButton,
 } from "@refinedev/antd";
-import { HttpError, useCreateMany, useGetIdentity } from "@refinedev/core";
+import { useCreateMany, useGetIdentity } from "@refinedev/core";
 import {
   Form,
   Input,
@@ -18,7 +18,6 @@ import {
   Col,
   InputNumber,
   Divider,
-  Radio,
   Modal,
   message,
   Descriptions,
@@ -213,6 +212,7 @@ export const RepairOrderCreate = () => {
     queryOptions: {
       enabled: current === 1,
     },
+    pagination: { mode: "off" },
   });
 
   // 品牌
@@ -231,10 +231,10 @@ export const RepairOrderCreate = () => {
     resource: "faults",
     optionLabel: "name",
     optionValue: "id",
-    onSearch: (value) => [{ field: "name", operator: "contains", value }],
     queryOptions: {
       enabled: current === 1,
     },
+    pagination: { mode: "off" },
   });
 
   const { selectProps: componentSelectProps } = useSelect<IInventoryComponent>({
@@ -334,6 +334,9 @@ export const RepairOrderCreate = () => {
             mode="multiple"
             placeholder="选择故障现象 (可多选)"
             size="large"
+            onSearch={undefined}
+            filterOption={true}
+            optionFilterProp="label"
             popupRender={(menu) => (
               <>
                 {menu}

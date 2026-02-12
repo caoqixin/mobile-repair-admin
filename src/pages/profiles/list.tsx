@@ -10,16 +10,26 @@ import {
 import { Table, Space } from "antd";
 import { IProfile, UserRole } from "../../interface";
 import { USER_ROLE_MAP } from "../../constants";
+import { ListLoader } from "../../components/loadings";
+import { useDocumentTitle } from "@refinedev/react-router";
 
 export const ProfileList = () => {
+  useDocumentTitle("");
   const translate = useTranslate();
-  const { tableProps } = useTable<IProfile>({
+  const {
+    tableProps,
+    tableQuery: { isLoading },
+  } = useTable<IProfile>({
     syncWithLocation: true,
   });
-  const { data: role } = usePermissions({});
+  const { data } = usePermissions<IProfile>({});
+
+  if (isLoading) {
+    return <ListLoader />;
+  }
 
   return (
-    <List canCreate={role[0].role === "admin"}>
+    <List canCreate={data?.role === "admin"}>
       <Table
         {...tableProps}
         pagination={{
@@ -50,17 +60,16 @@ export const ProfileList = () => {
           title={translate("profiles.fields.created_at")}
           render={(value: any) => <DateField value={value} />}
         />
-        {role[0].role === "admin" && (
-          <Table.Column
-            title={translate("table.actions")}
-            dataIndex="actions"
-            render={(_, record: BaseRecord) => (
-              <Space>
-                <EditButton hideText size="small" recordItemId={record.id} />
-              </Space>
-            )}
-          />
-        )}
+
+        <Table.Column
+          title={translate("table.actions")}
+          dataIndex="actions"
+          render={(_, record: BaseRecord) => (
+            <Space>
+              <EditButton hideText size="small" recordItemId={record.id} />
+            </Space>
+          )}
+        />
       </Table>
     </List>
   );
