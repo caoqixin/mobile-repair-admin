@@ -20,7 +20,6 @@ export default defineConfig({
             "@ant-design/v5-patch-for-react-19",
             "@refinedev/core",
             "@refinedev/antd",
-            "@refinedev/kbar",
           ],
           "vendor-editor": ["@uiw/react-md-editor"],
           "vendor-charts": ["recharts"],

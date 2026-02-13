@@ -2,10 +2,14 @@ import { useShow } from "@refinedev/core";
 import { Show } from "@refinedev/antd";
 import { Typography, Card, Divider, Table, Row, Col, Tag, Button } from "antd";
 import { PrinterOutlined, ShopOutlined } from "@ant-design/icons";
+import { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 const { Title, Text } = Typography;
 
 export const SalesOrderShow = () => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
   const { query } = useShow({
     meta: {
       select: "*, sales_order_items(*, inventory_items(name, sku))",
@@ -21,14 +25,14 @@ export const SalesOrderShow = () => {
       // 添加打印按钮（逻辑需额外实现，这里仅做UI）
       headerButtons={({ defaultButtons }) => (
         <>
-          <Button type="dashed" onClick={() => window.print()}>
+          <Button type="dashed" onClick={reactToPrintFn}>
             <PrinterOutlined /> 打印小票
           </Button>
           {defaultButtons}
         </>
       )}
     >
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+      <div ref={contentRef} style={{ maxWidth: 800, margin: "0 auto" }}>
         <Card
           variant="borderless"
           className="invoice-box"

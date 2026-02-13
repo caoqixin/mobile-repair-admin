@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useShow } from "@refinedev/core";
 import { Show, DateField } from "@refinedev/antd";
 import {
@@ -12,15 +12,15 @@ import {
   Tag,
   Alert,
 } from "antd";
-import {
-  PrinterOutlined,
-  SafetyCertificateOutlined,
-} from "@ant-design/icons";
+import { PrinterOutlined, SafetyCertificateOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { useReactToPrint } from "react-to-print";
 
 const { Title, Text, Paragraph } = Typography;
 
 export const WarrantyShow = () => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
   const { query } = useShow({
     meta: {
       select:
@@ -29,10 +29,6 @@ export const WarrantyShow = () => {
   });
   const { data, isLoading } = query;
   const record = data?.data;
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   // 判断是否在保
   const isExpired = record ? dayjs().isAfter(dayjs(record.end_date)) : false;
@@ -43,14 +39,18 @@ export const WarrantyShow = () => {
       title="保修详情"
       headerButtons={({ defaultButtons }) => (
         <>
-          <Button icon={<PrinterOutlined />} onClick={handlePrint}>
+          <Button icon={<PrinterOutlined />} onClick={reactToPrintFn}>
             打印证书 (Stampa)
           </Button>
           {defaultButtons}
         </>
       )}
     >
-      <div style={{ maxWidth: 800, margin: "0 auto" }} className="print-area">
+      <div
+        ref={contentRef}
+        style={{ maxWidth: 800, margin: "0 auto" }}
+        className="print-area"
+      >
         {/* 状态横幅 */}
         {record?.status === "void" ? (
           <Alert
