@@ -1,11 +1,6 @@
-import React from "react";
 import { Button, Popconfirm, message } from "antd";
 import { RedoOutlined } from "@ant-design/icons";
-import {
-  useCreate,
-  useGetIdentity,
-  useNavigation,
-} from "@refinedev/core";
+import { useCreate, useGetIdentity, useNavigation } from "@refinedev/core";
 
 type Props = {
   record: any; // 传入当前的保修单记录

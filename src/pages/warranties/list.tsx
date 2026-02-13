@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 
 import { ToolOutlined } from "@ant-design/icons";
 import { ListLoader } from "../../components/loadings";
-import { CreateReturnButton } from "../../components/warranties/CreateReturnButton";
+import { CreateReturnButton } from "../../components/buttons";
 
 const { Text } = Typography;
 

@@ -306,3 +306,42 @@ export interface IPartnerInventoryView {
   brand_name: string;
   model_name: string;
 }
+
+// --- View 视图
+export interface IYearlyStats {
+  year: number;
+  repair_count: number;
+  total_revenue: number;
+}
+
+export interface ITopModels {
+  model_name: string;
+  repair_count: number;
+}
+
+export interface IStatusStats {
+  status: string;
+  count: number;
+}
+
+export interface IMonthlyStats {
+  month_str: string;
+  year: number;
+  month: number;
+  repair_count: number;
+  total_revenue: number;
+}
+
+export interface IInventorySummary {
+  category: string;
+  sku_count: number;
+  total_quantity: number;
+  total_value: number;
+}
+
+// --- chart
+export interface IRepairStatusStats {
+  name: string;
+  value: number;
+  color: string;
+}

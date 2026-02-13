@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import { ITransaction } from "../../interface";
 import { ListLoader } from "../../components/loadings";
-import { FinancialStats } from "../../components/transactions/FinancialStats";
+import { FinancialStats } from "../../components/stats";
 
 const { Text } = Typography;
 

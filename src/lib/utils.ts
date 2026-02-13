@@ -20,6 +20,20 @@ export const getStatusColor = (status: string) => {
   }
 };
 
+// 排行榜颜色辅助函数
+export const getRankColor = (index: number) => {
+  switch (index) {
+    case 0:
+      return "#FFD700"; // 金
+    case 1:
+      return "#C0C0C0"; // 银
+    case 2:
+      return "#CD7F32"; // 铜
+    default:
+      return "#1890ff"; // 普通
+  }
+};
+
 export const getRepairStatusTag = (status: OrderStatus) => {
   return REPAIR_STATUS_MAP[status];
 };
@@ -92,3 +106,11 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 
   return true;
 }
+
+export const formatCurrency = (value: number | string) => {
+  return new Intl.NumberFormat("it-IT", {
+    // 假设是欧洲格式
+    style: "currency",
+    currency: "EUR",
+  }).format(Number(value));
+};

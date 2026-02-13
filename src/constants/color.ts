@@ -16,3 +16,13 @@ export const COLORS_EXPENSE = [
   "#ff7875",
   "#ffa39e",
 ];
+
+export const COLORS_BASE = {
+  primary: "#1890ff",
+  success: "#52c41a",
+  warning: "#faad14",
+  error: "#ff4d4f",
+  purple: "#722ed1",
+  cyan: "#13c2c2",
+  pink: "#eb2f96",
+};

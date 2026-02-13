@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, Col, Row, Statistic, Skeleton, Empty } from "antd";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useList } from "@refinedev/core";
