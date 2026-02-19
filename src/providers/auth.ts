@@ -62,11 +62,17 @@ const authProvider: AuthProvider = {
       },
     };
   },
-  register: async ({ email, password }) => {
+  register: async ({ email, password, full_name, role, redirectPath }) => {
     try {
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name,
+            role,
+          },
+        },
       });
 
       if (error) {
@@ -79,7 +85,7 @@ const authProvider: AuthProvider = {
       if (data) {
         return {
           success: true,
-          redirectTo: "/",
+          redirectTo: redirectPath,
         };
       }
     } catch (error: any) {

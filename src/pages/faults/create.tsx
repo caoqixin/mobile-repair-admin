@@ -8,7 +8,7 @@ export const FaultCreate = () => {
 
   return (
     <Create
-      title={translate("faults.form.create.title")}
+      title={translate("faults.titles.create")}
       saveButtonProps={saveButtonProps}
     >
       <Form {...formProps} layout="vertical">

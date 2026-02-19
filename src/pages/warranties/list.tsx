@@ -20,10 +20,13 @@ import dayjs from "dayjs";
 import { ToolOutlined } from "@ant-design/icons";
 import { ListLoader } from "../../components/loadings";
 import { CreateReturnButton } from "../../components/buttons";
+import { useTranslate } from "@refinedev/core";
+import { calculateProgress } from "../../lib/utils";
 
 const { Text } = Typography;
 
 export const WarrantyList = () => {
+  const translate = useTranslate();
   const {
     tableProps,
     searchFormProps,
@@ -56,21 +59,19 @@ export const WarrantyList = () => {
     },
   });
 
-  // 计算剩余天数百分比 (用于进度条)
-  const calculateProgress = (start: string, end: string) => {
-    const total = dayjs(end).diff(dayjs(start), "day");
-    const passed = dayjs().diff(dayjs(start), "day");
-    const percent = Math.max(0, Math.min(100, (passed / total) * 100));
-    return percent;
-  };
-
   // 状态颜色映射
   const getStatusTag = (status: string) => {
     const map: any = {
-      active: { color: "success", label: "生效中 (Active)" },
-      expired: { color: "default", label: "已过期 (Expired)" },
-      voided: { color: "error", label: "作废 (Void)" },
-      claimed: { color: "processing", label: "返修中 (Claimed)" },
+      active: { color: "success", label: translate("warranty.status.active") },
+      expired: {
+        color: "default",
+        label: translate("warranty.status.expired"),
+      },
+      voided: { color: "error", label: translate("warranty.status.void") },
+      claimed: {
+        color: "processing",
+        label: translate("warranty.status.claimed"),
+      },
     };
     const conf = map[status] || { color: "default", label: status };
     return <Tag color={conf.color}>{conf.label}</Tag>;
@@ -80,12 +81,12 @@ export const WarrantyList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("warranty.titles.list")}>
       {/* 搜索栏 */}
       <Form {...searchFormProps} layout="inline" style={{ marginBottom: 20 }}>
         <Form.Item name="q">
           <Input
-            placeholder="搜索用户手机号码..."
+            placeholder={translate("filters.warranty.placeholder")}
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
             allowClear
@@ -98,19 +99,19 @@ export const WarrantyList = () => {
             onClick={searchFormProps.form?.submit}
             icon={<SearchOutlined />}
           >
-            查询
+            {translate("filters.warranty.submitButton")}
           </Button>
         </Form.Item>
       </Form>
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="readable_id"
-          title="保修单号 (ID)"
+          title={translate("warranty.fields.readable_id")}
           render={(val) => <b>{val || "---"}</b>}
         />
 
         <Table.Column
-          title="关联维修单 (Riparazione)"
+          title={translate("warranty.fields.associate")}
           render={(_, record: any) => (
             <Tag icon={<ToolOutlined />}>
               {record.repair_orders?.readable_id || "---"}
@@ -119,7 +120,7 @@ export const WarrantyList = () => {
         />
 
         <Table.Column
-          title="客户 (Cliente)"
+          title={translate("warranty.fields.customer")}
           render={(_, record: any) => (
             <Space>
               <UserOutlined />
@@ -133,12 +134,12 @@ export const WarrantyList = () => {
 
         <Table.Column
           dataIndex="status"
-          title="状态"
+          title={translate("warranty.fields.status")}
           render={(val) => getStatusTag(val)}
         />
 
         <Table.Column
-          title="保修期限 (Scadenza)"
+          title={translate("warranty.fields.duration")}
           width={200}
           render={(_, record: any) => {
             const percent = calculateProgress(
@@ -161,7 +162,11 @@ export const WarrantyList = () => {
                   <DateField value={record.end_date} format="MM/DD" />
                 </div>
                 <Tooltip
-                  title={isExpired ? "已过期" : `有效期至 ${record.end_date}`}
+                  title={
+                    isExpired
+                      ? translate("warranty.status.expired")
+                      : `${translate("warranty.text.until")} ${record.end_date}`
+                  }
                 >
                   <Progress
                     percent={percent}
@@ -177,14 +182,14 @@ export const WarrantyList = () => {
         />
 
         <Table.Column
-          title="售后记录"
+          title={translate("warranty.fields.claim")}
           dataIndex="claim_count"
           align="center"
           render={(val, record) =>
             val > 0 ? (
               <Space direction="vertical">
                 <Tag color="orange" icon={<HistoryOutlined />}>
-                  {val} 次
+                  {val} {translate("warranty.text.count")}
                 </Tag>
                 <DateField value={record.last_claim_date} format="DD/MM/YYYY" />
               </Space>
@@ -195,7 +200,7 @@ export const WarrantyList = () => {
         />
 
         <Table.Column
-          title="操作"
+          title={translate("table.actions")}
           render={(_, record: any) => (
             <Space>
               <ShowButton hideText size="small" recordItemId={record.id} />

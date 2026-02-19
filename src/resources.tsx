@@ -117,7 +117,7 @@ export const resources: ResourceProps[] = [
     show: "/supply-chain/orders/show/:id",
     edit: "/supply-chain/orders/edit/:id",
     meta: {
-      translateKey: "进货单 (PO",
+      translateKey: "resources.purchase_orders",
       icon: <ShoppingCartOutlined />,
       parent: "inventory",
     },
@@ -128,7 +128,7 @@ export const resources: ResourceProps[] = [
     create: "/supply-chain/entries/create",
     show: "/supply-chain/entries/show/:id",
     meta: {
-      translateKey: "入库记录",
+      translateKey: "resources.stock_entries",
       icon: <ImportOutlined />,
       parent: "inventory",
       canDelete: false, // 入库单严禁删除，保证账目可追溯

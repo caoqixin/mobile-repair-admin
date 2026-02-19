@@ -63,7 +63,7 @@ export const InventoryComponentsCreate = () => {
   return (
     <Create
       saveButtonProps={saveButtonProps}
-      title={translate("inventory_components.form.create.title")}
+      title={translate("inventory_components.titles.create")}
     >
       <Form {...formProps} onFinish={handleFinish} layout="vertical">
         <Row gutter={24}>

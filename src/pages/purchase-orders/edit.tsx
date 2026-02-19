@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { QUALITY } from "../../constants";
 import { IInventoryComponent } from "../../interface";
 import { FormLoader } from "../../components/loadings";
-import { deepEqual } from "../../lib/utils";
+import { deepEqual, formatCurrency } from "../../lib/utils";
 
 export const PurchaseOrderEdit = () => {
   const translate = useTranslate();
@@ -271,7 +271,9 @@ export const PurchaseOrderEdit = () => {
     <>
       <Edit
         saveButtonProps={{ ...saveButtonProps, onClick: () => form.submit() }}
-        title="编辑进货单 (Modifica Ordine)"
+        title={translate("purchase_orders.titles.edit", {
+          id: record?.readable_id,
+        })}
       >
         <Form
           {...formProps}
@@ -461,7 +463,7 @@ export const PurchaseOrderEdit = () => {
           <Divider />
           <Row justify="end">
             <div style={{ fontSize: 20, fontWeight: "bold" }}>
-              总计: € {totalCost.toFixed(2)}
+              总计: {formatCurrency(totalCost)}
             </div>
           </Row>
         </Form>

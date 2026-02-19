@@ -16,12 +16,17 @@ import {
 import { useState } from "react";
 import { REPAIR_STATUS_OPTIONS } from "../../constants";
 import { ListLoader } from "../../components/loadings";
+import { useTranslate } from "@refinedev/core";
+import { formatCurrency } from "../../lib/utils";
 
 const { Text } = Typography;
 
+type Tab = "active" | "history";
+
 export const RepairOrderList = () => {
+  const translate = useTranslate();
   // 定义当前选中的 Tab
-  const [activeTab, setActiveTab] = useState<"active" | "history">("active");
+  const [activeTab, setActiveTab] = useState<Tab>("active");
 
   const {
     tableProps,
@@ -102,7 +107,7 @@ export const RepairOrderList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("repair_orders.titles.list")}>
       <Tabs
         defaultActiveKey="active"
         activeKey={activeTab}
@@ -112,7 +117,7 @@ export const RepairOrderList = () => {
           {
             label: (
               <span>
-                <ThunderboltOutlined /> 进行中 (Active)
+                <ThunderboltOutlined /> {translate("repair_orders.tabs.active")}
               </span>
             ),
             key: "active",
@@ -120,7 +125,7 @@ export const RepairOrderList = () => {
           {
             label: (
               <span>
-                <HistoryOutlined /> 历史记录 (History)
+                <HistoryOutlined /> {translate("repair_orders.tabs.history")}
               </span>
             ),
             key: "history",
@@ -132,7 +137,7 @@ export const RepairOrderList = () => {
       <Form {...searchFormProps} layout="inline" style={{ marginBottom: 20 }}>
         <Form.Item name="q">
           <Input
-            placeholder="搜索单号 / IMEI / 客户名..."
+            placeholder={translate("filters.repair_orders.placeholder")}
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
             allowClear
@@ -145,7 +150,7 @@ export const RepairOrderList = () => {
             onClick={searchFormProps.form?.submit}
             icon={<SearchOutlined />}
           >
-            查询
+            {translate("filters.repair_orders.submitButton")}
           </Button>
         </Form.Item>
       </Form>
@@ -153,12 +158,12 @@ export const RepairOrderList = () => {
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="readable_id"
-          title="维修单号 (ID)"
+          title={translate("repair_orders.fields.readable_id")}
           render={(val) => <b>{val || "---"}</b>}
         />
 
         <Table.Column
-          title="设备信息 (Dispositivo)"
+          title={translate("repair_orders.fields.device")}
           render={(_, record: any) => (
             <Space direction="vertical" size={0}>
               <Text strong>
@@ -175,7 +180,7 @@ export const RepairOrderList = () => {
         />
 
         <Table.Column
-          title="客户 (Cliente)"
+          title={translate("repair_orders.fields.customer")}
           render={(_, record: any) => (
             <Space direction="vertical">
               <Text strong>
@@ -190,21 +195,23 @@ export const RepairOrderList = () => {
 
         <Table.Column
           dataIndex="status"
-          title="状态 (Stato)"
+          title={translate("repair_orders.fields.status")}
           render={(val) => {
             const conf = getStatusConfig(val);
             return <Tag color={conf.color}>{conf.label}</Tag>;
           }}
         />
         <Table.Column
-          title="费用"
+          title={translate("repair_orders.fields.total_price")}
           dataIndex="total_price"
           render={(val, record) =>
             val === 0 ? (
-              <Tag color="green">保修/免费</Tag>
+              <Tag color="green">
+                {translate("repair_orders.fields.warranty")}
+              </Tag>
             ) : (
               <Space direction="vertical">
-                <Text>€ {Number(val).toFixed(2)}</Text>
+                <Text>{formatCurrency(val)}</Text>
                 {record?.status === "delivered" && (
                   <Text type="secondary">{record?.payment_method}</Text>
                 )}
@@ -215,12 +222,12 @@ export const RepairOrderList = () => {
 
         <Table.Column
           dataIndex="created_at"
-          title="接单时间"
+          title={translate("repair_orders.fields.created_at")}
           render={(val) => <DateField value={val} format="MM-DD HH:mm" />}
         />
 
         <Table.Column
-          title="操作"
+          title={translate("table.actions")}
           render={(_, record: any) => (
             <Space>
               {record.status != "delivered" && (

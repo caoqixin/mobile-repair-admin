@@ -6,7 +6,7 @@ import {
   useModalForm,
   SaveButton,
 } from "@refinedev/antd";
-import { useCreateMany, useGetIdentity } from "@refinedev/core";
+import { useCreateMany, useGetIdentity, useTranslate } from "@refinedev/core";
 import {
   Form,
   Input,
@@ -40,6 +40,7 @@ import { ICustomer, IInventoryComponent } from "../../interface";
 import { CREATE_REPAIR_STATUS_OPTIONS } from "../../constants";
 
 export const RepairOrderCreate = () => {
+  const translate = useTranslate();
   const { data: userData } = useGetIdentity();
   const [newCustomerOption, setNewCustomerOption] = useState<{
     label: string;
@@ -253,9 +254,14 @@ export const RepairOrderCreate = () => {
         <Row gutter={16}>
           <Col span={20}>
             <Form.Item
-              label="选择客户 (Cliente)"
+              label={translate("repair_orders.form.customer.select")}
               name="customer_id"
-              rules={[{ required: true, message: "请选择或新建客户" }]}
+              rules={[
+                {
+                  required: true,
+                  message: translate("repair_orders.form.customer.errMessage"),
+                },
+              ]}
             >
               <Select
                 {...customerSelectProps}
@@ -264,7 +270,9 @@ export const RepairOrderCreate = () => {
                   ...(customerSelectProps.options || []),
                 ]}
                 showSearch
-                placeholder="搜索姓名或电话..."
+                placeholder={translate(
+                  "repair_orders.form.customer.placeholder",
+                )}
                 size="large"
               />
             </Form.Item>
@@ -277,13 +285,13 @@ export const RepairOrderCreate = () => {
               style={{ marginTop: 29, width: "100%" }}
               onClick={() => showCustomerModal()}
             >
-              新建
+              {translate("repair_orders.form.customer.button")}
             </Button>
           </Col>
         </Row>
-        <Divider plain>或</Divider>
+        <Divider plain>{translate("repair_orders.form.customer.or")}</Divider>
         <div style={{ textAlign: "center", color: "#999" }}>
-          如果未找到客户，请点击右侧按钮新建
+          {translate("repair_orders.form.customer.tips")}
         </div>
       </Card>
     );
@@ -293,14 +301,16 @@ export const RepairOrderCreate = () => {
     return (
       <Card variant="borderless">
         <Form.Item
-          label="设备型号 (Modello)"
+          label={translate("repair_orders.form.device.modelName")}
           name="model_id"
           rules={[{ required: true }]}
         >
           <Select
             {...modelSelectProps}
             showSearch
-            placeholder="输入型号搜索 (e.g. iPhone 13)"
+            placeholder={translate(
+              "repair_orders.form.device.modelPlaceholder",
+            )}
             size="large"
             popupRender={(menu) => (
               <>
@@ -312,19 +322,25 @@ export const RepairOrderCreate = () => {
                   icon={<PlusOutlined />}
                   onClick={() => showModelModal()}
                 >
-                  添加新机型
+                  {translate("repair_orders.form.device.newModel")}
                 </Button>
               </>
             )}
           />
         </Form.Item>
 
-        <Form.Item label="IMEI / 序列号" name="imei_sn">
-          <Input placeholder="扫描或输入 IMEI" size="large" />
+        <Form.Item
+          label={translate("repair_orders.form.device.imei_sn")}
+          name="imei_sn"
+        >
+          <Input
+            placeholder={translate("repair_orders.form.device.imeiPlaceholder")}
+            size="large"
+          />
         </Form.Item>
 
         <Form.Item
-          label="故障描述 (Problema)"
+          label={translate("repair_orders.form.device.problem")}
           name="problem_description"
           rules={[{ required: true }]}
         >
@@ -332,7 +348,9 @@ export const RepairOrderCreate = () => {
             {...faultSelectProps}
             labelInValue
             mode="multiple"
-            placeholder="选择故障现象 (可多选)"
+            placeholder={translate(
+              "repair_orders.form.device.problemPlaceholder",
+            )}
             size="large"
             onSearch={undefined}
             filterOption={true}
@@ -347,17 +365,22 @@ export const RepairOrderCreate = () => {
                   icon={<PlusOutlined />}
                   onClick={() => showFaultModal()}
                 >
-                  添加新故障类型
+                  {translate("repair_orders.form.device.newProblem")}
                 </Button>
               </>
             )}
           />
         </Form.Item>
         {/* 补充备注 */}
-        <Form.Item label="补充描述 (备注)" name="additional_notes">
+        <Form.Item
+          label={translate("repair_orders.form.device.notes")}
+          name="additional_notes"
+        >
           <Input.TextArea
             rows={2}
-            placeholder="例如：客户保留贴膜，后盖有划痕..."
+            placeholder={translate(
+              "repair_orders.form.device.notesPlaceholder",
+            )}
           />
         </Form.Item>
       </Card>
@@ -368,17 +391,19 @@ export const RepairOrderCreate = () => {
     return (
       <Card variant="borderless">
         <Row gutter={24}>
-          {/* 🔥 新增：状态选择 */}
+          {/* 状态选择 */}
           <Col span={24}>
             <Form.Item
-              label="初始状态 (Stato Iniziale)"
+              label={translate("repair_orders.form.price.status")}
               name="status"
               initialValue="pending_check"
               rules={[{ required: true }]}
             >
               <Select
                 options={CREATE_REPAIR_STATUS_OPTIONS}
-                placeholder="选择当前状态"
+                placeholder={translate(
+                  "repair_orders.form.price.statusPlaceholder",
+                )}
                 // 可以在这里自定义渲染，带上颜色Tag
                 optionRender={(option) => (
                   <Space>
@@ -393,23 +418,34 @@ export const RepairOrderCreate = () => {
         <Row gutter={24}>
           <Col span={12}>
             <Form.Item
-              label="维修价格 (€)"
+              label={translate("repair_orders.form.price.totalPrice")}
               name="total_price"
               initialValue={0}
-              rules={[{ required: true, message: "请输入维修价格" }]}
-              help="默认自动计算配件费，可手动修改包含人工费"
+              rules={[
+                {
+                  required: true,
+                  message: translate("repair_orders.form.price.ruleMessage"),
+                },
+              ]}
+              help={translate("repair_orders.form.price.help")}
             >
               <InputNumber
                 prefix="€"
                 style={{ width: "100%" }}
                 min={0}
                 size="large"
-                placeholder="最终向客户收取的金额"
+                placeholder={translate(
+                  "repair_orders.form.price.pricePlaceholder",
+                )}
               />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="预收定金 (€)" name="deposit" initialValue={0}>
+            <Form.Item
+              label={translate("repair_orders.form.price.deposit")}
+              name="deposit"
+              initialValue={0}
+            >
               <InputNumber
                 prefix="€"
                 style={{ width: "100%" }}
@@ -420,7 +456,9 @@ export const RepairOrderCreate = () => {
           </Col>
         </Row>
 
-        <Divider orientation="left">所需配件 (可选)</Divider>
+        <Divider orientation="left">
+          {translate("repair_orders.form.price.components")}
+        </Divider>
         <Form.List name="parts">
           {(fields, { add, remove }) => (
             <>
@@ -439,7 +477,9 @@ export const RepairOrderCreate = () => {
                     >
                       <Select
                         {...componentSelectProps}
-                        placeholder="选择配件"
+                        placeholder={translate(
+                          "repair_orders.form.price.component",
+                        )}
                         size="large"
                         style={{ width: "100%" }}
                         showSearch
@@ -454,7 +494,9 @@ export const RepairOrderCreate = () => {
                     >
                       <InputNumber
                         prefix="€"
-                        placeholder="单价"
+                        placeholder={translate(
+                          "repair_orders.form.price.price",
+                        )}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -468,7 +510,9 @@ export const RepairOrderCreate = () => {
                     >
                       <InputNumber
                         min={1}
-                        placeholder="数量"
+                        placeholder={translate(
+                          "repair_orders.form.price.quantity",
+                        )}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -489,7 +533,7 @@ export const RepairOrderCreate = () => {
                 block
                 icon={<PlusOutlined />}
               >
-                添加配件
+                {translate("repair_orders.form.price.add")}
               </Button>
             </>
           )}
@@ -510,7 +554,7 @@ export const RepairOrderCreate = () => {
     // 合并 Model Options
     const modelLabel =
       modelSelectProps.options?.find((o) => o.value === values.model_id)
-        ?.label || "未知型号";
+        ?.label || translate("repair_orders.form.check.unknownModel");
 
     // 处理故障显示
     const faultLabels = (values.problem_description || [])
@@ -524,55 +568,79 @@ export const RepairOrderCreate = () => {
 
     return (
       <Card variant="borderless">
-        <Descriptions title="核对维修单信息" bordered column={1}>
-          <Descriptions.Item label="客户姓名">
+        <Descriptions
+          title={translate("repair_orders.form.check.title")}
+          bordered
+          column={1}
+        >
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.customerName")}
+          >
             {customer?.[0]}
           </Descriptions.Item>
-          <Descriptions.Item label="联系号码">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.phone")}
+          >
             {customer?.[1]}
           </Descriptions.Item>
-          <Descriptions.Item label="设备型号">{modelLabel}</Descriptions.Item>
-          <Descriptions.Item label="IMEI / SN">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.device")}
+          >
+            {modelLabel}
+          </Descriptions.Item>
+          <Descriptions.Item label={translate("repair_orders.form.check.imei")}>
             {values.imei_sn || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="故障描述">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.problem")}
+          >
             <Typography.Text strong>{faultLabels}</Typography.Text>
             {values.additional_notes && (
               <div style={{ fontSize: 12, color: "#999" }}>
-                备注: {values.additional_notes}
+                {translate("repair_orders.form.check.note")}:
+                {values.additional_notes}
               </div>
             )}
           </Descriptions.Item>
-          <Descriptions.Item label="维修费">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.total_price")}
+          >
             € {values.total_price}
           </Descriptions.Item>
-          <Descriptions.Item label="预收定金">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.deposit")}
+          >
             € {values.deposit}
           </Descriptions.Item>
-          <Descriptions.Item label="维修配件">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.component")}
+          >
             {(values.parts || []).length === 0 ? (
-              "无"
+              translate("repair_orders.form.check.no")
             ) : (
               <ul style={{ paddingLeft: 20, margin: 0 }}>
                 {values.parts.map((p: any, idx: number) => {
                   if (!p?.component_id) {
-                    return "无";
+                    return translate("repair_orders.form.check.no");
                   }
                   // 尝试查找配件名
                   const compName =
                     componentSelectProps.options?.find(
                       (o) => o.value === p.component_id,
-                    )?.label || "未知配件";
+                    )?.label ||
+                    translate("repair_orders.form.check.unkownComponent");
                   return (
                     <li key={idx}>
-                      {compName} x {p.quantity} (€{p.unit_price})
+                      {compName} x {p.quantity} (€ {p.unit_price})
                     </li>
                   );
                 })}
               </ul>
             )}
           </Descriptions.Item>
-          <Descriptions.Item label="维修状态">
+          <Descriptions.Item
+            label={translate("repair_orders.form.check.status")}
+          >
             {
               CREATE_REPAIR_STATUS_OPTIONS.find(
                 (option) => option.value == values?.status,
@@ -594,7 +662,7 @@ export const RepairOrderCreate = () => {
   return (
     <>
       <Create
-        title="新建维修单 (Nuova Riparazione)"
+        title={translate("repair_orders.titles.create")}
         footerButtons={
           <>
             {current > 0 && (
@@ -604,7 +672,7 @@ export const RepairOrderCreate = () => {
                 }}
                 icon={<StepBackwardOutlined />}
               >
-                上一步
+                {translate("buttons.previous")}
               </Button>
             )}
             {current < formList.length - 1 && (
@@ -615,7 +683,7 @@ export const RepairOrderCreate = () => {
                 icon={<StepForwardOutlined />}
                 iconPosition="end"
               >
-                下一步
+                {translate("buttons.next")}
               </Button>
             )}
             {current === formList.length - 1 && (
@@ -625,10 +693,22 @@ export const RepairOrderCreate = () => {
         }
       >
         <Steps {...stepsProps} size="small" style={{ marginBottom: 24 }}>
-          <Steps.Step title="客户信息" icon={<UserOutlined />} />
-          <Steps.Step title="设备故障" icon={<MobileOutlined />} />
-          <Steps.Step title="报价与配件" icon={<DollarOutlined />} />
-          <Steps.Step title="核对" icon={<CheckCircleOutlined />} />
+          <Steps.Step
+            title={translate("repair_orders.steps.customer")}
+            icon={<UserOutlined />}
+          />
+          <Steps.Step
+            title={translate("repair_orders.steps.device")}
+            icon={<MobileOutlined />}
+          />
+          <Steps.Step
+            title={translate("repair_orders.steps.price")}
+            icon={<DollarOutlined />}
+          />
+          <Steps.Step
+            title={translate("repair_orders.steps.check")}
+            icon={<CheckCircleOutlined />}
+          />
         </Steps>
 
         <Form {...formProps} layout="vertical">
@@ -636,33 +716,78 @@ export const RepairOrderCreate = () => {
         </Form>
       </Create>
       {/* 新建客户弹窗 */}
-      <Modal {...createCustomerModalProps} title="快速新建客户">
+      <Modal
+        {...createCustomerModalProps}
+        title={translate("repair_orders.customerModal.title")}
+      >
         <Form {...createCustomerFormProps} layout="vertical">
-          <Form.Item label="姓名" name="full_name" rules={[{ required: true }]}>
+          <Form.Item
+            label={translate("repair_orders.customerModal.name")}
+            name="full_name"
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="电话" name="phone">
+          <Form.Item
+            label={translate("repair_orders.customerModal.phone")}
+            name="phone"
+          >
             <Input />
           </Form.Item>
         </Form>
       </Modal>
-      <Modal {...createModelModalProps} title="新建设备型号">
+      <Modal
+        {...createModelModalProps}
+        title={translate("repair_orders.modelModal.title")}
+      >
         <Form {...createModelFormProps} layout="vertical">
-          <Form.Item label="型号名称" name="name" rules={[{ required: true }]}>
-            <Input placeholder="例如 iPhone 15 Pro" />
+          <Form.Item
+            label={translate("repair_orders.modelModal.modelName")}
+            name="name"
+            rules={[{ required: true }]}
+          >
+            <Input
+              placeholder={translate(
+                "repair_orders.modelModal.modelPlaceholder",
+              )}
+            />
           </Form.Item>
-          <Form.Item label="品牌" name="brand_id" rules={[{ required: true }]}>
-            <Select {...brandSelectProps} showSearch placeholder="选择品牌名" />
+          <Form.Item
+            label={translate("repair_orders.modelModal.brandName")}
+            name="brand_id"
+            rules={[{ required: true }]}
+          >
+            <Select
+              {...brandSelectProps}
+              showSearch
+              placeholder={translate(
+                "repair_orders.modelModal.brandPlaceholder",
+              )}
+            />
           </Form.Item>
         </Form>
       </Modal>
 
-      <Modal {...createFaultModalProps} title="新建故障类型">
+      <Modal
+        {...createFaultModalProps}
+        title={translate("repair_orders.faultModal.title")}
+      >
         <Form {...createFaultFormProps} layout="vertical">
-          <Form.Item label="故障名称" name="name" rules={[{ required: true }]}>
-            <Input placeholder="例如 屏幕破碎" />
+          <Form.Item
+            label={translate("repair_orders.faultModal.name")}
+            name="name"
+            rules={[{ required: true }]}
+          >
+            <Input
+              placeholder={translate(
+                "repair_orders.faultModal.namePlaceholder",
+              )}
+            />
           </Form.Item>
-          <Form.Item label="描述" name="description">
+          <Form.Item
+            label={translate("repair_orders.faultModal.description")}
+            name="description"
+          >
             <Input.TextArea />
           </Form.Item>
         </Form>

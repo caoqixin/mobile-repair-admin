@@ -19,10 +19,13 @@ import {
   CloseCircleOutlined,
   ThunderboltOutlined,
 } from "@ant-design/icons";
+import { useTranslate } from "@refinedev/core";
+import { formatCurrency } from "../../lib/utils";
 
 const { Title, Text } = Typography;
 
 export const Quote = () => {
+  const translate = useTranslate();
   // --- 状态管理 ---
   const [selectedModel, setSelectedModel] = useState<number | null>(null);
 
@@ -102,17 +105,17 @@ export const Quote = () => {
         {/* 顶部极简搜索区 */}
         <div style={{ textAlign: "center", marginBottom: 20 }}>
           <Title level={3} style={{ marginBottom: 8 }}>
-            <ThunderboltOutlined style={{ color: "#faad14" }} /> 极速报价
-            (Preventivo)
+            <ThunderboltOutlined style={{ color: "#faad14" }} />{" "}
+            {translate("quote.title")}
           </Title>
-          <Text type="secondary">输入型号，立获取维修底价</Text>
+          <Text type="secondary">{translate("quote.description")}</Text>
         </div>
 
         <div style={{ maxWidth: 500, margin: "0 auto 32px" }}>
           <Select
             {...modelSelectProps}
             showSearch
-            placeholder="输入型号搜索 (例如: iPhone 13...)"
+            placeholder={translate("quote.placeholder")}
             size="large"
             style={{ width: "100%" }}
             filterOption={false}
@@ -127,7 +130,7 @@ export const Quote = () => {
         {!selectedModel ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description="等待输入型号..."
+            description={translate("quote.pendingSearch")}
             style={{ color: "#999" }}
           />
         ) : (
@@ -137,11 +140,11 @@ export const Quote = () => {
             pagination={false}
             size="middle"
             loading={isLoading}
-            locale={{ emptyText: "该机型暂无匹配配件数据" }}
+            locale={{ emptyText: translate("quote.emptyResult") }}
           >
             {/* 配件名称 */}
             <Table.Column
-              title="配件名称 (Componente)"
+              title={translate("quote.fields.name")}
               render={(_, record: any) => {
                 const comp = record.inventory_components;
                 return (
@@ -164,7 +167,7 @@ export const Quote = () => {
 
             {/* 库存状态 */}
             <Table.Column
-              title="库存"
+              title={translate("quote.fields.quantity")}
               align="center"
               width={100}
               render={(_, record: any) => {
@@ -174,14 +177,15 @@ export const Quote = () => {
                     color="success"
                     style={{ width: "100%", textAlign: "center" }}
                   >
-                    <CheckCircleOutlined /> 有货 ({stock})
+                    <CheckCircleOutlined /> {translate("quote.fields.inStock")}(
+                    {stock})
                   </Tag>
                 ) : (
                   <Tag
                     color="error"
                     style={{ width: "100%", textAlign: "center" }}
                   >
-                    <CloseCircleOutlined /> 缺货
+                    <CloseCircleOutlined /> {translate("quote.fields.outStock")}
                   </Tag>
                 );
               }}
@@ -189,36 +193,34 @@ export const Quote = () => {
 
             {/* 维修报价 (重点) */}
             <Table.Column
-              title="维修价 (Retail)"
+              title={translate("quote.fields.retail_price")}
               align="right"
               render={(_, record: any) => (
                 <Text strong style={{ fontSize: 20, color: "#3f8600" }}>
-                  €{" "}
-                  {Number(
+                  {formatCurrency(
                     record.inventory_components?.suggested_repair_price,
-                  ).toFixed(2)}
+                  )}
                 </Text>
               )}
             />
 
             {/* 同行价 (隐蔽) */}
             <Table.Column
-              title="同行价"
+              title={translate("quote.fields.collabor_price")}
               align="right"
               responsive={["sm"]}
               render={(_, record: any) => (
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  €{" "}
-                  {Number(
+                  {formatCurrency(
                     record.inventory_components?.partner_repair_price,
-                  ).toFixed(2)}
+                  )}
                 </Text>
               )}
             />
 
             {/* 操作 */}
             <Table.Column
-              title="操作"
+              title={translate("table.actions")}
               align="center"
               width={80}
               render={(_, record: any) => (

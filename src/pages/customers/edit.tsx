@@ -1,18 +1,20 @@
 import { Edit, useForm } from "@refinedev/antd";
 import { useTranslate } from "@refinedev/core";
 import { Form, Input } from "antd";
+import { ICustomer } from "../../interface";
 
 export const CustomerEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps, query, formLoading } = useForm();
+  const { formProps, saveButtonProps, query, formLoading } =
+    useForm<ICustomer>();
 
   return (
     <Edit
       isLoading={formLoading}
       saveButtonProps={saveButtonProps}
-      title={`${translate("customers.form.edit.title")}${
-        query?.data?.data.full_name
-      }`}
+      title={translate("customers.titles.edit", {
+        name: query?.data?.data.full_name,
+      })}
     >
       <Form {...formProps} layout="vertical">
         <Form.Item

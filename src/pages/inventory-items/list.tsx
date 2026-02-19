@@ -80,7 +80,7 @@ export const InventoryItemsList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("inventory_items.titles.list")}>
       <Card variant="borderless" styles={{ body: { padding: "24px" } }}>
         <Form
           {...searchFormProps}

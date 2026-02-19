@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Create, useForm, useSelect } from "@refinedev/antd";
-import { useCreateMany, useGetIdentity } from "@refinedev/core";
+import { useCreateMany, useGetIdentity, useTranslate } from "@refinedev/core";
 import {
   Form,
   Input,
@@ -23,8 +23,11 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { IInventoryComponent } from "../../interface";
+import { STOCK_ENTRY_OPTIONS } from "../../constants";
+import { formatCurrency } from "../../lib/utils";
 
 export const StockEntriesCreate = () => {
+  const translate = useTranslate();
   const { data: user } = useGetIdentity();
   const [totalCost, setTotalCost] = useState(0);
   const itemsRef = useRef([]);
@@ -70,7 +73,7 @@ export const StockEntriesCreate = () => {
         },
         {
           onSuccess: () => {
-            message.success("入库单及明细创建成功！");
+            message.success(translate("stock_entries.message.success"));
           },
         },
       );
@@ -109,7 +112,7 @@ export const StockEntriesCreate = () => {
   return (
     <Create
       saveButtonProps={{ ...saveButtonProps, onClick: form.submit }}
-      title="手动入库 (Entrata Manuale)"
+      title={translate("stock_entries.titles.create")}
     >
       <Form
         {...formProps}
@@ -125,33 +128,43 @@ export const StockEntriesCreate = () => {
         <Row gutter={24}>
           <Col span={12}>
             <Form.Item
-              label="关联单号 / 备注 (Riferimento)"
+              label={translate("stock_entries.fields.reference_number")}
               name="reference_number"
               rules={[
-                { required: true, message: "请填写备注，如'盘盈'或'退货单号'" },
+                {
+                  required: true,
+                  message: translate("stock_entries.rules.reference_number"),
+                },
               ]}
-              help="例如: ADJ-2026-001 或 退货-Mario"
+              help={translate("stock_entries.help.reference_number")}
             >
-              <Input prefix={<InboxOutlined />} placeholder="输入单号..." />
+              <Input
+                prefix={<InboxOutlined />}
+                placeholder={translate(
+                  "stock_entries.placeholder.reference_number",
+                )}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="入库类型 (Tipo)"
+              label={translate("stock_entries.fields.type")}
               name="type"
               rules={[{ required: true }]}
             >
               <Select
-                options={[
-                  { label: "Adjustment (库存盘盈)", value: "adjust" },
-                  { label: "Customer Return (客户退货)", value: "return" },
-                ]}
+                options={STOCK_ENTRY_OPTIONS.map((o) => ({
+                  ...o,
+                  label: translate(o.label),
+                }))}
               />
             </Form.Item>
           </Col>
         </Row>
 
-        <Divider orientation="left">入库明细 (Dettagli)</Divider>
+        <Divider orientation="left">
+          {translate("stock_entries.detail.title")}
+        </Divider>
 
         {/* --- Items: 动态列表 (复用 PO 逻辑) --- */}
         <Form.List name="items">
@@ -173,10 +186,12 @@ export const StockEntriesCreate = () => {
                       >
                         <Radio.Group buttonStyle="solid" size="small">
                           <Radio.Button value="component">
-                            <ToolOutlined /> 维修配件
+                            <ToolOutlined />
+                            {translate("stock_entries.detail.buttons.tool")}
                           </Radio.Button>
                           <Radio.Button value="item">
-                            <ShoppingCartOutlined /> 零售商品
+                            <ShoppingCartOutlined />
+                            {translate("stock_entries.detail.buttons.shop")}
                           </Radio.Button>
                         </Radio.Group>
                       </Form.Item>
@@ -195,10 +210,17 @@ export const StockEntriesCreate = () => {
                           return (
                             <Form.Item
                               {...restField}
-                              label="产品名称"
+                              label={translate(
+                                "stock_entries.detail.fields.name",
+                              )}
                               name={[name, "product_id"]}
                               rules={[
-                                { required: true, message: "请选择产品" },
+                                {
+                                  required: true,
+                                  message: translate(
+                                    "stock_entries.detail.rules.name",
+                                  ),
+                                },
                               ]}
                             >
                               <Select
@@ -208,7 +230,9 @@ export const StockEntriesCreate = () => {
                                 labelInValue // 关键：保存 { value, label }
                                 showSearch
                                 filterOption={false}
-                                placeholder="搜索产品..."
+                                placeholder={translate(
+                                  "stock_entries.detail.placeholder.name",
+                                )}
                               />
                             </Form.Item>
                           );
@@ -220,7 +244,9 @@ export const StockEntriesCreate = () => {
                     <Col span={6}>
                       <Form.Item
                         {...restField}
-                        label="入库数量"
+                        label={translate(
+                          "stock_entries.detail.fields.quantity",
+                        )}
                         name={[name, "quantity"]}
                         rules={[{ required: true }]}
                       >
@@ -232,7 +258,9 @@ export const StockEntriesCreate = () => {
                     <Col span={6}>
                       <Form.Item
                         {...restField}
-                        label="单项成本 (€)"
+                        label={translate(
+                          "stock_entries.detail.fields.cost_price",
+                        )}
                         name={[name, "cost_price"]}
                         rules={[{ required: true }]}
                       >
@@ -267,7 +295,7 @@ export const StockEntriesCreate = () => {
                   block
                   icon={<PlusOutlined />}
                 >
-                  添加维修配件
+                  {translate("stock_entries.detail.buttons.addTool")}
                 </Button>
                 <Button
                   type="dashed"
@@ -277,7 +305,7 @@ export const StockEntriesCreate = () => {
                   block
                   icon={<PlusOutlined />}
                 >
-                  添加前台配件
+                  {translate("stock_entries.detail.buttons.addShop")}
                 </Button>
               </Flex>
             </>
@@ -287,9 +315,9 @@ export const StockEntriesCreate = () => {
         <Divider />
         <Row justify="end">
           <div style={{ fontSize: 18, color: "#666" }}>
-            入库总价值:{" "}
+            {translate("stock_entries.detail.totalText")}:{" "}
             <span style={{ color: "#000", fontWeight: "bold" }}>
-              € {totalCost.toFixed(2)}
+              {formatCurrency(totalCost)}
             </span>
           </div>
         </Row>

@@ -2,10 +2,13 @@ import { List, useTable, ShowButton, DateField } from "@refinedev/antd";
 import { Table, Tag, Typography } from "antd";
 import { PAYMENT_MAP } from "../../constants";
 import { PaymentMethod } from "../../interface";
+import { useTranslate } from "@refinedev/core";
+import { formatCurrency } from "../../lib/utils";
 
 const { Text } = Typography;
 
 export const SalesOrderList = () => {
+  const translate = useTranslate();
   const { tableProps } = useTable({
     syncWithLocation: true,
     meta: {
@@ -33,32 +36,32 @@ export const SalesOrderList = () => {
   };
 
   return (
-    <List>
+    <List title={translate("sales_orders.titles.list")}>
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="readable_id"
-          title="订单号 (ID)"
+          title={translate("sales_orders.fields.readable_id")}
           render={(val) => <b>{val || "---"}</b>}
         />
 
         <Table.Column
           dataIndex="total_amount"
-          title="金额 (Totale)"
+          title={translate("sales_orders.fields.total_amount")}
           render={(val) => (
             <Text strong style={{ color: "#3f8600" }}>
-              € {Number(val).toFixed(2)}
+              {formatCurrency(val)}
             </Text>
           )}
         />
 
         <Table.Column
           dataIndex="payment_method"
-          title="支付方式"
+          title={translate("sales_orders.fields.payment_method")}
           render={(val) => getPaymentTag(val)}
         />
 
         <Table.Column
-          title="销售员"
+          title={translate("sales_orders.fields.profile")}
           render={(_, record: any) =>
             record.profiles?.full_name ?? record.profiles?.email
           }
@@ -66,12 +69,12 @@ export const SalesOrderList = () => {
 
         <Table.Column
           dataIndex="created_at"
-          title="时间"
+          title={translate("sales_orders.fields.created_at")}
           render={(val) => <DateField value={val} format="MM/DD/YYYY HH:mm" />}
         />
 
         <Table.Column
-          title="操作"
+          title={translate("table.actions")}
           render={(_, record: any) => (
             <ShowButton hideText size="small" recordItemId={record.id} />
           )}

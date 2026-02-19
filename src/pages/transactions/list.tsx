@@ -47,7 +47,7 @@ export const TransactionsList = () => {
   }
 
   return (
-    <List resource="transactions">
+    <List resource="transactions" title={translate("transactions.titles.list")}>
       <FinancialStats />
       <Table
         {...tableProps}
@@ -82,8 +82,14 @@ export const TransactionsList = () => {
                 style={{ width: 200 }}
                 placeholder="筛选类型"
                 options={[
-                  { label: "收入 (Income)", value: "income" },
-                  { label: "支出 (Expense)", value: "expense" },
+                  {
+                    label: translate("transactions.options.income"),
+                    value: "income",
+                  },
+                  {
+                    label: translate("transactions.options.expense"),
+                    value: "expense",
+                  },
                 ]}
               />
             </FilterDropdown>
@@ -94,8 +100,8 @@ export const TransactionsList = () => {
               <Tag color={isIncome ? "success" : "error"}>
                 {isIncome ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
                 {isIncome
-                  ? translate("transactions.fields.income")
-                  : translate("transactions.fields.expense")}
+                  ? translate("transactions.options.income")
+                  : translate("transactions.options.expense")}
               </Tag>
             );
           }}

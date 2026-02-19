@@ -21,6 +21,7 @@ import { useRef, useState } from "react";
 import { QUALITY_OPTIONS } from "../../constants";
 import { IInventoryComponent } from "../../interface";
 import { useInventoryOptions } from "../../hooks/useInventoryOptions";
+import { formatCurrency } from "../../lib/utils";
 
 export const PurchaseOrderCreate = () => {
   // 用于联动：选了品牌后，机型下拉框只显示该品牌的机型
@@ -189,7 +190,7 @@ export const PurchaseOrderCreate = () => {
     <>
       <Create
         saveButtonProps={saveButtonProps}
-        title="新建进货单 (Nuovo Ordine)"
+        title={translate("purchase_orders.titles.create")}
       >
         <Form
           {...formProps}
@@ -392,7 +393,7 @@ export const PurchaseOrderCreate = () => {
           <Divider />
           <Row justify="end">
             <div style={{ fontSize: 20, fontWeight: "bold" }}>
-              总计: € {totalCost.toFixed(2)}
+              总计: {formatCurrency(totalCost)}
             </div>
           </Row>
         </Form>

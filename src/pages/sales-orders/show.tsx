@@ -1,15 +1,38 @@
-import { useShow } from "@refinedev/core";
+import { useState, useRef } from "react";
+import { useTranslation as usei18nextTranslation } from "react-i18next";
+import { useShow, useTranslation } from "@refinedev/core";
 import { Show } from "@refinedev/antd";
-import { Typography, Card, Divider, Table, Row, Col, Tag, Button } from "antd";
-import { PrinterOutlined, ShopOutlined } from "@ant-design/icons";
-import { useRef } from "react";
+import {
+  Typography,
+  Card,
+  Divider,
+  Table,
+  Row,
+  Col,
+  Tag,
+  Button,
+  Flex,
+} from "antd";
+import {
+  PrinterOutlined,
+  ShopOutlined,
+  TranslationOutlined,
+} from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
+import dayjs from "dayjs";
+import { formatCurrency } from "../../lib/utils";
 
 const { Title, Text } = Typography;
 
 export const SalesOrderShow = () => {
+  const { translate } = useTranslation();
+  const { i18n } = usei18nextTranslation();
+  // 控制是否显示中文，默认 false (仅显示意大利语)
+  const [showChinese, setShowChinese] = useState(false);
+
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
+
   const { query } = useShow({
     meta: {
       select: "*, sales_order_items(*, inventory_items(name, sku))",
@@ -17,141 +40,232 @@ export const SalesOrderShow = () => {
   });
   const { data, isLoading } = query;
   const record = data?.data;
+  const currentLocale = i18n.language;
+
+  // 辅助函数：用于渲染双语文本
+  const renderBilingual = (it: string, zh: string, isBlock = false) => {
+    if (!showChinese) return <>{it}</>;
+    if (isBlock) {
+      return (
+        <>
+          <div>{it}</div>
+          <div
+            style={{
+              fontSize: "0.85em",
+              color: "#8c8c8c",
+              fontWeight: "normal",
+            }}
+          >
+            {zh}
+          </div>
+        </>
+      );
+    }
+    return (
+      <>
+        {it} <span style={{ fontSize: "0.9em", color: "#8c8c8c" }}>({zh})</span>
+      </>
+    );
+  };
 
   return (
     <Show
       isLoading={isLoading}
-      title="订单详情"
-      // 添加打印按钮（逻辑需额外实现，这里仅做UI）
+      title={translate("sales_orders.titles.show")}
       headerButtons={({ defaultButtons }) => (
         <>
-          <Button type="dashed" onClick={reactToPrintFn}>
-            <PrinterOutlined /> 打印小票
+          {/* 添加中文切换按钮 */}
+          {currentLocale === "zh" && (
+            <Button
+              onClick={() => setShowChinese(!showChinese)}
+              icon={<TranslationOutlined />}
+            >
+              {showChinese ? "隐藏中文" : "添加中文"}
+            </Button>
+          )}
+          <Button
+            type="primary"
+            onClick={reactToPrintFn}
+            icon={<PrinterOutlined />}
+          >
+            {translate("sales_orders.show.print")}
           </Button>
           {defaultButtons}
         </>
       )}
     >
-      <div ref={contentRef} style={{ maxWidth: 800, margin: "0 auto" }}>
-        <Card
-          variant="borderless"
-          className="invoice-box"
-          style={{ padding: 24 }}
-        >
-          {/* Header */}
+      <div
+        ref={contentRef}
+        style={{
+          maxWidth: 800,
+          margin: "0 auto",
+          backgroundColor: "#fff",
+          padding: "20px 0",
+        }}
+      >
+        <Card variant="borderless" style={{ padding: "0 24px" }}>
+          {/* Header：店铺信息 */}
           <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <Title level={3} style={{ marginBottom: 0 }}>
-              <ShopOutlined /> {import.meta.env.VITE_APP_STORE_NAME}
+            <Title level={2} style={{ marginBottom: 8, letterSpacing: 1 }}>
+              <ShopOutlined style={{ marginRight: 8 }} />
+              {import.meta.env.VITE_APP_STORE_NAME || "NOME DEL NEGOZIO"}
             </Title>
-            <Text type="secondary">
-              {import.meta.env.VITE_APP_STORE_ADDRESS}
+            <Text type="secondary" style={{ display: "block", fontSize: 16 }}>
+              {import.meta.env.VITE_APP_STORE_ADDRESS ||
+                "Indirizzo del negozio"}
             </Text>
-            <br />
-            <Text type="secondary">
-              Tel: {import.meta.env.VITE_APP_STORE_TEL}
+            <Text
+              type="secondary"
+              style={{ display: "block", fontSize: 14, marginTop: 4 }}
+            >
+              Tel: {import.meta.env.VITE_APP_STORE_TEL || "1234567890"}
             </Text>
           </div>
 
-          {/* Order Info */}
-          <Row gutter={24} style={{ marginBottom: 24 }}>
-            <Col span={12} style={{ textAlign: "right" }}>
-              <Text type="secondary">单号 (Ordine #): </Text>
-              <Text strong>{record?.readable_id}</Text>
-              <br />
-              <Text type="secondary">
-                {new Date(record?.created_at).toLocaleString()}
-              </Text>
-            </Col>
-          </Row>
+          {/* Order Info：订单基础信息 */}
+          <div
+            style={{
+              backgroundColor: "#f8f9fa",
+              padding: "16px 24px",
+              borderRadius: 8,
+              marginBottom: 24,
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <div>
+                <Text
+                  type="secondary"
+                  style={{ display: "block", marginBottom: 4 }}
+                >
+                  {renderBilingual("Ordine N.", "单号")}
+                </Text>
+                <Text strong style={{ fontSize: 16 }}>
+                  {record?.readable_id || "-"}
+                </Text>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <Text
+                  type="secondary"
+                  style={{ display: "block", marginBottom: 4 }}
+                >
+                  {renderBilingual("Data", "日期")}
+                </Text>
+                <Text strong style={{ fontSize: 16 }}>
+                  {record?.created_at
+                    ? dayjs(record.created_at).format("DD/MM/YYYY HH:mm")
+                    : "-"}
+                </Text>
+              </div>
+            </Flex>
+          </div>
 
-          {/* Items Table */}
+          {/* Items Table：商品列表 */}
           <Table
-            dataSource={record?.sales_order_items}
+            dataSource={record?.sales_order_items || []}
             rowKey="id"
             pagination={false}
-            size="small"
+            size="middle"
             bordered={false}
+            className="invoice-table" // 如果你有全局样式可以利用这个 class
           >
             <Table.Column
-              title="商品 (Prodotto)"
+              title={renderBilingual("Prodotto", "商品", true)}
               render={(_, item: any) => (
                 <div>
-                  <Text>{item.inventory_items?.name}</Text>
+                  <Text strong style={{ fontSize: 14 }}>
+                    {item.inventory_items?.name || "Prodotto Sconosciuto"}
+                  </Text>
                   <br />
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    {item.inventory_items?.sku}
+                    SKU: {item.inventory_items?.sku || "-"}
                   </Text>
                 </div>
               )}
             />
             <Table.Column
-              title="数量"
+              title={renderBilingual("Qtà", "数量", true)}
               dataIndex="quantity"
               align="center"
-              render={(val) => `x${val}`}
+              render={(val) => <Text strong>x{val}</Text>}
             />
             <Table.Column
-              title="单价"
+              title={renderBilingual("Prezzo", "单价", true)}
               dataIndex="unit_price"
               align="right"
-              render={(val) => `€ ${Number(val).toFixed(2)}`}
+              render={(val) => formatCurrency(val)}
             />
             <Table.Column
-              title="小计"
+              title={renderBilingual("Subtotale", "小计", true)}
               align="right"
               render={(_, item: any) => (
                 <Text strong>
-                  € {(item.quantity * item.unit_price).toFixed(2)}
+                  {formatCurrency(
+                    (item.quantity || 0) * (item.unit_price || 0),
+                  )}
                 </Text>
               )}
             />
           </Table>
 
-          <Divider />
+          <Divider style={{ margin: "24px 0" }} />
 
-          {/* Total */}
+          {/* Total Section：结算金额 */}
           <Row justify="end">
-            <Col span={12}>
+            <Col xs={24} sm={16} md={12}>
+              <Flex
+                justify="space-between"
+                align="center"
+                style={{ marginBottom: 12 }}
+              >
+                <Text type="secondary">
+                  {renderBilingual("Metodo di Pagamento", "支付方式")}:
+                </Text>
+                <Tag
+                  color="blue"
+                  bordered={false}
+                  style={{ margin: 0, fontSize: 14, padding: "2px 8px" }}
+                >
+                  {record?.payment_method?.toUpperCase() || "-"}
+                </Tag>
+              </Flex>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: 8,
+                  alignItems: "center",
+                  backgroundColor: "#f6ffed", // Ant Design 浅绿色背景
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  border: "1px solid #b7eb8f", // Ant Design 绿色边框
                 }}
               >
-                <Text>支付方式 (Pagamento):</Text>
-                <Tag>{record?.payment_method?.toUpperCase()}</Tag>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: 18,
-                }}
-              >
-                <Text strong>总计 (TOTALE):</Text>
-                <Text strong style={{ color: "#3f8600" }}>
-                  € {Number(record?.total_amount).toFixed(2)}
+                <Text strong style={{ fontSize: 18 }}>
+                  {renderBilingual("TOTALE", "总计")}:
+                </Text>
+                <Text strong style={{ color: "#3f8600", fontSize: 24 }}>
+                  {formatCurrency(record?.total_amount || 0)}
                 </Text>
               </div>
             </Col>
           </Row>
 
-          {/* Footer */}
+          {/* Footer：底部感谢语 */}
           <div
             style={{
               textAlign: "center",
-              marginTop: 40,
+              marginTop: 60,
               borderTop: "1px dashed #e8e8e8",
-              paddingTop: 20,
+              paddingTop: 24,
             }}
           >
+            <Title level={5} style={{ color: "#595959", marginBottom: 8 }}>
+              {renderBilingual("Grazie per il vostro acquisto!", "谢谢惠顾！")}
+            </Title>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              谢谢惠顾! Grazie per il vostro acquisto!
-            </Text>
-            <br />
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              保修期内请保留此凭证
+              {renderBilingual(
+                "Conservare questo scontrino per la garanzia.",
+                "保修期内请保留此凭证",
+              )}
             </Text>
           </div>
         </Card>

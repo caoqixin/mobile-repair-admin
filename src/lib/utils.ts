@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   PART_QUALITY_MAP,
   REPAIR_STATUS_MAP,
@@ -113,4 +114,12 @@ export const formatCurrency = (value: number | string) => {
     style: "currency",
     currency: "EUR",
   }).format(Number(value));
+};
+
+// 计算剩余天数百分比 (用于进度条)
+export const calculateProgress = (start: string, end: string) => {
+  const total = dayjs(end).diff(dayjs(start), "day");
+  const passed = dayjs().diff(dayjs(start), "day");
+  const percent = Math.max(0, Math.min(100, (passed / total) * 100));
+  return percent;
 };

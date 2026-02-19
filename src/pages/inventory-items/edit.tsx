@@ -15,7 +15,11 @@ export const InventoryItemsEdit = () => {
   });
 
   return (
-    <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
+    <Edit
+      title={translate("inventory_items.titles.edit", { name: Data?.name })}
+      isLoading={formLoading}
+      saveButtonProps={saveButtonProps}
+    >
       <Form {...formProps} layout="vertical">
         <Row gutter={24}>
           <Col span={12}>

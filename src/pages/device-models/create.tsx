@@ -17,7 +17,7 @@ export const DeviceModelCreate = () => {
 
   return (
     <Create
-      title={translate("brands.form.create.title")}
+      title={translate("brands.titles.brandCreate")}
       saveButtonProps={saveButtonProps}
     >
       <Form {...formProps} layout="vertical">

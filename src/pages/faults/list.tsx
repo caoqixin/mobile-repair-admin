@@ -1,10 +1,11 @@
-import { BaseRecord, useCan, useTranslate } from "@refinedev/core";
+import { BaseRecord, useCan, useExport, useTranslate } from "@refinedev/core";
 import {
   useTable,
   List,
   EditButton,
   DateField,
   DeleteButton,
+  ExportButton,
 } from "@refinedev/antd";
 import { Table, Space } from "antd";
 import { IFault } from "../../interface";
@@ -26,6 +27,8 @@ export const FaultList = () => {
     action: "create",
   });
 
+  const { triggerExport, isLoading: exportLoading } = useExport<IFault>();
+
   const {
     tableProps,
     setCurrentPage,
@@ -40,7 +43,22 @@ export const FaultList = () => {
   }
 
   return (
-    <List canCreate={canCreate?.can}>
+    <List
+      title={translate("faults.titles.list")}
+      canCreate={canCreate?.can}
+      headerButtons={({ defaultButtons }) => (
+        <>
+          {canCreate?.can && (
+            <ExportButton
+              onClick={triggerExport}
+              loading={exportLoading}
+              children="导出"
+            />
+          )}
+          {defaultButtons}
+        </>
+      )}
+    >
       <Table
         {...tableProps}
         pagination={{

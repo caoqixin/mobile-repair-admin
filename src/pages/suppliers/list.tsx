@@ -27,7 +27,7 @@ export const SupplierList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("suppliers.titles.list")}>
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="name"

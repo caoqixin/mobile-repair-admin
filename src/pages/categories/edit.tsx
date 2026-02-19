@@ -2,15 +2,19 @@ import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Radio } from "antd";
 import { useTranslate } from "@refinedev/core";
 import { CATEGORY_OPTIONS } from "../../constants";
+import { ICategory } from "../../interface";
 
 export const CategoryEdit = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps, formLoading } = useForm();
+  const { formProps, saveButtonProps, formLoading, query } =
+    useForm<ICategory>();
 
   return (
     <Edit
       isLoading={formLoading}
-      title={translate("categories.form.edit.title")}
+      title={translate("categories.titles.edit", {
+        name: query?.data?.data.name,
+      })}
       saveButtonProps={saveButtonProps}
     >
       <Form {...formProps} layout="vertical">

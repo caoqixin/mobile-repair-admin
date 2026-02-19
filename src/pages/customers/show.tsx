@@ -2,7 +2,7 @@ import { DateField, Show, ShowButton } from "@refinedev/antd";
 import { useShow, useTranslate } from "@refinedev/core";
 import { Card, Descriptions, Space, Table, Tag, Typography } from "antd";
 import { MobileOutlined, ToolOutlined } from "@ant-design/icons";
-import { getRepairStatusTag } from "../../lib/utils";
+import { formatCurrency, getRepairStatusTag } from "../../lib/utils";
 
 const { Text } = Typography;
 
@@ -18,11 +18,14 @@ export const CustomerShow = () => {
   });
 
   return (
-    <Show isLoading={isLoading} title="客户档案">
+    <Show
+      isLoading={isLoading}
+      title={translate("customers.titles.show", { name: record?.full_name })}
+    >
       {/* 1. 客户基本信息 */}
       <Card variant="borderless" style={{ marginBottom: 24 }}>
         <Descriptions
-          title="基本信息"
+          title={translate("customers.info.baseTitle")}
           bordered
           column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
         >
@@ -49,7 +52,8 @@ export const CustomerShow = () => {
       <Card
         title={
           <span>
-            <ToolOutlined /> 历史维修记录 ({record?.repair_orders?.length || 0})
+            <ToolOutlined /> {translate("customers.info.historyTitle")} (
+            {record?.repair_orders?.length || 0})
           </span>
         }
         variant="borderless"
@@ -61,13 +65,13 @@ export const CustomerShow = () => {
           size="small"
         >
           <Table.Column
-            title="单号"
+            title={translate("customers.info.no")}
             dataIndex="readable_id"
             render={(val) => <b>{val}</b>}
           />
 
           <Table.Column
-            title="设备型号"
+            title={translate("customers.info.device")}
             render={(_, item: any) => (
               <Space>
                 <MobileOutlined />
@@ -78,7 +82,7 @@ export const CustomerShow = () => {
           />
 
           <Table.Column
-            title="故障描述"
+            title={translate("customers.info.problem")}
             dataIndex="problem_description"
             render={(val: string) =>
               val.split(",").map((desc) => <Tag key={desc}>{desc}</Tag>)
@@ -86,7 +90,7 @@ export const CustomerShow = () => {
           />
 
           <Table.Column
-            title="状态"
+            title={translate("customers.info.status")}
             dataIndex="status"
             render={(val) => {
               const conf = getRepairStatusTag(val);
@@ -96,25 +100,25 @@ export const CustomerShow = () => {
           />
 
           <Table.Column
-            title="总价"
+            title={translate("customers.info.total_price")}
             dataIndex="total_price"
             render={(val) =>
               val > 0 ? (
-                <Text>€ {Number(val).toFixed(2)}</Text>
+                <Text>{formatCurrency(val)}</Text>
               ) : (
-                <Tag color="green">保修/免费</Tag>
+                <Tag color="green">{translate("customers.info.warranty")}</Tag>
               )
             }
           />
 
           <Table.Column
-            title="日期"
+            title={translate("customers.info.date")}
             dataIndex="created_at"
             render={(val) => <DateField value={val} format="DD/MM/YYYY" />}
           />
 
           <Table.Column
-            title="操作"
+            title={translate("table.actions")}
             render={(_, item: any) => (
               // 跳转到 RepairOrderShow
               <ShowButton

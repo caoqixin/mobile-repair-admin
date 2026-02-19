@@ -11,10 +11,8 @@ import { Table, Space } from "antd";
 import { IProfile, UserRole } from "../../interface";
 import { USER_ROLE_MAP } from "../../constants";
 import { ListLoader } from "../../components/loadings";
-import { useDocumentTitle } from "@refinedev/react-router";
 
 export const ProfileList = () => {
-  useDocumentTitle("");
   const translate = useTranslate();
   const {
     tableProps,
@@ -29,7 +27,13 @@ export const ProfileList = () => {
   }
 
   return (
-    <List canCreate={data?.role === "admin"}>
+    <List
+      canCreate={data?.role === "admin"}
+      title={translate("profiles.list.title")}
+      createButtonProps={{
+        children: translate("profiles.list.button.create"),
+      }}
+    >
       <Table
         {...tableProps}
         pagination={{
@@ -42,7 +46,7 @@ export const ProfileList = () => {
         <Table.Column
           dataIndex={["email"]}
           title={translate("profiles.fields.email")}
-          render={(value: any) => <EmailField value={value} />}
+          render={(value) => <EmailField value={value} />}
         />
         <Table.Column
           dataIndex="full_name"

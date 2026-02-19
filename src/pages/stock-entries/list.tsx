@@ -2,11 +2,12 @@ import { List, useTable, ShowButton, DateField } from "@refinedev/antd";
 import { Table, Tag, Space, Input, Form, Button } from "antd";
 import { SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { IStockEntry } from "../../interface";
-import { HttpError } from "@refinedev/core";
+import { HttpError, useTranslate } from "@refinedev/core";
 import { ListLoader } from "../../components/loadings";
 import { getTypeTag } from "../../lib/utils";
 
 export const StockEntriesList = () => {
+  const translate = useTranslate();
   const {
     tableProps,
     searchFormProps,
@@ -43,12 +44,12 @@ export const StockEntriesList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("stock_entries.titles.list")}>
       {/* 简单的搜索栏 */}
       <Form {...searchFormProps} layout="inline" style={{ marginBottom: 20 }}>
         <Form.Item name="q">
           <Input
-            placeholder="搜索单号 (如 PO-2026...)"
+            placeholder={translate("filters.stock_entries.placeholder")}
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
           />
@@ -59,7 +60,7 @@ export const StockEntriesList = () => {
             icon={<SearchOutlined />}
             onClick={searchFormProps.form?.submit}
           >
-            查询
+            {translate("filters.stock_entries.submitButton")}
           </Button>
         </Form.Item>
       </Form>
@@ -67,13 +68,13 @@ export const StockEntriesList = () => {
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="reference_number"
-          title="关联单号 (Riferimento)"
+          title={translate("stock_entries.fields.reference_number")}
           render={(val) => <b>{val || "---"}</b>}
         />
 
         <Table.Column
           dataIndex="type"
-          title="类型 (Tipo)"
+          title={translate("stock_entries.fields.type")}
           render={(val) => {
             const tag = getTypeTag(val);
             return <Tag color={tag.color}>{tag.label}</Tag>;
@@ -81,7 +82,7 @@ export const StockEntriesList = () => {
         />
 
         <Table.Column
-          title="操作人 (Operatore)"
+          title={translate("stock_entries.fields.operator")}
           render={(_, record: any) => (
             <Space>
               <UserOutlined />
@@ -94,14 +95,14 @@ export const StockEntriesList = () => {
 
         <Table.Column
           dataIndex="created_at"
-          title="入库时间 (Data)"
+          title={translate("stock_entries.fields.created_at")}
           render={(value) => (
             <DateField value={value} format="YYYY-MM-DD HH:mm" />
           )}
         />
 
         <Table.Column
-          title="操作"
+          title={translate("table.actions")}
           render={(_, record: any) => (
             // ⚠️ 严禁删除，只提供查看功能
             <ShowButton hideText size="small" recordItemId={record.id} />

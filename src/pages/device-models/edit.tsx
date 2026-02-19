@@ -1,12 +1,13 @@
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input } from "antd";
 import { useNavigation, useParsed, useTranslate } from "@refinedev/core";
+import { IBrand } from "../../interface";
 export const DeviceModelEdit = () => {
   const { list } = useNavigation();
   const translate = useTranslate();
   const { id } = useParsed();
 
-  const { formProps, saveButtonProps, formLoading } = useForm({
+  const { formProps, saveButtonProps, formLoading, query } = useForm<IBrand>({
     resource: "brands",
     action: "edit",
     id,
@@ -19,7 +20,9 @@ export const DeviceModelEdit = () => {
   return (
     <Edit
       isLoading={formLoading}
-      title={translate("brands.form.edit.title")}
+      title={translate("brands.titles.brandEdit", {
+        name: query?.data?.data.name,
+      })}
       saveButtonProps={saveButtonProps}
     >
       <Form {...formProps} layout="vertical">

@@ -1,81 +1,67 @@
 import { Create, useForm } from "@refinedev/antd";
-import { Form, Input, notification, Select } from "antd";
-import { useNavigation, useTranslate } from "@refinedev/core";
+import { Button, Form, Input, Select, Space } from "antd";
+import {
+  useNavigation,
+  useNotification,
+  useRegister,
+  useTranslate,
+} from "@refinedev/core";
 import { IProfile, UserRole } from "../../interface";
-import { supabaseClient } from "../../providers/supabase-client";
 import { PROFILE_OPTIONS } from "../../constants";
+import { usePasswordGenerator } from "../../hooks/usePasswordGenerator";
 export const ProfileCreate = () => {
-  const { list } = useNavigation();
+  const { listUrl } = useNavigation();
   const translate = useTranslate();
-  const { formProps, saveButtonProps, form } = useForm<IProfile>({
+  const { open } = useNotification();
+  const { generatePassword } = usePasswordGenerator(12);
+  const { formProps, saveButtonProps, form, mutation } = useForm<
+    IProfile & { password: string }
+  >({
     warnWhenUnsavedChanges: false,
   });
 
+  const { mutateAsync: register } = useRegister();
+  const handleGenerate = () => {
+    const newPwd = generatePassword();
+    if (newPwd) {
+      form.setFieldValue(["password"], newPwd);
+      form.validateFields([["password"]]);
+    }
+  };
+
   const handleOnFinish = async (values: any) => {
-    try {
-      //  获取当前管理员的 Session Token
-      const {
-        data: { session },
-      } = await supabaseClient.auth.getSession();
+    const formData = {
+      email: values.email,
+      password: values.password,
+      role: values.role,
+      full_name: values.full_name,
+      redirectPath: listUrl("profiles"),
+    };
 
-      if (!session) {
-        throw new Error("管理员未登录或会话已过期");
-      }
-
-      // 执行邀请逻辑
-      const { error } = await supabaseClient.functions.invoke("invite-user", {
-        body: {
-          email: values.email,
-          full_name: values.full_name,
-          role: values.role,
-          redirectTo: `${window.location.origin}/update-password`,
-        },
-        headers: {
-          // 强制指定 Token，确保万无一失
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) {
-        // 解析详细的错误信息
-        let errorMessage = "邀请失败";
-        try {
-          // 尝试解析 Edge Function 返回的 JSON 错误
-          const errorBody =
-            typeof error === "string" ? JSON.parse(error) : error;
-          // 如果 error 是对象且有 context (Refine/Supabase 封装)，尝试读取
-          if (error.context) {
-            const contextJson = await error.context.json();
-            errorMessage = contextJson.error || errorMessage;
-          } else {
-            errorMessage = errorBody.message || errorBody.error || errorMessage;
-          }
-        } catch (e) {
-          console.error("解析错误失败", e);
+    await register(formData, {
+      onSuccess: (data) => {
+        if (!data.success) {
+          open?.({
+            message: translate("profiles.form.create.error"),
+            type: "error",
+          });
+          return;
         }
 
-        throw new Error(errorMessage);
-      }
+        open?.({
+          message: translate("profiles.form.create.success"),
+          type: "success",
+        });
 
-      notification.success({
-        message: "邀请发送成功",
-        description: `已向 ${values.email} 发送设置密码的邮件。`,
-      });
-
-      list("profiles");
-    } catch (error: any) {
-      notification.error({
-        message: "操作失败",
-        description: error.message || "请检查权限或邮件配置",
-      });
-    }
+        // todo 发送密码邮件给员工
+      },
+    });
   };
   return (
     <Create
       title={translate("profiles.form.create.title")}
       saveButtonProps={{
         ...saveButtonProps,
-        onClick: () => form.submit(), // 强制触发 form 的提交
       }}
     >
       <Form {...formProps} onFinish={handleOnFinish} layout="vertical">
@@ -101,7 +87,7 @@ export const ProfileCreate = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item
+        <Form.Item<UserRole>
           label={translate("profiles.fields.role")}
           name={["role"]}
           rules={[
@@ -109,12 +95,31 @@ export const ProfileCreate = () => {
               required: true,
             },
           ]}
+          initialValue={"front_desk"}
         >
-          <Select<UserRole>
-            options={PROFILE_OPTIONS}
-            defaultValue={"front_desk"}
-          />
+          <Select<UserRole> options={PROFILE_OPTIONS} />
         </Form.Item>
+        <Space.Compact style={{ width: "100%" }}>
+          <Form.Item
+            noStyle
+            label={translate("profiles.fields.password")}
+            name={["password"]}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Button
+            type="primary"
+            onClick={handleGenerate}
+            disabled={mutation.isPending}
+          >
+            生成密码
+          </Button>
+        </Space.Compact>
       </Form>
     </Create>
   );

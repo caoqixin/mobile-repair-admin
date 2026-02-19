@@ -7,7 +7,7 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { Space, Table } from "antd";
-import { getStatusColor } from "../../lib/utils";
+import { formatCurrency, getStatusColor } from "../../lib/utils";
 import { useTranslate } from "@refinedev/core";
 import { ListLoader } from "../../components/loadings";
 
@@ -36,7 +36,7 @@ export const PurchaseOrderList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("purchase_orders.titles.list")}>
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="readable_id"
@@ -60,7 +60,7 @@ export const PurchaseOrderList = () => {
         <Table.Column
           dataIndex="total_estimated_cost"
           title={translate("purchase_orders.fields.total_estimated_cost")}
-          render={(value) => `€ ${Number(value).toFixed(2)}`}
+          render={(value) => formatCurrency(value)}
         />
         <Table.Column
           dataIndex="expected_arrival_date"

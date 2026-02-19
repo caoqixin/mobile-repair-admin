@@ -1,4 +1,4 @@
-import { useShow } from "@refinedev/core";
+import { useShow, useTranslate } from "@refinedev/core";
 import { Show, DateField } from "@refinedev/antd";
 import {
   Descriptions,
@@ -15,10 +15,12 @@ import {
   ShoppingCartOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import { formatCurrency } from "../../lib/utils";
 
 const { Text } = Typography;
 
 export const StockEntriesShow = () => {
+  const translate = useTranslate();
   const { query } = useShow({
     resource: "stock_entries",
     meta: {
@@ -33,33 +35,39 @@ export const StockEntriesShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={`入库单详情 #${record?.reference_number || record?.id}`}
+      title={translate("stock_entries.titles.show", {
+        id: record?.reference_number,
+      })}
     >
       <Card variant="borderless" className="shadow-sm">
         <Descriptions
-          title="单据信息"
+          title={translate("stock_entries.titles.detail")}
           bordered
           column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
         >
-          <Descriptions.Item label="关联单号">
+          <Descriptions.Item
+            label={translate("stock_entries.fields.reference_number")}
+          >
             <Space>
               <ImportOutlined />
               <Text strong>{record?.reference_number}</Text>
             </Space>
           </Descriptions.Item>
-          <Descriptions.Item label="入库类型">
+          <Descriptions.Item label={translate("stock_entries.fields.type")}>
             <Tag color="blue">{record?.type?.toUpperCase()}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="操作人">
+          <Descriptions.Item label={translate("stock_entries.fields.operator")}>
             {record?.profiles?.full_name} {record?.profiles?.email}
           </Descriptions.Item>
-          <Descriptions.Item label="创建时间">
+          <Descriptions.Item
+            label={translate("stock_entries.fields.created_at")}
+          >
             <DateField value={record?.created_at} format="DD/MM/YYYY" />
           </Descriptions.Item>
         </Descriptions>
 
         <Divider orientation="left">
-          <FileTextOutlined /> 入库明细列表
+          <FileTextOutlined /> {translate("stock_entries.detail.title")}
         </Divider>
 
         <Table
@@ -69,12 +77,16 @@ export const StockEntriesShow = () => {
           size="small"
         >
           <Table.Column
-            title="类型"
+            title={translate("stock_entries.fields.type")}
             render={(_, item: any) =>
               item.component_id ? (
-                <Tag icon={<ToolOutlined />}>配件</Tag>
+                <Tag icon={<ToolOutlined />}>
+                  {translate("stock_entries.detail.buttons.tool")}
+                </Tag>
               ) : (
-                <Tag icon={<ShoppingCartOutlined />}>商品</Tag>
+                <Tag icon={<ShoppingCartOutlined />}>
+                  {translate("stock_entries.detail.buttons.shop")}
+                </Tag>
               )
             }
           />
@@ -85,24 +97,24 @@ export const StockEntriesShow = () => {
             }
           />
           <Table.Column
-            title="产品名称"
+            title={translate("stock_entries.detail.fields.name")}
             render={(_, item: any) => (
               <b>
                 {item.inventory_components?.name ||
                   item.inventory_items?.name ||
-                  "未知商品"}
+                  translate("stock_entries.detail.fields.unkown")}
               </b>
             )}
           />
           <Table.Column
-            title="入库数量"
+            title={translate("stock_entries.detail.fields.quantity")}
             dataIndex="quantity"
             render={(v) => <b style={{ color: "#52c41a" }}>+{v}</b>}
           />
           <Table.Column
-            title="入库成本"
+            title={translate("stock_entries.detail.fields.cost_price")}
             dataIndex="cost_price"
-            render={(v) => `€ ${Number(v).toFixed(2)}`}
+            render={(v) => formatCurrency(v)}
           />
         </Table>
       </Card>

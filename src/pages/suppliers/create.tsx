@@ -9,7 +9,7 @@ export const SupplierCreate = () => {
   return (
     <Create
       saveButtonProps={saveButtonProps}
-      title={translate("suppliers.form.create.title")}
+      title={translate("suppliers.titles.create")}
     >
       <Form {...formProps} layout="vertical">
         <Form.Item

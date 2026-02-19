@@ -1,8 +1,9 @@
 import { Card, Col, Row, Statistic, Skeleton, Empty } from "antd";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import { useList } from "@refinedev/core";
+import { useList, useTranslate } from "@refinedev/core";
 import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { COLORS_EXPENSE, COLORS_INCOME } from "../../constants";
+import { formatCurrency } from "../../lib/utils";
 
 interface IFinancialSummary {
   month_income: number;
@@ -18,6 +19,7 @@ interface ICategoryStat {
 }
 
 export const FinancialStats = () => {
+  const translate = useTranslate();
   // 1. 获取核心统计数据
   const {
     query: { data: summaryData, isLoading: isLoadingSummary },
@@ -40,9 +42,6 @@ export const FinancialStats = () => {
   const incomeCategories = categories.filter((c) => c.type === "income");
   const expenseCategories = categories.filter((c) => c.type === "expense");
 
-  // 简单的货币格式化
-  const formatCurrency = (value: number) => `€${value.toFixed(2)}`;
-
   if (isLoadingSummary || isLoadingCategory) {
     return <Skeleton active paragraph={{ rows: 4 }} />;
   }
@@ -51,7 +50,10 @@ export const FinancialStats = () => {
   const renderPieChart = (data: ICategoryStat[], colors: string[]) => {
     if (!data || data.length === 0)
       return (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无数据" />
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={translate("transactions.chart.empty")}
+        />
       );
 
     const chartData = data.map((item, index) => ({
@@ -60,25 +62,23 @@ export const FinancialStats = () => {
     }));
 
     return (
-      <div style={{ width: "100%", height: 300 }}>
-        <ResponsiveContainer>
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60} // 环形图效果
-              outerRadius={80}
-              paddingAngle={5}
-              dataKey="total_amount"
-              nameKey="category"
-            />
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={chartData}
+            cx="50%"
+            cy="50%"
+            innerRadius={60} // 环形图效果
+            outerRadius={80}
+            paddingAngle={5}
+            dataKey="total_amount"
+            nameKey="category"
+          />
 
-            <Tooltip formatter={(value) => formatCurrency(value as number)} />
-            <Legend verticalAlign="bottom" height={36} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+          <Tooltip formatter={(value) => formatCurrency(value as number)} />
+          <Legend verticalAlign="bottom" height={36} />
+        </PieChart>
+      </ResponsiveContainer>
     );
   };
 
@@ -89,7 +89,7 @@ export const FinancialStats = () => {
         <Col xs={12} sm={6}>
           <Card variant="borderless">
             <Statistic
-              title="本月收入"
+              title={translate("transactions.chart.month_income")}
               value={stats?.month_income}
               precision={2}
               valueStyle={{ color: "#3f8600" }}
@@ -101,7 +101,7 @@ export const FinancialStats = () => {
         <Col xs={12} sm={6}>
           <Card variant="borderless">
             <Statistic
-              title="本月支出"
+              title={translate("transactions.chart.month_expense")}
               value={stats?.month_expense}
               precision={2}
               valueStyle={{ color: "#cf1322" }}
@@ -113,7 +113,7 @@ export const FinancialStats = () => {
         <Col xs={12} sm={6}>
           <Card variant="borderless">
             <Statistic
-              title="本年总收入"
+              title={translate("transactions.chart.year_income")}
               value={stats?.year_income}
               precision={2}
               valueStyle={{ color: "#3f8600" }}
@@ -125,7 +125,7 @@ export const FinancialStats = () => {
         <Col xs={12} sm={6}>
           <Card variant="borderless">
             <Statistic
-              title="本年总支出"
+              title={translate("transactions.chart.year_expense")}
               value={stats?.year_expense}
               precision={2}
               valueStyle={{ color: "#cf1322" }}
@@ -139,12 +139,18 @@ export const FinancialStats = () => {
       {/* 2. 底部图表区域 */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <Col xs={24} md={12}>
-          <Card title="收入来源分析" variant="borderless">
+          <Card
+            title={translate("transactions.chart.income_analysis")}
+            variant="borderless"
+          >
             {renderPieChart(incomeCategories, COLORS_INCOME)}
           </Card>
         </Col>
         <Col xs={24} md={12}>
-          <Card title="支出去向分析" variant="borderless">
+          <Card
+            title={translate("transactions.chart.expense_analys")}
+            variant="borderless"
+          >
             {renderPieChart(expenseCategories, COLORS_EXPENSE)}
           </Card>
         </Col>

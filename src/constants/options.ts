@@ -38,3 +38,31 @@ export const QUALITY_OPTIONS = [
     ],
   },
 ];
+
+export const PAYMENT_OPTIONS = [
+  {
+    label: "payment.cash",
+    value: "cash",
+  },
+  {
+    label: "payment.card",
+    value: "card",
+  },
+  {
+    label: "payment.alipay",
+    value: "alipay",
+  },
+  {
+    label: "payment.wechat",
+    value: "wechat",
+  },
+  {
+    label: "payment.transfer",
+    value: "transfer",
+  },
+];
+
+export const STOCK_ENTRY_OPTIONS = [
+  { label: "stock_entries.options.adjust", value: "adjust" },
+  { label: "stock_entries.options.return", value: "return" },
+];

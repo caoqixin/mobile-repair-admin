@@ -8,7 +8,7 @@ export const CustomerCreate = () => {
 
   return (
     <Create
-      title={translate("customers.form.create.title")}
+      title={translate("customers.titles.create")}
       saveButtonProps={saveButtonProps}
     >
       <Form {...formProps} layout="vertical">

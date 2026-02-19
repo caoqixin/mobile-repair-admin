@@ -6,6 +6,7 @@ import {
   useGetIdentity,
   useNavigation,
   useInvalidate,
+  useTranslate,
 } from "@refinedev/core";
 import {
   Row,
@@ -35,10 +36,13 @@ import {
 } from "@ant-design/icons";
 // 假设你有这个接口定义，如果没有可以用 any
 import { IInventoryItem } from "../../interface";
+import { formatCurrency } from "../../lib/utils";
+import { PAYMENT_OPTIONS } from "../../constants";
 
 const { Text, Title } = Typography;
 
 export const SalesOrderCreate = () => {
+  const translate = useTranslate();
   const { list } = useNavigation();
   const { data: user } = useGetIdentity();
   const invalidate = useInvalidate();
@@ -92,7 +96,7 @@ export const SalesOrderCreate = () => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         if (existing.quantity >= item.stock_quantity) {
-          message.warning("库存不足 (Stock insufficiente)!");
+          message.warning(translate("sales_orders.create.message.noStock"));
           return prev;
         }
         return prev.map((i) =>
@@ -116,7 +120,9 @@ export const SalesOrderCreate = () => {
             // 注意：这里需要去原始 items 列表中找最大库存，或者 trusting cart item snapshop
             // 为了简单，假设 cart item 里的 stock_quantity 是准确的（实际建议从 itemsData 对比）
             if (newQty > item.stock_quantity) {
-              message.warning("达到库存上限");
+              message.warning(
+                translate("sales_orders.create.message.stockLimit"),
+              );
               return item;
             }
             return { ...item, quantity: newQty };
@@ -141,8 +147,10 @@ export const SalesOrderCreate = () => {
 
   // --- 核心提交逻辑 ---
   const handleCheckout = async () => {
-    if (cart.length === 0) return message.error("购物车是空的");
-    if (!user?.id) return message.error("无法获取销售员信息");
+    if (cart.length === 0)
+      return message.error(translate("sales_orders.create.message.empty"));
+    if (!user?.id)
+      return message.error(translate("sales_orders.create.message.user"));
 
     try {
       // 1. 创建 Sales Order 主表
@@ -174,7 +182,7 @@ export const SalesOrderCreate = () => {
       });
 
       // 3. 成功后处理
-      message.success("收款成功！(Ordine Completato)");
+      message.success(translate("sales_orders.create.message.success"));
       setCart([]); // 清空购物车
       invalidate({
         resource: "inventory_items",
@@ -182,7 +190,7 @@ export const SalesOrderCreate = () => {
       });
     } catch (error) {
       console.error(error);
-      message.error("创建订单失败，请重试");
+      message.error(translate("sales_orders.create.message.error"));
     }
   };
 
@@ -215,7 +223,7 @@ export const SalesOrderCreate = () => {
             {/* 搜索栏 */}
             <Input
               size="large"
-              placeholder="扫描条码或输入名称搜索..."
+              placeholder={translate("sales_orders.create.placeholder")}
               prefix={<BarcodeOutlined />}
               allowClear
               value={searchTerm}
@@ -249,7 +257,9 @@ export const SalesOrderCreate = () => {
                   renderItem={(item) => (
                     <List.Item>
                       <Badge.Ribbon
-                        text={`库存: ${item.stock_quantity}`}
+                        text={`${translate("sales_orders.create.stock")}: ${
+                          item.stock_quantity
+                        }`}
                         color={item.stock_quantity < 5 ? "red" : "green"}
                       >
                         <Card
@@ -278,7 +288,7 @@ export const SalesOrderCreate = () => {
                               strong
                               style={{ color: "#fa541c", fontSize: 16 }}
                             >
-                              €{Number(item.retail_price).toFixed(2)}
+                              {formatCurrency(item.retail_price)}
                             </Text>
                             <Button
                               type="primary"
@@ -294,7 +304,10 @@ export const SalesOrderCreate = () => {
                 />
               )}
               {!itemsLoading && items.length === 0 && (
-                <Empty description="未找到商品" style={{ marginTop: 50 }} />
+                <Empty
+                  description={translate("sales_orders.create.empty")}
+                  style={{ marginTop: 50 }}
+                />
               )}
             </div>
           </Card>
@@ -306,7 +319,8 @@ export const SalesOrderCreate = () => {
             title={
               <Flex align="center" justify="space-between" gap="small">
                 <Title level={5}>
-                  <ShoppingCartOutlined /> <span>当前订单 (Current Order)</span>
+                  <ShoppingCartOutlined />{" "}
+                  <span>{translate("sales_orders.create.current_order")}</span>
                 </Title>
 
                 <Button
@@ -314,7 +328,7 @@ export const SalesOrderCreate = () => {
                   icon={<BackwardOutlined />}
                   onClick={() => list("sales_orders")}
                 >
-                  返回列表
+                  {translate("buttons.backList")}
                 </Button>
               </Flex>
             }
@@ -338,7 +352,7 @@ export const SalesOrderCreate = () => {
               {cart.length === 0 ? (
                 <Empty
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="购物车为空"
+                  description={translate("sales_orders.create.shopCartEmpty")}
                   style={{ marginTop: 40 }}
                 />
               ) : (
@@ -361,7 +375,7 @@ export const SalesOrderCreate = () => {
                         description={
                           <Flex align="center" justify="space-between">
                             <Text type="secondary">
-                              €{Number(item.retail_price).toFixed(2)}
+                              {formatCurrency(item.retail_price)}
                             </Text>
                           </Flex>
                         }
@@ -384,7 +398,7 @@ export const SalesOrderCreate = () => {
                           onClick={() => updateQuantity(item.id, 1)}
                         />
                         <Text strong style={{ width: 60, textAlign: "right" }}>
-                          €{(item.retail_price * item.quantity).toFixed(2)}
+                          {formatCurrency(item.retail_price * item.quantity)}
                         </Text>
                       </Flex>
                     </List.Item>
@@ -406,7 +420,7 @@ export const SalesOrderCreate = () => {
                   type="secondary"
                   style={{ display: "block", marginBottom: 8 }}
                 >
-                  支付方式 (Metodo di pagamento):
+                  {translate("sales_orders.fields.payment_method")}:
                 </Text>
                 <Radio.Group
                   value={paymentMethod}
@@ -415,24 +429,15 @@ export const SalesOrderCreate = () => {
                   size="middle"
                   style={{ width: "100%", display: "flex" }}
                 >
-                  <Radio.Button
-                    value="cash"
-                    style={{ flex: 1, textAlign: "center" }}
-                  >
-                    💶 现金
-                  </Radio.Button>
-                  <Radio.Button
-                    value="card"
-                    style={{ flex: 1, textAlign: "center" }}
-                  >
-                    💳 刷卡
-                  </Radio.Button>
-                  <Radio.Button
-                    value="transfer"
-                    style={{ flex: 1, textAlign: "center" }}
-                  >
-                    🏦 转账
-                  </Radio.Button>
+                  {PAYMENT_OPTIONS.map((o) => (
+                    <Radio.Button
+                      key={o.value}
+                      value={o.value}
+                      style={{ flex: 1, textAlign: "center" }}
+                    >
+                      {translate(o.label)}
+                    </Radio.Button>
+                  ))}
                 </Radio.Group>
               </div>
 
@@ -441,7 +446,9 @@ export const SalesOrderCreate = () => {
                 align="flex-end"
                 style={{ marginBottom: 16 }}
               >
-                <Text style={{ fontSize: 16 }}>总计 (TOTALE):</Text>
+                <Text style={{ fontSize: 16 }}>
+                  {translate("sales_orders.create.total")}:
+                </Text>
                 <Statistic
                   value={totalAmount}
                   precision={2}
@@ -464,7 +471,9 @@ export const SalesOrderCreate = () => {
                 disabled={cart.length === 0}
                 style={{ height: 50, fontSize: 18, fontWeight: "bold" }}
               >
-                {isLoading ? "处理中..." : "确认收款 (CHECKOUT)"}
+                {isLoading
+                  ? translate("sales_orders.create.isLoading")
+                  : translate("sales_orders.create.checkout")}
               </Button>
             </div>
           </Card>

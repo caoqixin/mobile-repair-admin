@@ -26,6 +26,7 @@ import {
   ImportOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
+import { formatCurrency } from "../../lib/utils";
 
 const { Title, Text } = Typography;
 
@@ -86,7 +87,9 @@ export const PurchaseOrderShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={`进货单详情 #${record?.readable_id || record?.id}`}
+      title={translate("purchase_orders.titles.show", {
+        id: record?.readable_id,
+      })}
       canEdit={!isReceived}
     >
       {/* 顶部状态栏 */}
@@ -242,7 +245,7 @@ export const PurchaseOrderShow = () => {
                 dataIndex="unit_cost"
                 align="right"
                 width={100}
-                render={(val) => `€ ${Number(val).toFixed(2)}`}
+                render={(val) => formatCurrency(val)}
               />
               <Table.Column
                 title="小计"
@@ -250,7 +253,7 @@ export const PurchaseOrderShow = () => {
                 width={120}
                 render={(_, item: any) => (
                   <Text strong>
-                    € {(item.quantity * item.unit_cost).toFixed(2)}
+                    {formatCurrency(item.quantity * item.unit_cost)}
                   </Text>
                 )}
               />

@@ -78,7 +78,6 @@ export const InventoryComponentsEdit = () => {
     modelSelectProps,
     handleBrandChange,
     selectedBrand,
-    isModelLoading,
   } = useInventoryOptions({ initialBrandId: Data?.brand_id });
 
   const { selectProps: supplierSelectProps } = useSelect({
@@ -127,7 +126,9 @@ export const InventoryComponentsEdit = () => {
   return (
     <Edit
       saveButtonProps={saveButtonProps}
-      title={translate("inventory_components.form.edit.title")}
+      title={translate("inventory_components.titles.edit", {
+        name: Data?.name,
+      })}
     >
       <Form {...formProps} onFinish={handleFinish} layout="vertical">
         <Row gutter={24}>

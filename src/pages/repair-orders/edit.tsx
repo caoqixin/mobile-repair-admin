@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
-import { useCreateMany, useDeleteMany } from "@refinedev/core";
+import { useCreateMany, useDeleteMany, useTranslate } from "@refinedev/core";
 import {
   Form,
   Input,
@@ -18,10 +18,11 @@ import {
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { IInventoryComponent } from "../../interface";
 // 假设您的常量定义在这里，如果不一样请调整引用
-import { REPAIR_STATUS_OPTIONS } from "../../constants";
+import { PAYMENT_OPTIONS, REPAIR_STATUS_OPTIONS } from "../../constants";
 import { deepEqual } from "../../lib/utils";
 
 export const RepairOrderEdit = () => {
+  const translate = useTranslate();
   // 1. 数据更新 Hooks
   const { mutateAsync: deleteParts } = useDeleteMany();
   const { mutateAsync: createParts } = useCreateMany();
@@ -143,6 +144,9 @@ export const RepairOrderEdit = () => {
 
   return (
     <Edit
+      title={translate("repair_orders.titles.edit", {
+        id: record?.readable_id,
+      })}
       isLoading={formLoading}
       saveButtonProps={{ ...saveButtonProps, onClick: form.submit }}
     >
@@ -150,16 +154,21 @@ export const RepairOrderEdit = () => {
         <Row gutter={24}>
           <Col span={16}>
             <Card
-              title="维修详情"
+              title={translate("repair_orders.form.edit.repair_info")}
               variant="borderless"
               style={{ marginBottom: 24 }}
             >
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item label="状态 (Stato)" name="status">
+                  <Form.Item
+                    label={translate("repair_orders.form.price.status")}
+                    name="status"
+                  >
                     <Select
                       options={REPAIR_STATUS_OPTIONS}
-                      placeholder="选择状态"
+                      placeholder={translate(
+                        "repair_orders.form.price.statusPlaceholder",
+                      )}
                       // 自定义渲染选中的内容 (回显)
                       tagRender={(props) => {
                         const target = REPAIR_STATUS_OPTIONS.find(
@@ -182,14 +191,20 @@ export const RepairOrderEdit = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="故障描述" name="problem_description">
+                  <Form.Item
+                    label={translate("repair_orders.form.device.problem")}
+                    name="problem_description"
+                  >
                     <Input.TextArea rows={1} />
                   </Form.Item>
                 </Col>
               </Row>
             </Card>
 
-            <Card title="配件列表" variant="borderless">
+            <Card
+              title={translate("repair_orders.form.edit.component_list")}
+              variant="borderless"
+            >
               <Form.List name="parts">
                 {(fields, { add, remove }) => (
                   <>
@@ -209,7 +224,9 @@ export const RepairOrderEdit = () => {
                             <Select
                               {...componentSelectProps}
                               labelInValue // 🔥 开启此项以支持对象格式的值
-                              placeholder="选择配件"
+                              placeholder={translate(
+                                "repair_orders.form.price.component",
+                              )}
                               showSearch
                               style={{ width: "100%" }}
                               filterOption={false} // 配合 onSearch 使用
@@ -225,7 +242,9 @@ export const RepairOrderEdit = () => {
                           >
                             <InputNumber
                               prefix="€"
-                              placeholder="单价"
+                              placeholder={translate(
+                                "repair_orders.form.price.price",
+                              )}
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -239,7 +258,9 @@ export const RepairOrderEdit = () => {
                           >
                             <InputNumber
                               min={1}
-                              placeholder="Qty"
+                              placeholder={translate(
+                                "repair_orders.form.price.quantity",
+                              )}
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -260,7 +281,7 @@ export const RepairOrderEdit = () => {
                       block
                       icon={<PlusOutlined />}
                     >
-                      添加配件 (Aggiungi Ricambio)
+                      {translate("repair_orders.form.price.add")}
                     </Button>
                   </>
                 )}
@@ -269,11 +290,14 @@ export const RepairOrderEdit = () => {
           </Col>
 
           <Col span={8}>
-            <Card title="财务结算" variant="borderless">
+            <Card
+              title={translate("repair_orders.form.edit.checkout")}
+              variant="borderless"
+            >
               <Form.Item
-                label="订单总价 (€)"
+                label={translate("repair_orders.form.edit.total_price")}
                 name="total_price"
-                help="自动计算配件费，可手动修改包含人工费"
+                help={translate("repair_orders.form.edit.help")}
               >
                 <InputNumber
                   style={{ width: "100%" }}
@@ -283,7 +307,10 @@ export const RepairOrderEdit = () => {
                 />
               </Form.Item>
 
-              <Form.Item label="已收定金 (€)" name="deposit">
+              <Form.Item
+                label={translate("repair_orders.form.edit.deposit")}
+                name="deposit"
+              >
                 <InputNumber
                   style={{ width: "100%" }}
                   min={0}
@@ -294,16 +321,16 @@ export const RepairOrderEdit = () => {
 
               {record?.status === "completed" && (
                 <Form.Item
-                  label="支付方式"
+                  label={translate("repair_orders.form.edit.payment_method")}
                   name="payment_method"
                   initialValue="cash"
                 >
                   <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="cash">现金</Radio.Button>
-                    <Radio.Button value="card">刷卡</Radio.Button>
-                    <Radio.Button value="alipay">支付宝</Radio.Button>
-                    <Radio.Button value="wechat">微信支付</Radio.Button>
-                    <Radio.Button value="transfer">转账</Radio.Button>
+                    {PAYMENT_OPTIONS.map((o) => (
+                      <Radio.Button key={o.value} value={o.value}>
+                        {translate(o.label)}
+                      </Radio.Button>
+                    ))}
                   </Radio.Group>
                 </Form.Item>
               )}
@@ -311,7 +338,7 @@ export const RepairOrderEdit = () => {
               <Divider />
               <div style={{ textAlign: "right" }}>
                 <Typography.Text type="secondary">
-                  * 保存后更新应收尾款
+                  {translate("repair_orders.form.edit.tips")}
                 </Typography.Text>
               </div>
             </Card>

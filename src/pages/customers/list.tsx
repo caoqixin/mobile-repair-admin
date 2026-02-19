@@ -44,12 +44,12 @@ export const CustomerList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("customers.titles.list")}>
       {/* 搜索栏 */}
       <Form {...searchFormProps} layout="inline" style={{ marginBottom: 20 }}>
         <Form.Item name="q">
           <Input
-            placeholder="搜索手机号码/用户名..."
+            placeholder={translate("filters.customers.placeholder")}
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
             allowClear
@@ -58,7 +58,7 @@ export const CustomerList = () => {
         </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={searchFormProps.form?.submit}>
-            查询
+            {translate("filters.customers.submitButton")}
           </Button>
         </Form.Item>
       </Form>

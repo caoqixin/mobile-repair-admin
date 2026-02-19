@@ -1,6 +1,7 @@
 import { Modal, Table } from "antd";
 import dayjs from "dayjs";
 import { IMonthlyStats } from "../../interface";
+import { formatCurrency } from "../../lib/utils";
 
 interface MonthlyDataModalProps {
   open: boolean;
@@ -32,7 +33,7 @@ export const MonthlyDataModal = ({
           {
             title: "收入",
             dataIndex: "total_revenue",
-            render: (val) => `€ ${Number(val).toFixed(2)}`,
+            render: (val) => formatCurrency(val),
           },
         ]}
       />

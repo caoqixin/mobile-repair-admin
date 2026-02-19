@@ -40,7 +40,10 @@ export const CategoryList = () => {
   }
 
   return (
-    <List canCreate={canCreate?.can}>
+    <List
+      canCreate={canCreate?.can}
+      title={translate("categories.titles.list")}
+    >
       <Table
         {...tableProps}
         pagination={{

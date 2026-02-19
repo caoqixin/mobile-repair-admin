@@ -91,7 +91,7 @@ export const InventoryComponentsList = () => {
   }
 
   return (
-    <List>
+    <List title={translate("inventory_components.titles.list")}>
       {/* --- 顶部搜索筛选栏 --- */}
       <Card variant="borderless" styles={{ body: { padding: "24px" } }}>
         <Form

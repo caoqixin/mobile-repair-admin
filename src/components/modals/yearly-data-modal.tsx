@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { COLORS_BASE } from "../../constants";
 import { IYearlyStats } from "../../interface";
+import { formatCurrency } from "../../lib/utils";
 
 const { Text } = Typography;
 
@@ -44,7 +45,7 @@ export const YearlyDataModal = ({
             key: "revenue",
             render: (val) => (
               <Text strong style={{ color: COLORS_BASE.success }}>
-                € {Number(val).toFixed(2)}
+                {formatCurrency(val)}
               </Text>
             ),
           },

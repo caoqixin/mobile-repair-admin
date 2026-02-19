@@ -93,7 +93,10 @@
     "undo": "撤销",
     "import": "导入",
     "clone": "克隆",
-    "notAccessTitle": "您没有访问权限"
+    "notAccessTitle": "您没有访问权限",
+    "next": "下一步",
+    "previous": "上一步",
+    "backList": "返回列表"
   },
   "warnWhenUnsavedChanges": "确定离开吗？您的更改尚未保存。",
   "notifications": {
@@ -115,41 +118,19 @@
   "dashboard": {
     "title": "控制台"
   },
-  "posts": {
-    "posts": "文章",
-    "fields": {
-      "id": "ID",
-      "title": "标题",
-      "category": "分类",
-      "status": {
-        "title": "状态",
-        "published": "已发布",
-        "draft": "草稿",
-        "rejected": "已拒绝"
-      },
-      "content": "内容",
-      "createdAt": "创建时间"
-    },
-    "titles": {
-      "create": "创建文章",
-      "edit": "编辑文章",
-      "list": "文章列表",
-      "show": "查看文章"
-    }
-  },
   "table": {
     "actions": "操作"
   },
+  "payment": {
+    "cash": "现金",
+    "card": "刷卡",
+    "alipay": "支付宝",
+    "wechat": "微信支付",
+    "transfer": "转账"
+  },
   "documentTitle": {
-    "default": "refine",
-    "suffix": " | Refine",
-    "post": {
-      "list": "文章 | Refine",
-      "show": "#{{id}} 查看文章 | Refine",
-      "edit": "#{{id}} 编辑文章 | Refine",
-      "create": "创建新文章 | Refine",
-      "clone": "#{{id}} 克隆文章 | Refine"
-    }
+    "default": "Luna Tech",
+    "suffix": " | Luna Tech"
   },
   "autoSave": {
     "success": "已保存",
@@ -173,39 +154,29 @@
     "categories": "产品分类",
     "faults": "故障列表",
     "profiles": "员工与权限管理",
-    "warranties": "保修管理"
+    "warranties": "保修管理",
+    "purchase_orders": "进货单",
+    "stock_entries": "入库记录"
   },
-  "profiles": {
-    "fields": {
-      "id": "ID",
-      "email": "邮箱",
-      "role": "角色",
-      "full_name": "员工名称",
-      "created_at": "激活时间"
+  "filters": {
+    "customers": {
+      "placeholder": "搜索手机号码/用户名...",
+      "submitButton": "查询"
     },
-    "form": {
-      "create": {
-        "title": "添加员工账号"
-      },
-      "edit": {
-        "title": "修改员工资料"
-      }
-    }
-  },
-  "faults": {
-    "fields": {
-      "id": "ID",
-      "name": "故障名称",
-      "description": "故障描述",
-      "created_at": "添加时间"
+    "brands": {
+      "placeholder": "搜索品牌名称 ..."
     },
-    "form": {
-      "create": {
-        "title": "添加故障类型"
-      },
-      "edit": {
-        "title": "修改故障名称"
-      }
+    "repair_orders": {
+      "placeholder": "搜索单号 / IMEI / 客户名...",
+      "submitButton": "查询"
+    },
+    "stock_entries": {
+      "placeholder": "搜索单号 (如 PO-2026...)",
+      "submitButton": "查询"
+    },
+    "warranty": {
+      "placeholder": "搜索用户手机号码...",
+      "submitButton": "查询"
     }
   },
   "categories": {
@@ -215,27 +186,49 @@
       "type": "类型",
       "created_at": "添加时间"
     },
-    "form": {
-      "create": {
-        "title": "添加分类"
-      },
-      "edit": {
-        "title": "修改分类名称"
-      }
+    "titles": {
+      "list": "产品分类列表",
+      "create": "新增产品分类",
+      "edit": "{{name}} | 修改产品分类信息"
     }
   },
+  "customers": {
+    "fields": {
+      "id": "ID",
+      "full_name": "客户名称",
+      "phone": "电话号码",
+      "email": "电子邮箱",
+      "notes": "备注",
+      "created_at": "添加时间"
+    },
+    "titles": {
+      "list": "客户档案管理",
+      "create": "录入客户档案",
+      "edit": "{{name}} | 修改客户档案",
+      "show": "客户信息: {{name}}"
+    },
+    "info": {
+      "baseTitle": "基本信息",
+      "historyTitle": "历史维修记录",
+      "no": "单号",
+      "device": "设备型号",
+      "problem": "维修故障",
+      "status": "状态",
+      "total_price": "总价",
+      "date": "日期",
+      "warranty": "保修/免费"
+    }
+  },
+
   "brands": {
     "fields": {
       "id": "ID",
       "name": "品牌"
     },
-    "form": {
-      "create": {
-        "title": "添加品牌"
-      },
-      "edit": {
-        "title": "修改品牌名称"
-      }
+    "titles": {
+      "brandList": "手机品牌列表",
+      "brandCreate": "添加品牌",
+      "brandEdit": "修改品牌名称 | {{name}}"
     },
     "models": {
       "title": "型号大全",
@@ -267,53 +260,17 @@
       }
     }
   },
-  "transactions": {
-    "fields": {
-      "created_at": "添加时间",
-      "type": "类型",
-      "amount": "金额",
-      "category": "分类",
-      "payment_method": "支付方式",
-      "description": "备注",
-      "profile": "经手人",
-      "repair": "维修单",
-      "sale": "销售单",
-      "associate": "关联订单",
-      "income": "收入",
-      "expense": "支出"
-    },
-    "title": "记一笔 (手动录入流水)"
-  },
-  "suppliers": {
+  "faults": {
     "fields": {
       "id": "ID",
-      "name": "供应商名称",
-      "website": "官网",
-      "description": "描述",
+      "name": "故障名称",
+      "description": "故障描述",
       "created_at": "添加时间"
     },
-    "form": {
-      "create": {
-        "title": "添加供应商"
-      }
-    }
-  },
-  "customers": {
-    "fields": {
-      "id": "ID",
-      "full_name": "客户名称",
-      "phone": "电话号码",
-      "email": "电子邮箱",
-      "notes": "备注",
-      "created_at": "添加时间"
-    },
-    "form": {
-      "create": {
-        "title": "录入客人"
-      },
-      "edit": {
-        "title": "修改客户档案 | "
-      }
+    "titles": {
+      "list": "维修故障列表",
+      "create": "添加维修故障",
+      "edit": "修改维修故障名称 | {{name}}"
     }
   },
   "inventory_components": {
@@ -350,13 +307,10 @@
         "noModel": "先选择品牌"
       }
     },
-    "form": {
-      "create": {
-        "title": "录入配件"
-      },
-      "edit": {
-        "title": "修改配件信息"
-      }
+    "titles": {
+      "list": "维修配件列表",
+      "create": "录入配件",
+      "edit": "修改配件信息 | {{name}}"
     }
   },
   "inventory_items": {
@@ -380,12 +334,35 @@
         "category": "选择分类"
       }
     },
+    "titles": {
+      "list": "商品列表",
+      "create": "录入商品",
+      "edit": "修改商品信息 | {{name}}"
+    }
+  },
+  "profiles": {
+    "fields": {
+      "id": "ID",
+      "email": "邮箱",
+      "role": "角色",
+      "full_name": "员工名称",
+      "created_at": "激活时间",
+      "password": "密码"
+    },
+    "list": {
+      "title": "员工账号列表",
+      "button": {
+        "create": "添加"
+      }
+    },
     "form": {
       "create": {
-        "title": "录入配件"
+        "title": "添加员工账号",
+        "success": "账号添加成功",
+        "error": "账号添加失败, 请重试!"
       },
       "edit": {
-        "title": "修改配件信息"
+        "title": "修改员工资料"
       }
     }
   },
@@ -396,7 +373,345 @@
       "status": "状态",
       "total_estimated_cost": "预估总价 (€)",
       "expected_arrival_date": "预计到货"
+    },
+    "titles": {
+      "list": "进货单列表",
+      "create": "新建进货单",
+      "edit": "编辑进货单 | 单号 #{{id}}",
+      "show": "进货单详情 | 单号 #{{id}}"
     }
   },
-  "quote": {}
+  "quote": {
+    "title": "极速报价",
+    "description": "输入型号，立获取维修报价",
+    "placeholder": "输入型号搜索 (例如: iPhone 13...)",
+    "pendingSearch": "等待输入型号...",
+    "emptyResult": "该机型暂无匹配配件数据",
+    "fields": {
+      "name": "配件名称",
+      "quantity": "库存",
+      "retail_price": "零售价",
+      "collabor_price": "同行价",
+      "inStock": "有货",
+      "outStock": "缺货"
+    }
+  },
+  "repair_orders": {
+    "titles": {
+      "list": "维修订单管理",
+      "create": "创建维修单",
+      "edit": "修改维修信息 | #{{id}}",
+      "show": "维修单详情 | #{{id}}"
+    },
+    "tabs": {
+      "active": "进行中",
+      "history": "历史记录"
+    },
+    "fields": {
+      "readable_id": "维修单号",
+      "device": "设备信息",
+      "customer": "客户信息",
+      "status": "维修状态",
+      "total_price": "维修费用",
+      "warranty": "保修/免费",
+      "created_at": "接单时间"
+    },
+    "steps": {
+      "customer": "客户信息",
+      "device": "设备故障",
+      "price": "报价与配件",
+      "check": "核对"
+    },
+    "form": {
+      "customer": {
+        "select": "选择客户",
+        "errMessage": "请选择或新建客户",
+        "placeholder": "搜索姓名或电话...",
+        "button": "新建",
+        "or": "或",
+        "tips": "如果未找到客户，请点击右侧按钮新建"
+      },
+      "device": {
+        "modelName": "设备型号",
+        "modelPlaceholder": "输入型号搜索 (e.g. iPhone 13)",
+        "newModel": "添加新机型",
+        "imei_sn": "IMEI / 序列号",
+        "imeiPlaceholder": "扫描或输入 IMEI / 序列号",
+        "problem": "故障描述",
+        "problemPlaceholder": "选择故障现象 (可多选)",
+        "newProblem": "添加新故障类型",
+        "notes": "补充描述 (备注)",
+        "notesPlaceholder": "例如：客户保留贴膜，后盖有划痕..."
+      },
+      "price": {
+        "status": "初始状态",
+        "statusPlaceholder": "选择维修状态",
+        "totalPrice": "维修价格 (€)",
+        "ruleMessage": "请输入维修价格",
+        "help": "默认自动计算配件费，可手动修改包含人工费",
+        "pricePlaceholder": "最终向客户收取的金额",
+        "deposit": "预收定金 (€)",
+        "components": "所需配件 (可选)",
+        "component": "选择配件",
+        "price": "单价",
+        "quantity": "数量",
+        "add": "添加配件"
+      },
+      "check": {
+        "unkownComponent": "未知配件",
+        "no": "无",
+        "unkownModel": "未知型号",
+        "title": "核对维修单信息",
+        "customerName": "客户姓名",
+        "phone": "联系号码",
+        "device": "设备型号",
+        "imei": "IMEI / SN",
+        "problem": "故障描述",
+        "note": "备注",
+        "total_price": "维修费用",
+        "component": "维修配件",
+        "deposit": "预收定金",
+        "status": "维修状态"
+      },
+      "edit": {
+        "repair_info": "维修详情",
+        "component_list": "配件列表",
+        "checkout": "财务结算",
+        "total_price": "订单总价 (€)",
+        "help": "自动计算配件费，可手动修改包含人工费",
+        "deposit": "已收定金 (€)",
+        "payment_method": "支付方式",
+        "tips": "* 保存后更新应收尾款"
+      }
+    },
+    "customerModal": {
+      "title": "快速新建客户档案",
+      "name": "姓名",
+      "phone": "电话"
+    },
+    "modelModal": {
+      "title": "添加设备型号",
+      "modelName": "设备型号",
+      "modelPlaceholder": "请输入设备名称, 例如 iPhone 15 Pro",
+      "brandName": "品牌",
+      "brandPlaceholder": "请选择品牌"
+    },
+    "faultModal": {
+      "title": "新建故障类型",
+      "name": "故障名称",
+      "namePlaceholder": "请输入故障名称, 例如 屏幕破碎",
+      "description": "故障描述"
+    },
+    "info": {
+      "device": {
+        "title": "设备信息",
+        "model": "手机型号",
+        "imei": "IMEI / SN",
+        "problem": "维修故障"
+      },
+      "customer": {
+        "title": "客户信息",
+        "name": "客户姓名",
+        "phone": "电话号码"
+      },
+      "component": {
+        "title": "配件明细",
+        "name": "配件",
+        "unit_price": "单价",
+        "quantity": "数量",
+        "price": "小计"
+      },
+      "order": {
+        "title": "订单状态",
+        "created_at": "创建时间",
+        "tech": "技师"
+      },
+      "checkout": {
+        "title": "财务结算",
+        "payment_method": "支付方式",
+        "total_price": "维修费用",
+        "deposit": "已付定金",
+        "rest": "应收尾款"
+      }
+    }
+  },
+  "sales_orders": {
+    "titles": {
+      "list": "零售单",
+      "show": "订单详情"
+    },
+    "fields": {
+      "readable_id": "订单号",
+      "total_amount": "金额",
+      "payment_method": "支付方式",
+      "profile": "销售员",
+      "created_at": "销售时间"
+    },
+    "create": {
+      "placeholder": "扫描条码或输入名称搜索...",
+      "stock": "库存",
+      "empty": "未找到商品",
+      "current_order": "当前订单",
+      "shopCartEmpty": "购物车为空",
+      "total": "总计",
+      "isLoading": "处理中...",
+      "checkout": "确认收款",
+      "message": {
+        "noStock": "库存不足",
+        "stockLimit": "达到库存上限!",
+        "empty": "购物车是空的",
+        "user": "无法获取销售员信息",
+        "success": "收款成功！",
+        "error": "创建订单失败，请重试"
+      }
+    },
+    "show": {
+      "print": "打印小票"
+    }
+  },
+  "stock_entries": {
+    "titles": {
+      "list": "入库列表",
+      "create": "手动入库",
+      "show": "入库单详情 | #{{id}}",
+      "detail": "单据信息"
+    },
+    "fields": {
+      "reference_number": "关联单号 / 备注",
+      "type": "类型",
+      "operator": "操作人",
+      "created_at": "入库时间"
+    },
+    "options": {
+      "adjust": "库存盘盈",
+      "return": "客户退货"
+    },
+    "message": {
+      "success": "入库单及明细创建成功！"
+    },
+    "rules": {
+      "reference_number": "请填写备注，如'盘盈'或'退货单号'"
+    },
+    "help": {
+      "reference_number": "例如: ADJ-2026-001 或 退货-Mario"
+    },
+    "placeholder": {
+      "reference_number": "输入单号..."
+    },
+    "detail": {
+      "title": "入库明细",
+      "totalText": "入库总价值",
+      "buttons": {
+        "tool": "维修配件",
+        "shop": "零售商品",
+        "addTool": "添加维修配件",
+        "addShop": "添加商品"
+      },
+      "fields": {
+        "name": "产品名称",
+        "quantity": "入库数量",
+        "cost_price": "成本价格 (€)",
+        "unkown": "未知商品"
+      },
+      "rules": {
+        "name": "请输入产品名称"
+      },
+      "placeholder": {
+        "name": "请输入产品名称..."
+      }
+    }
+  },
+  "suppliers": {
+    "titles": {
+      "list": "供应商列表",
+      "create": "添加供应商",
+      "edit": "修改供应商信息 | {{name}}"
+    },
+    "fields": {
+      "id": "ID",
+      "name": "供应商名称",
+      "website": "官网",
+      "description": "描述",
+      "created_at": "添加时间"
+    },
+    "form": {
+      "create": {
+        "title": "添加供应商"
+      }
+    }
+  },
+
+  "transactions": {
+    "titles": {
+      "list": "财务明细报表",
+      "create": "记一笔 (手动录入流水)"
+    },
+    "fields": {
+      "created_at": "添加时间",
+      "type": "类型",
+      "amount": "金额",
+      "category": "分类",
+      "payment_method": "支付方式",
+      "description": "备注",
+      "profile": "经手人",
+      "repair": "维修单",
+      "sale": "销售单",
+      "associate": "关联订单"
+    },
+    "options": {
+      "income": "收入",
+      "expense": "支出",
+      "rent": "房租",
+      "salary": "员工工资",
+      "utilities": "水电网费",
+      "purchase": "采购",
+      "refund": "退款",
+      "other": "其他"
+    },
+    "chart": {
+      "empty": "暂无数据",
+      "month_income": "本月收入",
+      "month_expense": "本月支出",
+      "year_income": "本年总收入",
+      "year_expense": "本年总支出",
+      "income_analysis": "收入来源分析",
+      "expense_analys": "支出去向分析"
+    },
+    "rules": {
+      "amount": "请输入金额",
+      "category": "请选择或输入类别"
+    },
+    "help": {
+      "category": "例如: 房租, 工资, 水电, 餐费...."
+    },
+    "placeholder": {
+      "category": "选择或输入类别",
+      "description": "备注详, 例如: 1月份电费"
+    }
+  },
+  "warranty": {
+    "titles": {
+      "list": "保修管理",
+      "show": "保修详情 | {{id}}"
+    },
+    "status": {
+      "active": "生效中",
+      "expired": "已过期",
+      "void": "作废",
+      "claimed": "返修中"
+    },
+    "fields": {
+      "readable_id": "保修单号",
+      "associate": "关联维修单",
+      "customer": "客户",
+      "status": "保修状态",
+      "duration": "保修期限",
+      "claim": "售后记录"
+    },
+    "text": {
+      "count": "次",
+      "until": "有效期至",
+      "print": "打印证书"
+    }
+  }
 }

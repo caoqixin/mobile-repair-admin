@@ -9,7 +9,7 @@ export const CategoryCreate = () => {
 
   return (
     <Create
-      title={translate("categories.form.create.title")}
+      title={translate("categories.titles.create")}
       saveButtonProps={saveButtonProps}
     >
       <Form {...formProps} layout="vertical">

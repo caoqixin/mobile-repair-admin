@@ -64,7 +64,7 @@ export const DeviceModelList = () => {
   return (
     <List
       resource="brands"
-      title={translate("resources.deviceModels")}
+      title={translate("brands.titles.brandList")}
       headerButtons={({ defaultButtons }) => (
         <>
           {defaultButtons}
@@ -83,7 +83,7 @@ export const DeviceModelList = () => {
         >
           <Form.Item name="name" noStyle>
             <Input
-              placeholder={translate("brands.fields.name") + " 搜索..."}
+              placeholder={translate("filters.brands.placeholder")}
               prefix={<SearchOutlined />}
               style={{ width: 300 }}
               allowClear // 允许点击 X 清空，清空后会自动重置表格

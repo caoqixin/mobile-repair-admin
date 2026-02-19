@@ -12,6 +12,7 @@ import {
 import { useTranslate } from "@refinedev/core";
 import { EuroCircleOutlined } from "@ant-design/icons";
 import { ITransaction } from "../../interface";
+import { PAYMENT_OPTIONS } from "../../constants";
 
 export const TransactionsCreate = () => {
   const translate = useTranslate();
@@ -21,7 +22,7 @@ export const TransactionsCreate = () => {
 
   return (
     <Create
-      title={translate("transactions.title")}
+      title={translate("transactions.titles.create")}
       saveButtonProps={saveButtonProps}
     >
       <Form
@@ -42,8 +43,12 @@ export const TransactionsCreate = () => {
               rules={[{ required: true }]}
             >
               <Radio.Group buttonStyle="solid">
-                <Radio.Button value="expense">支出 (Expense)</Radio.Button>
-                <Radio.Button value="income">收入 (Income)</Radio.Button>
+                <Radio.Button value="expense">
+                  {translate("transactions.options.expense")}
+                </Radio.Button>
+                <Radio.Button value="income">
+                  {translate("transactions.options.income")}
+                </Radio.Button>
               </Radio.Group>
             </Form.Item>
           </Col>
@@ -55,13 +60,10 @@ export const TransactionsCreate = () => {
               rules={[{ required: true }]}
             >
               <Select
-                options={[
-                  { label: "现金 (Cash)", value: "cash" },
-                  { label: "刷卡 (Card)", value: "card" },
-                  { label: "微信支付 (WePay)", value: "wechat" },
-                  { label: "支付宝 (Alipay)", value: "alipay" },
-                  { label: "银行转账 (Transfer)", value: "transfer" },
-                ]}
+                options={PAYMENT_OPTIONS.map((o) => ({
+                  ...o,
+                  label: translate(o.label),
+                }))}
               />
             </Form.Item>
           </Col>
@@ -73,7 +75,12 @@ export const TransactionsCreate = () => {
             <Form.Item
               label={translate("transactions.fields.amount")}
               name="amount"
-              rules={[{ required: true, message: "请输入金额" }]}
+              rules={[
+                {
+                  required: true,
+                  message: translate("transactions.rules.amount"),
+                },
+              ]}
             >
               <InputNumber
                 style={{ width: "100%" }}
@@ -93,19 +100,42 @@ export const TransactionsCreate = () => {
               getValueFromEvent={(value) => {
                 return Array.isArray(value) ? value[0] : value;
               }}
-              rules={[{ required: true, message: "请选择或输入类别" }]}
-              help="例如：Rent (房租), Salary (工资), Utilities (水电), Food (餐费)"
+              rules={[
+                {
+                  required: true,
+                  message: translate("transactions.rules.category"),
+                },
+              ]}
+              help={translate("transactions.help.category")}
             >
               <Select
                 mode="tags" // 允许用户手动输入列表里没有的选项
-                placeholder="选择或输入类别"
+                placeholder={translate("transactions.placeholder.category")}
                 options={[
-                  { label: "房租 (Rent)", value: "房租" },
-                  { label: "员工工资 (Salary)", value: "员工工资" },
-                  { label: "水电网费 (Utilities)", value: "水电网费" },
-                  { label: "采购 (Purchase)", value: "采购" },
-                  { label: "退款 (Refund)", value: "退款" },
-                  { label: "其它 (Other)", value: "其它" },
+                  {
+                    label: translate("transactions.options.rent"),
+                    value: translate("transactions.options.rent"),
+                  },
+                  {
+                    label: translate("transactions.options.salary"),
+                    value: translate("transactions.options.salary"),
+                  },
+                  {
+                    label: translate("transactions.options.utilities"),
+                    value: translate("transactions.options.utilities"),
+                  },
+                  {
+                    label: translate("transactions.options.purchase"),
+                    value: translate("transactions.options.purchase"),
+                  },
+                  {
+                    label: translate("transactions.options.refund"),
+                    value: translate("transactions.options.refund"),
+                  },
+                  {
+                    label: translate("transactions.options.other"),
+                    value: translate("transactions.options.other"),
+                  },
                 ]}
                 maxCount={1} // 限制只能选一个tag，变相实现“可输入的单选”
               />
@@ -120,7 +150,10 @@ export const TransactionsCreate = () => {
           label={translate("transactions.fields.description")}
           name="description"
         >
-          <Input.TextArea rows={3} placeholder="备注详情，例如：1月份电费" />
+          <Input.TextArea
+            rows={3}
+            placeholder={translate("transactions.placeholder.description")}
+          />
         </Form.Item>
       </Form>
     </Create>
