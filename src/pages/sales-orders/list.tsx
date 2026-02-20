@@ -1,6 +1,6 @@
 import { List, useTable, ShowButton, DateField } from "@refinedev/antd";
 import { Table, Tag, Typography } from "antd";
-import { PAYMENT_MAP } from "../../constants";
+import { PAYMENT_MAP, PAYMENT_OPTIONS } from "../../constants";
 import { PaymentMethod } from "../../interface";
 import { useTranslate } from "@refinedev/core";
 import { formatCurrency } from "../../lib/utils";
@@ -30,7 +30,10 @@ export const SalesOrderList = () => {
     const conf = PAYMENT_MAP[method] || { color: "default", icon: "" };
     return (
       <Tag color={conf.color}>
-        {conf.icon} {method.toUpperCase()}
+        {conf.icon} {""}
+        {translate(
+          PAYMENT_OPTIONS.find((o) => o.value === method)?.label as string,
+        )}
       </Tag>
     );
   };

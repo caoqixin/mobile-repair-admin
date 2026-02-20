@@ -268,7 +268,7 @@ export const RepairOrderCreate = () => {
         ...status,
         label: translate(status.label),
       })),
-    [CREATE_REPAIR_STATUS_OPTIONS],
+    [CREATE_REPAIR_STATUS_OPTIONS, translate],
   );
 
   const CustomerForm = () => {

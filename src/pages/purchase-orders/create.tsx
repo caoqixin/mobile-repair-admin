@@ -159,7 +159,7 @@ export const PurchaseOrderCreate = () => {
           label: translate(op.label),
         })),
       })),
-    [QUALITY_OPTIONS],
+    [QUALITY_OPTIONS, translate],
   );
 
   const handleModalOnFinish = (values: any) => {

@@ -218,7 +218,7 @@ export const Dashboard = () => {
         color: "#d9d9d9",
       },
     ].filter((i) => i.value > 0);
-  }, [statusData]);
+  }, [statusData, translate]);
 
   const activeRepairsCount = useMemo(() => {
     return pieChartData
@@ -229,7 +229,7 @@ export const Dashboard = () => {
         ].includes(d.name),
       )
       .reduce((a, b) => a + b.value, 0);
-  }, [pieChartData]);
+  }, [pieChartData, translate]);
 
   const allModels = useMemo(() => topModelsData?.data || [], [topModelsData]);
   const top5Models = allModels.slice(0, 5);

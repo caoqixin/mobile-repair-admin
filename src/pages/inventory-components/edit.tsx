@@ -106,7 +106,7 @@ export const InventoryComponentsEdit = () => {
       brand_id: brandId[0],
       model_id: modelId,
     });
-  }, [Data, form]);
+  }, [Data, form, handleBrandChange]);
 
   const handleFinish = (values: any) => {
     const componentForm = {

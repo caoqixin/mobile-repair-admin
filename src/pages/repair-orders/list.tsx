@@ -91,7 +91,7 @@ export const RepairOrderList = () => {
         ...status,
         label: translate(status.label),
       })),
-    [REPAIR_STATUS_OPTIONS],
+    [REPAIR_STATUS_OPTIONS, translate],
   );
 
   const getStatusConfig = (status: string) => {

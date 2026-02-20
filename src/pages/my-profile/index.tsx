@@ -80,7 +80,7 @@ export const MyProfile: React.FC = () => {
       setEnrolledFactorId(data.id);
       setQrCodeData(data.totp.qr_code); // 这是一个 SVG 字符串
       setMfaModalVisible(true);
-    } catch (_) {
+    } catch {
       open?.({
         type: "error",
         message: t("pages.myProfile.message.qr_code_error"),
@@ -118,7 +118,7 @@ export const MyProfile: React.FC = () => {
       mfaForm.resetFields();
 
       logout();
-    } catch (error: any) {
+    } catch {
       open?.({
         type: "error",
         message: t("pages.myProfile.message.mfa_enable_error"),

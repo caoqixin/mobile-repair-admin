@@ -39,7 +39,7 @@ export const PurchaseOrderList = () => {
         ...o,
         label: translate(o.label),
       })),
-    [PURCHASE_STATUS_OPTIONS],
+    [PURCHASE_STATUS_OPTIONS, translate],
   );
 
   if (isLoading) {

@@ -14,7 +14,7 @@ export const CategoryCreate = () => {
         ...o,
         label: translate(o.label as string),
       })),
-    [CATEGORY_OPTIONS],
+    [CATEGORY_OPTIONS, translate],
   );
 
   return (

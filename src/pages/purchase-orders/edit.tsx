@@ -86,7 +86,7 @@ export const PurchaseOrderEdit = () => {
         ...o,
         label: translate(o.label),
       })),
-    [PURCHASE_STATUS_OPTIONS],
+    [PURCHASE_STATUS_OPTIONS, translate],
   );
   useEffect(() => {
     if (record) {
@@ -123,7 +123,7 @@ export const PurchaseOrderEdit = () => {
         }, 0) || 0;
       setTotalCost(initialTotal);
     }
-  }, [record]);
+  }, [record, form]);
 
   // --- Select Props ---
   const { selectProps: supplierSelectProps } = useSelect({

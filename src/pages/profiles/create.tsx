@@ -1,17 +1,13 @@
 import { Create, useForm } from "@refinedev/antd";
 import { Button, Form, Input, Select, Space } from "antd";
-import {
-  useNavigation,
-  useNotification,
-  useRegister,
-  useTranslate,
-} from "@refinedev/core";
+import { useNavigation, useNotification, useTranslate } from "@refinedev/core";
 import { IProfile, UserRole } from "../../interface";
 import { PROFILE_OPTIONS } from "../../constants";
 import { usePasswordGenerator } from "../../hooks/usePasswordGenerator";
 import { useMemo } from "react";
+import { supabaseClient } from "../../providers/supabase-client";
 export const ProfileCreate = () => {
-  const { listUrl } = useNavigation();
+  const { list } = useNavigation();
   const translate = useTranslate();
   const { open } = useNotification();
   const { generatePassword } = usePasswordGenerator(12);
@@ -21,7 +17,6 @@ export const ProfileCreate = () => {
     warnWhenUnsavedChanges: false,
   });
 
-  const { mutateAsync: register } = useRegister();
   const handleGenerate = () => {
     const newPwd = generatePassword();
     if (newPwd) {
@@ -36,7 +31,7 @@ export const ProfileCreate = () => {
         ...o,
         label: translate(o.label as string),
       })),
-    [PROFILE_OPTIONS],
+    [PROFILE_OPTIONS, translate],
   );
 
   const handleOnFinish = async (values: any) => {
@@ -45,27 +40,31 @@ export const ProfileCreate = () => {
       password: values.password,
       role: values.role,
       full_name: values.full_name,
-      redirectPath: listUrl("profiles"),
     };
 
-    await register(formData, {
-      onSuccess: (data) => {
-        if (!data.success) {
-          open?.({
-            message: translate("profiles.form.create.error"),
-            type: "error",
-          });
-          return;
-        }
-
-        open?.({
-          message: translate("profiles.form.create.success"),
-          type: "success",
-        });
-
-        // todo 发送密码邮件给员工
+    const { data, error } = await supabaseClient.functions.invoke(
+      "create-user",
+      {
+        body: formData,
       },
-    });
+    );
+
+    if (error) {
+      open?.({
+        message: translate("profiles.form.create.error"),
+        description: error.message,
+        type: "error",
+      });
+      return;
+    }
+
+    if (data?.success) {
+      open?.({
+        message: translate("profiles.form.create.success"),
+        type: "success",
+      });
+      list("profiles");
+    }
   };
   return (
     <Create

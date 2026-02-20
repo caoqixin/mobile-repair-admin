@@ -38,22 +38,25 @@ export const customTitleHandler = ({
           resource: resourceName,
         });
         break;
-      case "edit":
+      case "edit": {
         const editLabel = t("documentTitle.edit", {
           resource: resourceName,
         });
         title = `${editLabel} ${params?.id ? `#${params.id}` : ""}`;
         break;
-      case "show":
+      }
+      case "show": {
         const showLabel = t("documentTitle.details", {
           resource: resourceName,
         });
         title = `${showLabel} ${params?.id ? `#${params.id}` : ""}`;
         break;
-      default:
+      }
+      default: {
         // 兜底：[动作名] - [资源名]
         const actionLabel = t(`actions.${action}`, action);
         title = `${actionLabel} - ${resourceName}`;
+      }
     }
   }
   // 2. 处理 Auth 页面 (登录/注册/忘记密码)

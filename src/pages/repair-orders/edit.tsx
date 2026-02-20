@@ -43,7 +43,7 @@ export const RepairOrderEdit = () => {
         ...status,
         label: translate(status.label),
       })),
-    [REPAIR_STATUS_OPTIONS],
+    [REPAIR_STATUS_OPTIONS, translate],
   );
 
   // 获取 Form 实例用于监听

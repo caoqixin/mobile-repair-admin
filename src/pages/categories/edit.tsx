@@ -16,7 +16,7 @@ export const CategoryEdit = () => {
         ...o,
         label: translate(o.label as string),
       })),
-    [CATEGORY_OPTIONS],
+    [CATEGORY_OPTIONS, translate],
   );
   return (
     <Edit

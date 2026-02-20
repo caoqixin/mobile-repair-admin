@@ -44,7 +44,7 @@ export const InventoryComponentsCreate = () => {
           label: translate(op.label),
         })),
       })),
-    [QUALITY_OPTIONS],
+    [QUALITY_OPTIONS, translate],
   );
 
   const {

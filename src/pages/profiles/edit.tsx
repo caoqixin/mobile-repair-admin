@@ -17,7 +17,7 @@ export const ProfileEdit = () => {
         ...o,
         label: translate(o.label as string),
       })),
-    [PROFILE_OPTIONS],
+    [PROFILE_OPTIONS, translate],
   );
 
   return (

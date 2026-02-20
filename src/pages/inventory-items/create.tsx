@@ -6,10 +6,9 @@ import { Col, Form, Input, InputNumber, Row, Select, Space } from "antd";
 export const InventoryItemsCreate = () => {
   const translate = useTranslate();
 
-  const { formProps, saveButtonProps, onFinish, form } =
-    useForm<IInventoryItem>({
-      resource: "inventory_items",
-    });
+  const { formProps, saveButtonProps } = useForm<IInventoryItem>({
+    resource: "inventory_items",
+  });
 
   // 获取分类下拉数据 (仅限 component 类型)
   const { selectProps: categorySelectProps } = useSelect({
