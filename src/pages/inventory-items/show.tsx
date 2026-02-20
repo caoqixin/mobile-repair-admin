@@ -18,6 +18,8 @@ import {
   InboxOutlined,
   EuroCircleOutlined,
 } from "@ant-design/icons";
+import { IInventoryItem } from "../../interface";
+import { formatCurrency } from "../../lib/utils";
 
 const { Title, Text } = Typography;
 
@@ -28,7 +30,7 @@ export const InventoryItemsShow = () => {
   const {
     result: record,
     query: { isLoading },
-  } = useShow();
+  } = useShow<IInventoryItem>();
 
   // 获取分类数据
   const {
@@ -49,7 +51,10 @@ export const InventoryItemsShow = () => {
     : 0;
 
   return (
-    <Show isLoading={isLoading} title="商品详情 (Dettagli Prodotto)">
+    <Show
+      isLoading={isLoading}
+      title={translate("inventory_items.titles.show", { name: record?.name })}
+    >
       {/* 顶部标题区：名称与SKU */}
       <div style={{ marginBottom: 24 }}>
         <Title level={3} style={{ margin: 0 }}>
@@ -62,9 +67,7 @@ export const InventoryItemsShow = () => {
             SKU: {record?.sku || "---"}
           </Tag>
           <Tag color={categoryIsLoading ? "default" : "cyan"}>
-            {categoryIsLoading
-              ? "Loading..."
-              : categoryData?.name || "Uncategorized"}
+            {categoryIsLoading ? translate("loading") : categoryData?.name}
           </Tag>
         </div>
       </div>
@@ -73,7 +76,7 @@ export const InventoryItemsShow = () => {
         {/* 左侧：详细信息区 */}
         <Col xs={24} lg={16}>
           <Card
-            title="📦 基本信息 (Informazioni di Base)"
+            title={translate("inventory_items.titles.information")}
             variant="borderless"
             className="shadow-sm"
           >
@@ -115,7 +118,7 @@ export const InventoryItemsShow = () => {
         {/* 右侧：财务与库存卡片 */}
         <Col xs={24} lg={8}>
           <Card
-            title="💰 财务与库存 (Finanza & Stock)"
+            title={translate("inventory_items.titles.financial")}
             variant="borderless"
             styles={{
               body: { padding: 24 },
@@ -135,7 +138,7 @@ export const InventoryItemsShow = () => {
               />
               {(record?.stock_quantity || 0) <= 5 && (
                 <Tag color="error" style={{ marginTop: 8 }}>
-                  低库存警告
+                  {translate("inventory_items.text.lowStock")}
                 </Tag>
               )}
             </div>
@@ -144,15 +147,20 @@ export const InventoryItemsShow = () => {
 
             {/* 价格板块 */}
             <Descriptions column={1} size="small" layout="horizontal">
-              <Descriptions.Item label="零售价 (Retail)">
+              <Descriptions.Item
+                label={translate("inventory_items.labels.retail")}
+              >
                 <Text strong style={{ fontSize: 18, color: "#1890ff" }}>
                   <EuroCircleOutlined />{" "}
-                  {Number(record?.retail_price).toFixed(2)}
+                  {formatCurrency(record?.retail_price as number)}
                 </Text>
               </Descriptions.Item>
-              <Descriptions.Item label="进货价 (Cost)">
+              <Descriptions.Item
+                label={translate("inventory_items.labels.cost")}
+              >
                 <Text type="secondary">
-                  <EuroCircleOutlined /> {Number(record?.cost_price).toFixed(2)}
+                  <EuroCircleOutlined />{" "}
+                  {formatCurrency(record?.cost_price as number)}
                 </Text>
               </Descriptions.Item>
             </Descriptions>
@@ -169,7 +177,7 @@ export const InventoryItemsShow = () => {
             >
               <Row align="middle" justify="space-between">
                 <Text type="success">
-                  <RiseOutlined /> 预估利润
+                  <RiseOutlined /> {translate("inventory_items.text.profit")}
                 </Text>
                 <Text strong style={{ color: "#52c41a" }}>
                   +€ {profit.toFixed(2)} ({profitPercent}%)

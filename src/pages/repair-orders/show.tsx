@@ -117,11 +117,11 @@ export const RepairOrderShow = () => {
           >
             <div style={{ textAlign: "center", marginBottom: 20 }}>
               <Tag color="blue" style={{ fontSize: 18, padding: "5px 15px" }}>
-                {
+                {translate(
                   REPAIR_STATUS_OPTIONS.find(
                     (option) => option.value === record?.status,
-                  )?.label
-                }
+                  )?.label as string,
+                )}
               </Tag>
             </div>
             <Descriptions column={1}>

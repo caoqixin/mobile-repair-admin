@@ -70,6 +70,11 @@
       "404": "抱歉，您访问的页面不存在。",
       "resource404": "请确定您已创建了 {{resource}} 资源。",
       "backHome": "返回首页"
+    },
+    "authorization": {
+      "title": "访问被拒",
+      "description": "你没有权限范文该页面",
+      "backHome": "返回首页"
     }
   },
   "actions": {
@@ -92,11 +97,13 @@
     "show": "查看",
     "undo": "撤销",
     "import": "导入",
+    "export": "导出",
     "clone": "克隆",
     "notAccessTitle": "您没有访问权限",
     "next": "下一步",
     "previous": "上一步",
-    "backList": "返回列表"
+    "backList": "返回列表",
+    "generate": "生成密码"
   },
   "warnWhenUnsavedChanges": "确定离开吗？您的更改尚未保存。",
   "notifications": {
@@ -115,8 +122,87 @@
   "tags": {
     "clone": "克隆"
   },
+  "repair_status": {
+    "pending_check": "待检测",
+    "pending_quote": "待报价",
+    "approved": "已批准",
+    "repairing": "维修中",
+    "waiting_parts": "等待配件",
+    "completed": "已完成",
+    "delivered": "已取机",
+    "cancelled": "已取消"
+  },
+  "user_role": {
+    "admin": "管理员",
+    "technician": "技术员",
+    "front_desk": "前台",
+    "partner": "合作伙伴"
+  },
+  "category": {
+    "component": "维修配件",
+    "item": "前台配件"
+  },
+  "quality": {
+    "labels": {
+      "general": "通用",
+      "apple_screen": "苹果屏幕"
+    },
+    "options": {
+      "compatible": "组装",
+      "original": "原装",
+      "regenerate": "后压原装",
+      "service_original": "售后原装",
+      "incell": "INCELL 屏幕",
+      "hard": "硬性 OLED 屏幕",
+      "soft": "柔性 OLED 屏幕"
+    }
+  },
+  "quick_actions": {
+    "name": "快捷操作",
+    "actions": {
+      "repair": "新建维修",
+      "pos": "零售收银",
+      "parts": "配件查询",
+      "retail": "商品查询",
+      "quote": "报价助手",
+      "purchase": "进货入库"
+    }
+  },
+
   "dashboard": {
-    "title": "控制台"
+    "yearly_income": "{{year}} 年度总收入",
+    "last_year": "点击查看往年",
+    "yearly_repair": "{{year}} 年度维修量",
+    "count": "单",
+    "monthly": "{{month}}月 收入/单量",
+    "monthly_suffix": " / {{count}}单",
+    "year_statistic": "查看本年趋势",
+    "top": "热门机型 Top 5",
+    "rank": "查看完整榜单",
+    "kpi": {
+      "title": {
+        "active": "当前进行中",
+        "parts": "维修配件",
+        "retail": "前台商品"
+      },
+      "footer": {
+        "active": "需尽快处理",
+        "parts": "用于维修消耗",
+        "retail": "用于直接销售"
+      },
+      "suffix": {
+        "active": "单",
+        "parts": "/ {{count}}件",
+        "retail": "/ {{count}}件"
+      }
+    },
+    "chart": {
+      "income": "{{year}}年 营收趋势",
+      "status": "订单状态分布",
+      "buttons": {
+        "last_year": "查看往年数据"
+      }
+    }
   },
   "table": {
     "actions": "操作"
@@ -179,6 +265,7 @@
       "submitButton": "查询"
     }
   },
+
   "categories": {
     "fields": {
       "id": "ID",
@@ -238,6 +325,10 @@
         "isTablet": "平板设备?",
         "year": "发售年份"
       },
+      "options": {
+        "tablet": "平板",
+        "phone": "手机"
+      },
       "form": {
         "create": {
           "title": "添加手机型号",
@@ -267,6 +358,7 @@
       "description": "故障描述",
       "created_at": "添加时间"
     },
+
     "titles": {
       "list": "维修故障列表",
       "create": "添加维修故障",
@@ -304,13 +396,27 @@
         "category": "选择分类",
         "brand": "选择品牌",
         "model": "选择适用机型",
-        "noModel": "先选择品牌"
+        "noModel": "先选择品牌",
+        "supplier": "选择供应商"
       }
     },
     "titles": {
       "list": "维修配件列表",
       "create": "录入配件",
-      "edit": "修改配件信息 | {{name}}"
+      "edit": "修改配件信息 | {{name}}",
+      "show": "配件详情",
+      "detail": "📦 基本信息",
+      "compatible_model": "📦 适配型号",
+      "stock_price": "💰 库存与定价"
+    },
+    "labels": {
+      "models": "适用手机型号",
+      "cost_price": "进货价",
+      "suggested_repair_price": "建议维修价",
+      "partner_repair_price": "同行价"
+    },
+    "text": {
+      "sold_out": "库存紧张"
     }
   },
   "inventory_items": {
@@ -332,12 +438,24 @@
       "placeholder": {
         "query": "搜索名称或SKU...",
         "category": "选择分类"
-      }
+      },
+      "button": "查询"
     },
     "titles": {
       "list": "商品列表",
       "create": "录入商品",
-      "edit": "修改商品信息 | {{name}}"
+      "edit": "修改商品信息 | {{name}}",
+      "show": "商品详情: {{name}}",
+      "information": "📦 基本信息",
+      "financial": "💰 财务与库存"
+    },
+    "text": {
+      "lowStock": "低库存警告",
+      "profit": "预估利润"
+    },
+    "labels": {
+      "retail": "零售价",
+      "cost": "进货价"
     }
   },
   "profiles": {
@@ -371,14 +489,69 @@
       "readable_id": "单号",
       "supplier": "供应商",
       "status": "状态",
+      "operator": "创建人",
       "total_estimated_cost": "预估总价 (€)",
-      "expected_arrival_date": "预计到货"
+      "expected_arrival_date": "预计到货",
+      "created_at": "创建时间"
     },
     "titles": {
       "list": "进货单列表",
       "create": "新建进货单",
       "edit": "编辑进货单 | 单号 #{{id}}",
       "show": "进货单详情 | 单号 #{{id}}"
+    },
+    "status": {
+      "draft": "草稿",
+      "ordered": "已下单",
+      "received": "已收货",
+      "cancelled": "已取消"
+    },
+    "placeholder": {
+      "supplier": "选择供应商",
+      "component": "搜索维修配件...",
+      "item": "搜索前台配件...",
+      "category": "选择分类"
+    },
+    "text": {
+      "list": "采购清单",
+      "addButton": "新建配件",
+      "addComponent": "添加维修配件",
+      "addItem": "添加前台商品",
+      "total": "总计",
+      "cost": "小计",
+      "orderTotal": "💰 订单总额",
+      "estimated_cost": "预估总成本",
+      "purchased": "已完成入库",
+      "status": "状态",
+      "tips": "需确认收货以入库"
+    },
+    "rules": {
+      "name": "请选择配件"
+    },
+    "labels": {
+      "name": "配件名称",
+      "itemName": "商品名称",
+      "quantity": "数量",
+      "unit_price": "单价 (€)",
+      "type": {
+        "title": "类型",
+        "component": "维修配件",
+        "item": "商品"
+      }
+    },
+    "message": {
+      "success": "入库成功",
+      "successDescription": "库存已增加，最新进价已更新，订单已锁定。",
+      "error": "操作失败",
+      "errorDescription": "请检查网络或权限",
+      "locked": "订单已入库锁定"
+    },
+    "confirm": {
+      "title": "确认收货并入库?",
+      "description": "此操作将自动增加库存并更新进价，且不可撤销。",
+      "okText": "确认入库",
+      "cancelText": "取消",
+      "confirmText": "确认收货"
     }
   },
   "quote": {
@@ -387,6 +560,7 @@
     "placeholder": "输入型号搜索 (例如: iPhone 13...)",
     "pendingSearch": "等待输入型号...",
     "emptyResult": "该机型暂无匹配配件数据",
+    "copied": "报价已复制",
     "fields": {
       "name": "配件名称",
       "quantity": "库存",
@@ -533,6 +707,11 @@
         "deposit": "已付定金",
         "rest": "应收尾款"
       }
+    },
+    "message": {
+      "customer": "客户创建成功并已选中",
+      "model": "型号创建成功",
+      "fault": "故障类型创建成功"
     }
   },
   "sales_orders": {
@@ -584,7 +763,9 @@
     },
     "options": {
       "adjust": "库存盘盈",
-      "return": "客户退货"
+      "return": "客户退货",
+      "purchase": "采购入库",
+      "repair": "维修订单"
     },
     "message": {
       "success": "入库单及明细创建成功！"
@@ -711,7 +892,52 @@
     "text": {
       "count": "次",
       "until": "有效期至",
-      "print": "打印证书"
+      "print": "打印证书",
+      "description": "[保修返修] 第 {{count}} 次报修。关联原单号: {{id}}"
+    },
+    "confirm": {
+      "title": "确认返修?",
+      "description": "当前已理赔次数: {{count}}. 确认创建返修单?",
+      "okText": "创建",
+      "cancelText": "取消",
+      "confirmText": "返修"
+    },
+    "message": {
+      "success": "返修单创建成功",
+      "error": "创建失败: {{message}}",
+      "warning": "该保修单正在返修处理中，请勿重复创建。"
+    }
+  },
+  "charts": {
+    "monthly": {
+      "total_revenue": "收入 (€)",
+      "repair_count": "维修量"
+    }
+  },
+  "modals": {
+    "models": {
+      "title": "所有维修机型统计",
+      "columns": {
+        "rank": "排名",
+        "name": "机型名称",
+        "repair_count": "维修次数"
+      }
+    },
+    "monthly": {
+      "title": "{{year}}年 月度详情",
+      "columns": {
+        "month": "月份",
+        "repair_count": "维修量",
+        "total_revenue": "收入"
+      }
+    },
+    "yearly": {
+      "title": "历年营收数据",
+      "columns": {
+        "year": "年份",
+        "repair_count": "维修量",
+        "total_revenue": "总收入"
+      }
     }
   }
 }

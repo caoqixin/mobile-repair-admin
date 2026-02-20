@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 import { useCreateMany, useDeleteMany, useTranslate } from "@refinedev/core";
 import {
@@ -36,6 +36,15 @@ export const RepairOrderEdit = () => {
     });
 
   const record = query?.data?.data;
+
+  const status_options = useMemo(
+    () =>
+      REPAIR_STATUS_OPTIONS.map((status) => ({
+        ...status,
+        label: translate(status.label),
+      })),
+    [REPAIR_STATUS_OPTIONS],
+  );
 
   // 获取 Form 实例用于监听
   // 🔥 监听配件变化，实现自动计算总价
@@ -165,13 +174,13 @@ export const RepairOrderEdit = () => {
                     name="status"
                   >
                     <Select
-                      options={REPAIR_STATUS_OPTIONS}
+                      options={status_options}
                       placeholder={translate(
                         "repair_orders.form.price.statusPlaceholder",
                       )}
                       // 自定义渲染选中的内容 (回显)
                       tagRender={(props) => {
-                        const target = REPAIR_STATUS_OPTIONS.find(
+                        const target = status_options.find(
                           (o) => o.value === props.value,
                         );
                         return (
@@ -182,7 +191,7 @@ export const RepairOrderEdit = () => {
                       }}
                       // 自定义下拉菜单选项
                       optionRender={(option) => {
-                        const target = REPAIR_STATUS_OPTIONS.find(
+                        const target = status_options.find(
                           (o) => o.value === option.value,
                         );
                         return <Tag color={target?.color}>{option.label}</Tag>;

@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useMemo, useState } from "react";
-import { useList, useNavigation } from "@refinedev/core";
+import { useList, useNavigation, useTranslate } from "@refinedev/core";
 import {
   Row,
   Col,
@@ -80,6 +80,7 @@ const RepairStatusStats = React.lazy(() =>
 const { Text } = Typography;
 
 export const Dashboard = () => {
+  const translate = useTranslate();
   const { list } = useNavigation();
 
   // --- 状态控制 ---
@@ -192,28 +193,41 @@ export const Dashboard = () => {
 
     return [
       {
-        name: "待处理",
+        name: translate("repair_status.pending_check"),
         value: (map["pending_check"] || 0) + (map["pending_quote"] || 0),
         color: COLORS_BASE.warning,
       },
       {
-        name: "维修中",
+        name: translate("repair_status.repairing"),
         value: (map["repairing"] || 0) + (map["waiting_parts"] || 0),
         color: COLORS_BASE.primary,
       },
       {
-        name: "已完成",
+        name: translate("repair_status.completed"),
         value: map["completed"] || 0,
         color: COLORS_BASE.success,
       },
-      { name: "已取机", value: map["delivered"] || 0, color: COLORS_BASE.cyan },
-      { name: "已取消", value: map["cancelled"] || 0, color: "#d9d9d9" },
+      {
+        name: translate("repair_status.delivered"),
+        value: map["delivered"] || 0,
+        color: COLORS_BASE.cyan,
+      },
+      {
+        name: translate("repair_status.cancelled"),
+        value: map["cancelled"] || 0,
+        color: "#d9d9d9",
+      },
     ].filter((i) => i.value > 0);
   }, [statusData]);
 
   const activeRepairsCount = useMemo(() => {
     return pieChartData
-      .filter((d) => ["待处理", "维修中"].includes(d.name))
+      .filter((d) =>
+        [
+          translate("repair_status.pending_check"),
+          translate("repair_status.repairing"),
+        ].includes(d.name),
+      )
       .reduce((a, b) => a + b.value, 0);
   }, [pieChartData]);
 
@@ -239,14 +253,16 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <KpiCard
             loading={yearlyLoading}
-            title={`${dayjs().year()} 年度总收入`}
+            title={translate("dashboard.yearly_income", {
+              year: dayjs().year(),
+            })}
             value={currentYearStats.total_revenue}
             prefix="€"
             color={COLORS_BASE.success}
             icon={<DollarCircleOutlined />}
             footer={
               <Space>
-                <HistoryOutlined /> 点击查看往年
+                <HistoryOutlined /> {translate("dashboard.last_year")}
               </Space>
             }
             onClick={openYearlyModal}
@@ -255,14 +271,16 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <KpiCard
             loading={yearlyLoading}
-            title={`${dayjs().year()} 年度维修量`}
+            title={translate("dashboard.yearly_repair", {
+              year: dayjs().year(),
+            })}
             value={currentYearStats.repair_count}
-            suffix="单"
+            suffix={translate("dashboard.count")}
             color={COLORS_BASE.primary}
             icon={<BarChartOutlined />}
             footer={
               <Space>
-                <HistoryOutlined /> 点击查看往年
+                <HistoryOutlined /> {translate("dashboard.last_year")}
               </Space>
             }
             onClick={openYearlyModal}
@@ -273,15 +291,20 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <KpiCard
             loading={monthlyLoading}
-            title={`${dayjs().month() + 1}月 收入/单量`}
+            title={translate("dashboard.monthly", {
+              month: dayjs().month(),
+            })}
             value={currentMonthStats.total_revenue}
             prefix="€"
-            suffix={` / ${currentMonthStats.repair_count}单`}
+            suffix={translate("dashboard.monthly_suffix", {
+              count: currentMonthStats.repair_count,
+            })}
             color={COLORS_BASE.cyan}
             icon={<CalendarOutlined />}
             footer={
               <Space>
-                <RightOutlined /> 查看本年趋势
+                <RightOutlined />
+                {translate("dashboard.year_statistic")}
               </Space>
             }
             onClick={openMonthlyModal}
@@ -291,12 +314,12 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <KpiCard
             loading={statusLoading}
-            title="当前进行中 (Active)"
+            title={translate("dashboard.kpi.title.active")}
             value={activeRepairsCount}
-            suffix="单"
+            suffix={translate("dashboard.kpi.suffix.active")}
             color={COLORS_BASE.warning}
             icon={<SyncOutlined spin />}
-            footer="需尽快处理"
+            footer={translate("dashboard.kpi.footer.active")}
             onClick={() => list("repair_orders")}
           />
         </Col>
@@ -308,13 +331,15 @@ export const Dashboard = () => {
           {/* 🔥 维修配件统计 */}
           <KpiCard
             loading={inventoryLoading}
-            title="维修配件 (Parts)"
+            title={translate("dashboard.kpi.title.parts")}
             value={componentsStats.total_value}
             prefix="€"
-            suffix={` / ${componentsStats.total_quantity}件`}
+            suffix={translate("dashboard.kpi.suffix.parts", {
+              count: componentsStats.total_quantity,
+            })}
             color={COLORS_BASE.purple}
             icon={<ToolOutlined />}
-            footer="用于维修消耗"
+            footer={translate("dashboard.kpi.footer.parts")}
             onClick={() => list("inventory_components")}
           />
         </Col>
@@ -322,13 +347,15 @@ export const Dashboard = () => {
           {/* 🔥 前台商品统计 */}
           <KpiCard
             loading={inventoryLoading}
-            title="前台商品 (Retail)"
+            title={translate("dashboard.kpi.title.retail")}
             value={itemsStats.total_value}
             prefix="€"
-            suffix={` / ${itemsStats.total_quantity}件`}
+            suffix={translate("dashboard.kpi.suffix.retail", {
+              count: itemsStats.total_quantity,
+            })}
             color={COLORS_BASE.pink}
             icon={<ShopOutlined />}
-            footer="用于直接销售"
+            footer={translate("dashboard.kpi.footer.retail")}
             onClick={() => list("inventory_items")}
           />
         </Col>
@@ -340,11 +367,13 @@ export const Dashboard = () => {
         <Col xs={24} lg={16}>
           <Card
             variant="borderless"
-            title={`${dayjs().year()}年 营收趋势`}
+            title={translate("dashboard.chart.income", {
+              year: dayjs().year(),
+            })}
             style={{ height: "100%" }}
             extra={
               <Button type="link" size="small" onClick={openYearlyModal}>
-                查看往年数据
+                {translate("dashboard.chart.buttons.last_year")}
               </Button>
             }
           >
@@ -365,7 +394,7 @@ export const Dashboard = () => {
         {/* --- 饼图：状态分布 --- */}
         <Col xs={24} lg={8}>
           <Card
-            title="订单状态分布"
+            title={translate("dashboard.chart.status")}
             variant="borderless"
             style={{ height: "100%" }}
           >
@@ -402,7 +431,10 @@ export const Dashboard = () => {
                           <Badge color={item.color} />
                           <Text>{item.name}</Text>
                         </Space>
-                        <Text strong>{item.value} 单</Text>
+                        <Text strong>
+                          {item.value}
+                          {translate("dashboard.count")}
+                        </Text>
                       </Flex>
                     </List.Item>
                   )}
@@ -417,7 +449,7 @@ export const Dashboard = () => {
           <Card
             title={
               <Space>
-                <MobileOutlined /> 热门机型 Top 5
+                <MobileOutlined /> {translate("dashboard.top")}
               </Space>
             }
             variant="borderless"
@@ -449,7 +481,9 @@ export const Dashboard = () => {
                             )}
                             <Text strong>{item.model_name}</Text>
                           </Space>
-                          <Text strong>{item.repair_count} 单</Text>
+                          <Text strong>
+                            {item.repair_count} {translate("dashboard.count")}
+                          </Text>
                         </Flex>
                         <Progress
                           percent={percent}
@@ -466,7 +500,7 @@ export const Dashboard = () => {
               {allModels.length > 5 && (
                 <div style={{ textAlign: "center", marginTop: 16 }}>
                   <Button onClick={openModelsModal}>
-                    查看完整榜单 <RightOutlined />
+                    {translate("dashboard.rank")} <RightOutlined />
                   </Button>
                 </div>
               )}

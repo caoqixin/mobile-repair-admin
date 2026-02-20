@@ -62,7 +62,7 @@ export const CategoryList = () => {
           title={translate("categories.fields.type")}
           render={(value: CategoryType) => (
             <TagField
-              value={CATEGORY_TYPE_MAP[value]}
+              value={translate(CATEGORY_TYPE_MAP[value])}
               color={value === "component" ? "blue" : "yellow"}
             />
           )}

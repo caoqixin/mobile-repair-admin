@@ -1,11 +1,12 @@
 import React from "react";
 import { Result, Button, Space, Typography, Spin } from "antd";
-import { useNavigation, usePermissions } from "@refinedev/core";
+import { useNavigation, usePermissions, useTranslate } from "@refinedev/core";
 import { HomeOutlined } from "@ant-design/icons";
 import { ROLE_BASE_HOME_MAP } from "../../constants";
 import { UserRole } from "../../interface";
 
 export const AccessDenied: React.FC = () => {
+  const translate = useTranslate();
   const { list } = useNavigation(); // 用于跳转首页
   const { data, isLoading } = usePermissions({});
 
@@ -43,12 +44,10 @@ export const AccessDenied: React.FC = () => {
         subTitle={
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <Typography.Text strong style={{ fontSize: "16px" }}>
-              Accesso Negato / Access Denied
+              {translate("pages.authorization.title")}
             </Typography.Text>
             <Typography.Text type="secondary">
-              Non hai l'autorizzazione per accedere a questa pagina.
-              <br />
-              (You do not have permission to access this page.)
+              {translate("pages.authorization.description")}
             </Typography.Text>
           </div>
         }
@@ -63,7 +62,7 @@ export const AccessDenied: React.FC = () => {
                   list(ROLE_BASE_HOME_MAP[role].resources, "replace")
                 }
               >
-                Vai alla Home (Go Home)
+                {translate("pages.authorization.backHome")}
               </Button>
             )}
           </Space>

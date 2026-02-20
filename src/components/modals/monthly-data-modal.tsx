@@ -2,6 +2,7 @@ import { Modal, Table } from "antd";
 import dayjs from "dayjs";
 import { IMonthlyStats } from "../../interface";
 import { formatCurrency } from "../../lib/utils";
+import { useTranslate } from "@refinedev/core";
 
 interface MonthlyDataModalProps {
   open: boolean;
@@ -14,9 +15,10 @@ export const MonthlyDataModal = ({
   data,
   onCancel,
 }: MonthlyDataModalProps) => {
+  const translate = useTranslate();
   return (
     <Modal
-      title={`${dayjs().year()}年 月度详情`}
+      title={translate("modals.monthly.title", { year: dayjs().year() })}
       open={open}
       onCancel={onCancel}
       footer={null}
@@ -28,10 +30,16 @@ export const MonthlyDataModal = ({
         pagination={false}
         size="small"
         columns={[
-          { title: "月份", dataIndex: "month_str" },
-          { title: "单量", dataIndex: "repair_count" },
           {
-            title: "收入",
+            title: translate("modals.monthly.columns.month"),
+            dataIndex: "month_str",
+          },
+          {
+            title: translate("modals.monthly.columns.repair_count"),
+            dataIndex: "repair_count",
+          },
+          {
+            title: translate("modals.monthly.columns.total_revenue"),
             dataIndex: "total_revenue",
             render: (val) => formatCurrency(val),
           },

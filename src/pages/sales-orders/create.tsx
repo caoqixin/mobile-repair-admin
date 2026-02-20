@@ -7,6 +7,7 @@ import {
   useNavigation,
   useInvalidate,
   useTranslate,
+  useNotification,
 } from "@refinedev/core";
 import {
   Row,
@@ -19,7 +20,6 @@ import {
   Radio,
   Statistic,
   Empty,
-  message,
   Spin,
   Badge,
   Flex,
@@ -43,6 +43,7 @@ const { Text, Title } = Typography;
 
 export const SalesOrderCreate = () => {
   const translate = useTranslate();
+  const { open } = useNotification();
   const { list } = useNavigation();
   const { data: user } = useGetIdentity();
   const invalidate = useInvalidate();
@@ -96,7 +97,10 @@ export const SalesOrderCreate = () => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         if (existing.quantity >= item.stock_quantity) {
-          message.warning(translate("sales_orders.create.message.noStock"));
+          open?.({
+            type: "error",
+            message: translate("sales_orders.create.message.noStock"),
+          });
           return prev;
         }
         return prev.map((i) =>
@@ -120,9 +124,10 @@ export const SalesOrderCreate = () => {
             // 注意：这里需要去原始 items 列表中找最大库存，或者 trusting cart item snapshop
             // 为了简单，假设 cart item 里的 stock_quantity 是准确的（实际建议从 itemsData 对比）
             if (newQty > item.stock_quantity) {
-              message.warning(
-                translate("sales_orders.create.message.stockLimit"),
-              );
+              open?.({
+                type: "error",
+                message: translate("sales_orders.create.message.stockLimit"),
+              });
               return item;
             }
             return { ...item, quantity: newQty };
@@ -147,10 +152,21 @@ export const SalesOrderCreate = () => {
 
   // --- 核心提交逻辑 ---
   const handleCheckout = async () => {
-    if (cart.length === 0)
-      return message.error(translate("sales_orders.create.message.empty"));
-    if (!user?.id)
-      return message.error(translate("sales_orders.create.message.user"));
+    if (cart.length === 0) {
+      open?.({
+        type: "error",
+        message: translate("sales_orders.create.message.empty"),
+      });
+      return;
+    }
+
+    if (!user?.id) {
+      open?.({
+        type: "error",
+        message: translate("sales_orders.create.message.user"),
+      });
+      return;
+    }
 
     try {
       // 1. 创建 Sales Order 主表
@@ -182,7 +198,10 @@ export const SalesOrderCreate = () => {
       });
 
       // 3. 成功后处理
-      message.success(translate("sales_orders.create.message.success"));
+      open?.({
+        type: "success",
+        message: translate("sales_orders.create.message.success"),
+      });
       setCart([]); // 清空购物车
       invalidate({
         resource: "inventory_items",
@@ -190,7 +209,10 @@ export const SalesOrderCreate = () => {
       });
     } catch (error) {
       console.error(error);
-      message.error(translate("sales_orders.create.message.error"));
+      open?.({
+        type: "error",
+        message: translate("sales_orders.create.message.error"),
+      });
     }
   };
 

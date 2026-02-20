@@ -18,23 +18,23 @@ export const CATEGORY_OPTIONS: CheckboxOptionType[] = Object.entries(
 
 export const QUALITY_OPTIONS = [
   {
-    label: "通用 (Generale)",
+    label: "quality.labels.general",
     options: [
-      { label: "组装 (Compatibile)", value: "compatibile" },
-      { label: "原装 (Originale)", value: "originale" },
-      { label: "后压原装 (Rigenerato)", value: "rigenerato" },
+      { label: "quality.options.compatible", value: "compatibile" },
+      { label: "quality.options.original", value: "originale" },
+      { label: "quality.options.regenerate", value: "rigenerato" },
       {
-        label: "售后原装 (Service Pack Originale)",
+        label: "quality.options.service_original",
         value: "service_pack_original",
       },
     ],
   },
   {
-    label: "苹果屏幕 (Riservata schermo iphone)",
+    label: "quality.labels.apple_screen",
     options: [
-      { label: "LCD 屏幕 (schermo lcd)", value: "incell" },
-      { label: "硬性 OLED 屏幕 (schermo hard oled)", value: "hard_oled" },
-      { label: "柔性 OLED 屏幕 (schermo morbido oled)", value: "soft_oled" },
+      { label: "quality.options.incell", value: "incell" },
+      { label: "quality.options.hard", value: "hard_oled" },
+      { label: "quality.options.soft", value: "soft_oled" },
     ],
   },
 ];
@@ -65,4 +65,23 @@ export const PAYMENT_OPTIONS = [
 export const STOCK_ENTRY_OPTIONS = [
   { label: "stock_entries.options.adjust", value: "adjust" },
   { label: "stock_entries.options.return", value: "return" },
+];
+
+export const PURCHASE_STATUS_OPTIONS = [
+  {
+    label: "purchase_orders.status.draft",
+    value: "draft",
+  },
+  {
+    label: "purchase_orders.status.ordered",
+    value: "ordered",
+  },
+  {
+    label: "purchase_orders.status.received",
+    value: "received",
+  },
+  {
+    label: "purchase_orders.status.cancelled",
+    value: "cancelled",
+  },
 ];

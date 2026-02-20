@@ -1,5 +1,6 @@
 import { Modal, Table, Tag } from "antd";
 import { ITopModels } from "../../interface";
+import { useTranslate } from "@refinedev/core";
 
 interface ModelsDataModalProps {
   open: boolean;
@@ -12,9 +13,10 @@ export const ModelsDataModal = ({
   data,
   onCancel,
 }: ModelsDataModalProps) => {
+  const translate = useTranslate();
   return (
     <Modal
-      title="所有维修机型统计"
+      title={translate("modals.models.title")}
       open={open}
       onCancel={onCancel}
       footer={null}
@@ -27,13 +29,16 @@ export const ModelsDataModal = ({
         size="small"
         columns={[
           {
-            title: "排名",
+            title: translate("modals.models.columns.rank"),
             render: (_, __, index) => index + 1,
             width: 80,
           },
-          { title: "机型名称", dataIndex: "model_name" },
           {
-            title: "维修次数",
+            title: translate("modals.models.columns.name"),
+            dataIndex: "model_name",
+          },
+          {
+            title: translate("modals.models.columns.repair_count"),
             dataIndex: "repair_count",
             sorter: (a, b) => a.repair_count - b.repair_count,
             defaultSortOrder: "descend",

@@ -2,10 +2,20 @@ import { Create, useForm } from "@refinedev/antd";
 import { Form, Input, Radio } from "antd";
 import { useTranslate } from "@refinedev/core";
 import { CATEGORY_OPTIONS } from "../../constants";
+import { useMemo } from "react";
 
 export const CategoryCreate = () => {
   const translate = useTranslate();
   const { formProps, saveButtonProps } = useForm();
+
+  const options = useMemo(
+    () =>
+      CATEGORY_OPTIONS.map((o) => ({
+        ...o,
+        label: translate(o.label as string),
+      })),
+    [CATEGORY_OPTIONS],
+  );
 
   return (
     <Create
@@ -35,7 +45,7 @@ export const CategoryCreate = () => {
         >
           <Radio.Group
             defaultValue={"component"}
-            options={CATEGORY_OPTIONS}
+            options={options}
             optionType="button"
             buttonStyle="solid"
           />

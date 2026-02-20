@@ -3,12 +3,21 @@ import { Form, Input, Radio } from "antd";
 import { useTranslate } from "@refinedev/core";
 import { CATEGORY_OPTIONS } from "../../constants";
 import { ICategory } from "../../interface";
+import { useMemo } from "react";
 
 export const CategoryEdit = () => {
   const translate = useTranslate();
   const { formProps, saveButtonProps, formLoading, query } =
     useForm<ICategory>();
 
+  const options = useMemo(
+    () =>
+      CATEGORY_OPTIONS.map((o) => ({
+        ...o,
+        label: translate(o.label as string),
+      })),
+    [CATEGORY_OPTIONS],
+  );
   return (
     <Edit
       isLoading={formLoading}
@@ -51,7 +60,7 @@ export const CategoryEdit = () => {
         >
           <Radio.Group
             defaultValue={"component"}
-            options={CATEGORY_OPTIONS}
+            options={options}
             optionType="button"
             buttonStyle="solid"
           />

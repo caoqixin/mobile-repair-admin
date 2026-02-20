@@ -129,7 +129,7 @@ export const InventoryItemsList = () => {
                   icon={<SearchOutlined />}
                   onClick={searchFormProps.form?.submit}
                 >
-                  查询
+                  {translate("inventory_items.search.button")}
                 </Button>
               </Form.Item>
             </Col>

@@ -3,12 +3,22 @@ import { Form, Input, Select } from "antd";
 import { useTranslate } from "@refinedev/core";
 import { IProfile } from "../../interface";
 import { PROFILE_OPTIONS } from "../../constants";
+import { useMemo } from "react";
 
 export const ProfileEdit = () => {
   const translate = useTranslate();
   const { formProps, saveButtonProps, formLoading } = useForm<IProfile>({
     warnWhenUnsavedChanges: true,
   });
+
+  const options = useMemo(
+    () =>
+      PROFILE_OPTIONS?.map((o) => ({
+        ...o,
+        label: translate(o.label as string),
+      })),
+    [PROFILE_OPTIONS],
+  );
 
   return (
     <Edit
@@ -54,7 +64,7 @@ export const ProfileEdit = () => {
             },
           ]}
         >
-          <Select options={PROFILE_OPTIONS} />
+          <Select options={options} />
         </Form.Item>
       </Form>
     </Edit>

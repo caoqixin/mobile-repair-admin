@@ -17,7 +17,7 @@ import {
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { QUALITY_OPTIONS } from "../../constants";
 import { IInventoryComponent } from "../../interface";
 import { useInventoryOptions } from "../../hooks/useInventoryOptions";
@@ -150,6 +150,18 @@ export const PurchaseOrderCreate = () => {
     setTotalCost(total);
   };
 
+  const options = useMemo(
+    () =>
+      QUALITY_OPTIONS.map((o) => ({
+        label: translate(o.label),
+        options: o.options.map((op) => ({
+          ...op,
+          label: translate(op.label),
+        })),
+      })),
+    [QUALITY_OPTIONS],
+  );
+
   const handleModalOnFinish = (values: any) => {
     const componentForm = {
       sku: values.sku,
@@ -211,7 +223,9 @@ export const PurchaseOrderCreate = () => {
                   onSearch={undefined}
                   filterOption={true}
                   optionFilterProp="label"
-                  placeholder="选择供应商"
+                  placeholder={translate(
+                    "purchase_orders.placeholder.supplier",
+                  )}
                 />
               </Form.Item>
             </Col>
@@ -236,15 +250,23 @@ export const PurchaseOrderCreate = () => {
               >
                 <Select
                   options={[
-                    { label: "Draft (草稿)", value: "draft" },
-                    { label: "Ordered (已下单)", value: "ordered" },
+                    {
+                      label: translate("purchase_orders.status.draft"),
+                      value: "draft",
+                    },
+                    {
+                      label: translate("purchase_orders.status.ordered"),
+                      value: "ordered",
+                    },
                   ]}
                 />
               </Form.Item>
             </Col>
           </Row>
 
-          <Divider orientation="left">采购清单 (Lista Prodotti)</Divider>
+          <Divider orientation="left">
+            {translate("purchase_orders.text.list")}
+          </Divider>
 
           <Form.List name="items">
             {(fields, { add, remove }) => (
@@ -292,12 +314,16 @@ export const PurchaseOrderCreate = () => {
                                   <Col flex="auto">
                                     <Form.Item
                                       {...restField}
-                                      label="配件名称"
+                                      label={translate(
+                                        "purchase_orders.labels.name",
+                                      )}
                                       name={[name, "component_id"]}
                                       rules={[
                                         {
                                           required: true,
-                                          message: "请选择配件",
+                                          message: translate(
+                                            "purchase_orders.rules.name",
+                                          ),
                                         },
                                       ]}
                                     >
@@ -311,8 +337,12 @@ export const PurchaseOrderCreate = () => {
                                         optionFilterProp="label"
                                         placeholder={
                                           rowType === "component"
-                                            ? "搜索维修配件..."
-                                            : "搜索前台配件..."
+                                            ? translate(
+                                                "purchase_orders.placeholder.component",
+                                              )
+                                            : translate(
+                                                "purchase_orders.placeholder.item",
+                                              )
                                         }
                                       />
                                     </Form.Item>
@@ -331,7 +361,9 @@ export const PurchaseOrderCreate = () => {
                                           createItemModalShow();
                                         }
                                       }}
-                                      title="新建配件"
+                                      title={translate(
+                                        "purchase_orders.text.addButton",
+                                      )}
                                     />
                                   </Col>
                                 </>
@@ -344,7 +376,7 @@ export const PurchaseOrderCreate = () => {
                       <Col span={8}>
                         <Form.Item
                           {...restField}
-                          label="数量"
+                          label={translate("purchase_orders.labels.quantity")}
                           name={[name, "quantity"]}
                           rules={[{ required: true }]}
                         >
@@ -354,7 +386,7 @@ export const PurchaseOrderCreate = () => {
                       <Col span={6}>
                         <Form.Item
                           {...restField}
-                          label="单价 (€)"
+                          label={translate("purchase_orders.labels.unit_cost")}
                           name={[name, "unit_cost"]}
                           rules={[{ required: true }]}
                         >
@@ -375,7 +407,7 @@ export const PurchaseOrderCreate = () => {
                     block
                     icon={<PlusOutlined />}
                   >
-                    添加维修配件
+                    {translate("purchase_orders.text.addComponent")}
                   </Button>
                   <Button
                     type="dashed"
@@ -383,7 +415,7 @@ export const PurchaseOrderCreate = () => {
                     block
                     icon={<PlusOutlined />}
                   >
-                    添加前台配件
+                    {translate("purchase_orders.text.addItem")}
                   </Button>
                 </Flex>
               </>
@@ -393,7 +425,8 @@ export const PurchaseOrderCreate = () => {
           <Divider />
           <Row justify="end">
             <div style={{ fontSize: 20, fontWeight: "bold" }}>
-              总计: {formatCurrency(totalCost)}
+              {translate("purchase_orders.text.total")}:{" "}
+              {formatCurrency(totalCost)}
             </div>
           </Row>
         </Form>
@@ -449,7 +482,9 @@ export const PurchaseOrderCreate = () => {
                   <Select
                     {...categorySelectProps}
                     allowClear
-                    placeholder="全部分类"
+                    placeholder={translate(
+                      "purchase_orders.placeholder.category",
+                    )}
                   />
                 </Form.Item>
               </Col>
@@ -469,7 +504,9 @@ export const PurchaseOrderCreate = () => {
                     onSearch={undefined}
                     filterOption={true}
                     optionFilterProp="label"
-                    placeholder="全部供应商"
+                    placeholder={translate(
+                      "purchase_orders.placeholder.supplier",
+                    )}
                   />
                 </Form.Item>
               </Col>
@@ -489,7 +526,9 @@ export const PurchaseOrderCreate = () => {
                     onSearch={undefined}
                     filterOption={true}
                     optionFilterProp="label"
-                    placeholder="先选品牌"
+                    placeholder={translate(
+                      "inventory_components.search.placeholder.brand",
+                    )}
                     onChange={(val) => {
                       handleBrandChange(val as unknown as number);
                       form?.setFieldValue("model_id", null);
@@ -514,7 +553,15 @@ export const PurchaseOrderCreate = () => {
                     onSearch={undefined}
                     filterOption={true}
                     optionFilterProp="label"
-                    placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
+                    placeholder={
+                      selectedBrand
+                        ? translate(
+                            "inventory_components.search.placeholder.model",
+                          )
+                        : translate(
+                            "inventory_components.search.placeholder.noModel",
+                          )
+                    }
                     disabled={!selectedBrand || isModelLoading}
                     onChange={(val) => {
                       setSelectedModels(val as unknown as number[]);
@@ -534,7 +581,7 @@ export const PurchaseOrderCreate = () => {
                 },
               ]}
             >
-              <Select options={QUALITY_OPTIONS} />
+              <Select options={options} />
             </Form.Item>
             <Row gutter={24}>
               <Col span={6}>
@@ -615,7 +662,9 @@ export const PurchaseOrderCreate = () => {
                     filterOption={true}
                     optionFilterProp="label"
                     allowClear
-                    placeholder="全部分类"
+                    placeholder={translate(
+                      "purchase_orders.placeholder.category",
+                    )}
                   />
                 </Form.Item>
               </Col>

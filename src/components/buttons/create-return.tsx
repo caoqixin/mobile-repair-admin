@@ -1,12 +1,20 @@
-import { Button, Popconfirm, message } from "antd";
+import { Button, Popconfirm } from "antd";
 import { RedoOutlined } from "@ant-design/icons";
-import { useCreate, useGetIdentity, useNavigation } from "@refinedev/core";
+import {
+  useCreate,
+  useGetIdentity,
+  useNavigation,
+  useNotification,
+  useTranslate,
+} from "@refinedev/core";
 
 type Props = {
   record: any; // 传入当前的保修单记录
 };
 
 export const CreateReturnButton = ({ record }: Props) => {
+  const translate = useTranslate();
+  const { open } = useNotification();
   const {
     mutate,
     mutation: { isPending },
@@ -19,7 +27,10 @@ export const CreateReturnButton = ({ record }: Props) => {
   const handleCreateReturn = () => {
     // 检查是否已经是 'claimed' 状态，防止重复点击
     if (record.status === "claimed") {
-      message.warning("该保修单正在返修处理中，请勿重复创建。");
+      open?.({
+        type: "error",
+        message: translate("warranty.message.warning"),
+      });
       return;
     }
 
@@ -39,21 +50,31 @@ export const CreateReturnButton = ({ record }: Props) => {
           status: "approved",
 
           // 自动备注
-          problem_description: `[保修返修] 第 ${
-            record.claim_count + 1
-          } 次报修。关联原单号: ${record.repair_orders?.readable_id}`,
+          problem_description: translate("warranty.text.description", {
+            count: record.claim_count + 1,
+            id: record.repair_orders?.readable_id,
+          }),
           total_price: 0,
           warranty_id: record.id,
         },
       },
       {
         onSuccess: (data) => {
-          message.success("返修单创建成功");
+          open?.({
+            type: "success",
+            message: translate("warranty.message.success"),
+          });
+
           // 3. 创建成功后，跳转到新单的编辑页
           show("repair_orders", data.data.id as number);
         },
         onError: (error) => {
-          message.error(`创建失败: ${error.message}`);
+          open?.({
+            type: "error",
+            message: translate("warranty.message.error", {
+              message: error.message,
+            }),
+          });
         },
       },
     );
@@ -61,13 +82,13 @@ export const CreateReturnButton = ({ record }: Props) => {
 
   return (
     <Popconfirm
-      title="确认返修?"
-      description={`当前已理赔次数: ${
-        record.claimed_count || 0
-      }。确认创建返修单？`}
+      title={translate("warranty.confirm.title")}
+      description={translate("warranty.confirm.description", {
+        count: record.claimed_count || 0,
+      })}
       onConfirm={handleCreateReturn}
-      okText="创建"
-      cancelText="取消"
+      okText={translate("warranty.confirm.okText")}
+      cancelText={translate("warranty.confirm.cancelText")}
     >
       <Button
         icon={<RedoOutlined />}
@@ -76,7 +97,7 @@ export const CreateReturnButton = ({ record }: Props) => {
         // 如果状态已经是 claimed，禁用按钮
         disabled={record.status === "claimed"}
       >
-        返修
+        {translate("warranty.confirm.confirmText")}
       </Button>
     </Popconfirm>
   );

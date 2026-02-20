@@ -8,7 +8,6 @@ import {
   Tag,
   Space,
   Button,
-  message,
   Tooltip,
   Empty,
 } from "antd";
@@ -19,13 +18,14 @@ import {
   CloseCircleOutlined,
   ThunderboltOutlined,
 } from "@ant-design/icons";
-import { useTranslate } from "@refinedev/core";
+import { useNotification, useTranslate } from "@refinedev/core";
 import { formatCurrency } from "../../lib/utils";
 
 const { Title, Text } = Typography;
 
 export const Quote = () => {
   const translate = useTranslate();
+  const { open } = useNotification();
   // --- 状态管理 ---
   const [selectedModel, setSelectedModel] = useState<number | null>(null);
 
@@ -96,7 +96,10 @@ export const Quote = () => {
 
     const text = `${comp.name} (${comp.quality}): €${comp.suggested_repair_price}`;
     navigator.clipboard.writeText(text);
-    message.success("报价已复制 (Copiato)!");
+    open?.({
+      message: translate("quote.copied"),
+      type: "success",
+    });
   };
 
   return (

@@ -55,13 +55,13 @@ export const PurchaseOrderShow = () => {
         status: "received", // 只需更改状态，后端触发器会处理库存和价格
       },
       successNotification: {
-        message: "入库成功 (Successo)",
-        description: "库存已增加，最新进价已更新，订单已锁定。",
+        message: translate("purchase_orders.message.success"),
+        description: translate("purchase_orders.message.successDescription"),
         type: "success",
       },
       errorNotification: {
-        message: "操作失败",
-        description: "请检查网络或权限",
+        message: translate("purchase_orders.message.error"),
+        description: translate("purchase_orders.message.errorDescription"),
         type: "error",
       },
     });
@@ -117,7 +117,7 @@ export const PurchaseOrderShow = () => {
             {/* 核心操作区 */}
             {isReceived ? (
               <Alert
-                message="订单已入库锁定 (Bloccato)"
+                message={translate("purchase_orders.message.locked")}
                 type="success"
                 showIcon
                 icon={<LockOutlined />}
@@ -128,11 +128,13 @@ export const PurchaseOrderShow = () => {
                 {/* 只有状态为 'ordered' 时才允许确认收货，草稿状态需要先去编辑页改为 ordered */}
                 {record?.status === "ordered" && (
                   <Popconfirm
-                    title="确认收货并入库?"
-                    description="此操作将自动增加库存并更新进价，且不可撤销。"
+                    title={translate("purchase_orders.confirm.title")}
+                    description={translate(
+                      "purchase_orders.confirm.description",
+                    )}
                     onConfirm={handleConfirmReceipt}
-                    okText="确认入库"
-                    cancelText="取消"
+                    okText={translate("purchase_orders.confirm.okText")}
+                    cancelText={translate("purchase_orders.confirm.cancelText")}
                     okButtonProps={{ loading: mutation.isPending }}
                   >
                     <Button
@@ -140,7 +142,7 @@ export const PurchaseOrderShow = () => {
                       icon={<ImportOutlined />}
                       loading={mutation.isPending}
                     >
-                      确认收货 (Conferma Ricezione)
+                      {translate("purchase_orders.confirm.confirmText")}
                     </Button>
                   </Popconfirm>
                 )}
@@ -158,13 +160,21 @@ export const PurchaseOrderShow = () => {
               bordered
               column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
             >
-              <Descriptions.Item label="单号 (ID)">
+              <Descriptions.Item
+                label={translate("purchase_orders.fields.readable_id")}
+              >
                 <Text copyable>{record?.readable_id || record?.id}</Text>
               </Descriptions.Item>
-              <Descriptions.Item label="创建人">
+              <Descriptions.Item
+                label={translate("purchase_orders.fields.operator")}
+              >
                 {record?.profiles?.full_name}
               </Descriptions.Item>
-              <Descriptions.Item label="预计到货">
+              <Descriptions.Item
+                label={translate(
+                  "purchase_orders.fields.expected_arrival_date",
+                )}
+              >
                 <Space>
                   <CalendarOutlined />{" "}
                   <DateField
@@ -173,13 +183,15 @@ export const PurchaseOrderShow = () => {
                   />
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="创建时间">
+              <Descriptions.Item
+                label={translate("purchase_orders.fields.created_at")}
+              >
                 <DateField value={record?.created_at} format="DD/MM/YYYY" />
               </Descriptions.Item>
             </Descriptions>
 
             <Divider orientation="left" style={{ marginTop: 32 }}>
-              <FileTextOutlined /> 采购明细 (Items)
+              <FileTextOutlined /> {translate("purchase_orders.text.list")}
             </Divider>
 
             <Table
@@ -189,17 +201,17 @@ export const PurchaseOrderShow = () => {
               size="small"
             >
               <Table.Column
-                title="类型"
+                title={translate("purchase_orders.text.type.title")}
                 key="type"
                 width={100}
                 render={(_, item: any) =>
                   item.component_id ? (
                     <Tag icon={<ToolOutlined />} color="blue">
-                      维修件
+                      {translate("purchase_orders.text.type.component")}
                     </Tag>
                   ) : (
                     <Tag icon={<ShoppingCartOutlined />} color="cyan">
-                      商品
+                      {translate("purchase_orders.text.type.item")}
                     </Tag>
                   )
                 }
@@ -215,7 +227,7 @@ export const PurchaseOrderShow = () => {
                 )}
               />
               <Table.Column
-                title="名称"
+                title={translate("purchase_orders.text.name")}
                 render={(_, item: any) => (
                   <Space direction="vertical" size={0}>
                     <Text strong>
@@ -235,20 +247,20 @@ export const PurchaseOrderShow = () => {
                 )}
               />
               <Table.Column
-                title="数量"
+                title={translate("purchase_orders.text.quantity")}
                 dataIndex="quantity"
                 align="center"
                 width={80}
               />
               <Table.Column
-                title="单价"
+                title={translate("purchase_orders.text.unit_cost")}
                 dataIndex="unit_cost"
                 align="right"
                 width={100}
                 render={(val) => formatCurrency(val)}
               />
               <Table.Column
-                title="小计"
+                title={translate("purchase_orders.text.cost")}
                 align="right"
                 width={120}
                 render={(_, item: any) => (
@@ -264,12 +276,12 @@ export const PurchaseOrderShow = () => {
         {/* 右侧：财务统计 */}
         <Col xs={24} lg={8}>
           <Card
-            title="💰 订单总额"
+            title={translate("purchase_orders.text.orderTotal")}
             variant="borderless"
             styles={{ header: { background: "#fafafa" } }}
           >
             <Statistic
-              title="预估总成本 (Totale Stimato)"
+              title={translate("purchase_orders.text.estimated_cost")}
               value={record?.total_estimated_cost}
               precision={2}
               prefix={<EuroCircleOutlined />}
@@ -284,11 +296,12 @@ export const PurchaseOrderShow = () => {
                 <CheckCircleOutlined
                   style={{ fontSize: 24, marginBottom: 8 }}
                 />
-                <div>已完成入库</div>
+                <div>{translate("purchase_orders.text.purchased")}</div>
               </div>
             ) : (
               <div style={{ color: "#8c8c8c" }}>
-                状态: {record?.status} (需确认收货以入库)
+                {translate("purchase_orders.text.status")}: {record?.status} (
+                {translate("purchase_orders.text.tips")})
               </div>
             )}
           </Card>

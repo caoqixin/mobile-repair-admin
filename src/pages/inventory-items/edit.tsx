@@ -67,7 +67,9 @@ export const InventoryItemsEdit = () => {
                 onSearch={undefined}
                 filterOption={true}
                 optionFilterProp="label"
-                placeholder="全部分类"
+                placeholder={translate(
+                  "inventory_items.search.placeholder.category",
+                )}
               />
             </Form.Item>
           </Col>

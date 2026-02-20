@@ -10,12 +10,14 @@ import {
 } from "recharts";
 import { COLORS_BASE } from "../../constants";
 import { IMonthlyStats } from "../../interface";
+import { useTranslate } from "@refinedev/core";
 
 interface MonthlyRevenueProps {
   data: IMonthlyStats[];
 }
 
 export const MonthlyRevenue = ({ data }: MonthlyRevenueProps) => {
+  const translate = useTranslate();
   return (
     <ResponsiveContainer width="100%" height={380}>
       <LineChart
@@ -42,7 +44,7 @@ export const MonthlyRevenue = ({ data }: MonthlyRevenueProps) => {
           yAxisId="left"
           type="monotone"
           dataKey="total_revenue"
-          name="收入 (€)"
+          name={translate("charts.monthly.total_revenue")}
           stroke={COLORS_BASE.success}
           strokeWidth={3}
           dot={{ r: 4 }}
@@ -52,7 +54,7 @@ export const MonthlyRevenue = ({ data }: MonthlyRevenueProps) => {
           yAxisId="right"
           type="monotone"
           dataKey="repair_count"
-          name="单量"
+          name={translate("charts.monthly.repair_count")}
           stroke={COLORS_BASE.primary}
           strokeWidth={3}
           dot={{ r: 4 }}

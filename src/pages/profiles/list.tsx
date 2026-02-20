@@ -56,7 +56,7 @@ export const ProfileList = () => {
           dataIndex="role"
           title={translate("profiles.fields.role")}
           render={(value: UserRole) => (
-            <TextField value={USER_ROLE_MAP[value]} />
+            <TextField value={translate(USER_ROLE_MAP[value])} />
           )}
         />
         <Table.Column

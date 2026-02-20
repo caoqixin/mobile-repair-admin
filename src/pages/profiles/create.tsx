@@ -9,6 +9,7 @@ import {
 import { IProfile, UserRole } from "../../interface";
 import { PROFILE_OPTIONS } from "../../constants";
 import { usePasswordGenerator } from "../../hooks/usePasswordGenerator";
+import { useMemo } from "react";
 export const ProfileCreate = () => {
   const { listUrl } = useNavigation();
   const translate = useTranslate();
@@ -28,6 +29,15 @@ export const ProfileCreate = () => {
       form.validateFields([["password"]]);
     }
   };
+
+  const options = useMemo(
+    () =>
+      PROFILE_OPTIONS?.map((o) => ({
+        ...o,
+        label: translate(o.label as string),
+      })),
+    [PROFILE_OPTIONS],
+  );
 
   const handleOnFinish = async (values: any) => {
     const formData = {
@@ -97,7 +107,7 @@ export const ProfileCreate = () => {
           ]}
           initialValue={"front_desk"}
         >
-          <Select<UserRole> options={PROFILE_OPTIONS} />
+          <Select<UserRole> options={options} />
         </Form.Item>
         <Space.Compact style={{ width: "100%" }}>
           <Form.Item
@@ -117,7 +127,7 @@ export const ProfileCreate = () => {
             onClick={handleGenerate}
             disabled={mutation.isPending}
           >
-            生成密码
+            {translate("buttons.generate")}
           </Button>
         </Space.Compact>
       </Form>

@@ -13,7 +13,7 @@ import {
   ThunderboltOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { REPAIR_STATUS_OPTIONS } from "../../constants";
 import { ListLoader } from "../../components/loadings";
 import { useTranslate } from "@refinedev/core";
@@ -85,9 +85,18 @@ export const RepairOrderList = () => {
     },
   });
 
+  const status_options = useMemo(
+    () =>
+      REPAIR_STATUS_OPTIONS.map((status) => ({
+        ...status,
+        label: translate(status.label),
+      })),
+    [REPAIR_STATUS_OPTIONS],
+  );
+
   const getStatusConfig = (status: string) => {
     return (
-      REPAIR_STATUS_OPTIONS.find((o) => o.value === status) || {
+      status_options.find((o) => o.value === status) || {
         color: "default",
         label: status,
       }
@@ -198,7 +207,7 @@ export const RepairOrderList = () => {
           title={translate("repair_orders.fields.status")}
           render={(val) => {
             const conf = getStatusConfig(val);
-            return <Tag color={conf.color}>{conf.label}</Tag>;
+            return <Tag color={conf.color}>{translate(conf.label)}</Tag>;
           }}
         />
         <Table.Column

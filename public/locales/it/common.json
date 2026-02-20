@@ -4,7 +4,7 @@
       "title": "Accedi al tuo account",
       "signin": "Accedi",
       "signup": "Registrati",
-      "divider": "o",
+      "divider": "oppure",
       "fields": {
         "email": "Email",
         "password": "Password"
@@ -35,7 +35,7 @@
       }
     },
     "register": {
-      "title": "Registra un account",
+      "title": "Registra account",
       "fields": {
         "email": "Email",
         "password": "Password"
@@ -51,15 +51,15 @@
       }
     },
     "updatePassword": {
-      "title": "Aggiorna Password",
+      "title": "Aggiorna password",
       "fields": {
-        "password": "Nuova Password",
-        "confirmPassword": "Conferma Nuova Password"
+        "password": "Nuova password",
+        "confirmPassword": "Conferma nuova password"
       },
       "errors": {
         "confirmPasswordNotMatch": "Le password non corrispondono",
         "requiredPassword": "La password è obbligatoria",
-        "requiredConfirmPassword": "Conferma la nuova password"
+        "requiredConfirmPassword": "Conferma la password"
       },
       "buttons": {
         "submit": "Aggiorna"
@@ -67,8 +67,13 @@
     },
     "error": {
       "info": "Potresti aver dimenticato di aggiungere il componente {{action}} alla risorsa {{resource}}.",
-      "404": "Spiacenti, la pagina che stai cercando non esiste.",
+      "404": "Spiacenti, la pagina che stai visitando non esiste.",
       "resource404": "Assicurati di aver creato la risorsa {{resource}}.",
+      "backHome": "Torna alla Home"
+    },
+    "authorization": {
+      "title": "Accesso negato",
+      "description": "Non hai i permessi per accedere a questa pagina",
       "backHome": "Torna alla Home"
     }
   },
@@ -92,31 +97,111 @@
     "show": "Visualizza",
     "undo": "Annulla azione",
     "import": "Importa",
+    "export": "Esporta",
     "clone": "Clona",
-    "notAccessTitle": "Non hai i permessi di accesso",
+    "notAccessTitle": "Nessun accesso",
     "next": "Avanti",
     "previous": "Indietro",
-    "backList": "Torna all'elenco"
+    "backList": "Torna all'elenco",
+    "generate": "Genera password"
   },
   "warnWhenUnsavedChanges": "Sei sicuro di voler uscire? Le modifiche non sono state salvate.",
   "notifications": {
-    "success": "Operazione completata con successo",
-    "error": "Si è verificato un errore (Codice: {{statusCode}})",
-    "undoable": "Hai {{seconds}} secondi per annullare l'operazione",
+    "success": "Operazione riuscita",
+    "error": "Si è verificato un errore (Stato: {{statusCode}})",
+    "undoable": "Hai {{seconds}} secondi per annullare l'azione",
     "createSuccess": "{{resource}} creato con successo",
-    "createError": "Errore durante la creazione di {{resource}} (Codice: {{statusCode}})",
+    "createError": "Errore nella creazione di {{resource}} (Stato: {{statusCode}})",
     "deleteSuccess": "{{resource}} eliminato con successo",
-    "deleteError": "Errore durante l'eliminazione di {{resource}} (Codice: {{statusCode}})",
-    "editSuccess": "{{resource}} modificato con successo",
-    "editError": "Errore durante la modifica di {{resource}} (Codice: {{statusCode}})",
-    "importProgress": "Importazione in corso: {{processed}}/{{total}}"
+    "deleteError": "Errore nell'eliminazione di {{resource}} (Stato: {{statusCode}})",
+    "editSuccess": "{{resource}} aggiornato con successo",
+    "editError": "Errore nell'aggiornamento di {{resource}} (Stato: {{statusCode}})",
+    "importProgress": "Importazione: {{processed}}/{{total}}"
   },
   "loading": "Caricamento...",
   "tags": {
     "clone": "Clona"
   },
+  "repair_status": {
+    "pending_check": "In attesa test",
+    "pending_quote": "In attesa preventivo",
+    "approved": "Approvato",
+    "repairing": "In riparazione",
+    "waiting_parts": "In attesa ricambi",
+    "completed": "Completato",
+    "delivered": "Consegnato",
+    "cancelled": "Annullato"
+  },
+  "user_role": {
+    "admin": "Amministratore",
+    "technician": "Tecnico",
+    "front_desk": "Reception",
+    "partner": "Partner"
+  },
+  "category": {
+    "component": "Ricambi riparazione",
+    "item": "Prodotti vendita"
+  },
+  "quality": {
+    "labels": {
+      "general": "Generale",
+      "apple_screen": "Schermo Apple"
+    },
+    "options": {
+      "compatible": "Compatibile",
+      "original": "Originale",
+      "regenerate": "Rigenerato",
+      "service_original": "Service Pack Originale",
+      "incell": "Schermo INCELL",
+      "hard": "OLED Hard",
+      "soft": "OLED Soft"
+    }
+  },
+  "quick_actions": {
+    "name": "Azioni Rapide",
+    "actions": {
+      "repair": "Nuova Riparazione",
+      "pos": "Cassa Retail",
+      "parts": "Cerca Ricambi",
+      "retail": "Cerca Prodotti",
+      "quote": "Preventivi",
+      "purchase": "Carico Magazzino"
+    }
+  },
   "dashboard": {
-    "title": "Dashboard"
+    "yearly_income": "Entrate totali {{year}}",
+    "last_year": "Vedi anni precedenti",
+    "yearly_repair": "Volume riparazioni {{year}}",
+    "count": "ord.",
+    "monthly": "Entrate/Ordini di {{month}}",
+    "monthly_suffix": " / {{count}} ord.",
+    "year_statistic": "Trend dell'anno",
+    "top": "Top 5 Modelli Riparati",
+    "rank": "Vedi classifica completa",
+    "kpi": {
+      "title": {
+        "active": "Ordini in corso",
+        "parts": "Ricambi riparazione",
+        "retail": "Articoli vendita"
+      },
+      "footer": {
+        "active": "Da gestire con urgenza",
+        "parts": "Per uso interno",
+        "retail": "Per vendita diretta"
+      },
+      "suffix": {
+        "active": " ord.",
+        "parts": "/ {{count}} pz",
+        "retail": "/ {{count}} pz"
+      }
+    },
+    "chart": {
+      "income": "Trend Entrate {{year}}",
+      "status": "Distribuzione Stati Ordine",
+      "buttons": {
+        "last_year": "Dati anni passati"
+      }
+    }
   },
   "table": {
     "actions": "Azioni"
@@ -134,48 +219,48 @@
   },
   "autoSave": {
     "success": "Salvato",
-    "error": "Salvataggio automatico fallito",
-    "loading": "Salvataggio in corso...",
+    "error": "Salvataggio fallito",
+    "loading": "Salvataggio...",
     "idle": "In attesa di modifiche"
   },
   "resources": {
-    "dashboard": "Pannello di Controllo",
-    "quote": "Preventivo Rapido",
-    "repairOrders": "Gestione Riparazioni",
-    "salesOrders": "Vendite e Accessori",
-    "customers": "Anagrafica Clienti",
+    "dashboard": "Dashboard",
+    "quote": "Preventivatore",
+    "repairOrders": "Ordini di Riparazione",
+    "salesOrders": "Vendite Retail",
+    "customers": "Gestione Clienti",
     "inventory": "Panoramica Inventario",
-    "inventoryComponents": "Magazzino Ricambi (Interno)",
-    "inventoryItems": "Catalogo Prodotti (Retail)",
-    "suppliers": "Elenco Fornitori",
+    "inventoryComponents": "Magazzino Ricambi",
+    "inventoryItems": "Magazzino Prodotti",
+    "suppliers": "Fornitori",
     "transactions": "Movimenti Finanziari",
-    "settings": "Impostazioni di Sistema",
-    "deviceModels": "Database Modelli",
-    "categories": "Categorie Prodotti",
+    "settings": "Impostazioni",
+    "deviceModels": "Modelli Dispositivi",
+    "categories": "Categorie",
     "faults": "Elenco Guasti",
     "profiles": "Staff e Permessi",
-    "warranties": "Gestione Garanzie",
-    "purchase_orders": "Ordini di Acquisto",
-    "stock_entries": "Registri di Carico"
+    "warranties": "Garanzie",
+    "purchase_orders": "Ordini d'Acquisto",
+    "stock_entries": "Carichi Magazzino"
   },
   "filters": {
     "customers": {
-      "placeholder": "Cerca per telefono/nome...",
+      "placeholder": "Cerca Cellulare/Nome...",
       "submitButton": "Cerca"
     },
     "brands": {
       "placeholder": "Cerca marca..."
     },
     "repair_orders": {
-      "placeholder": "Cerca per ID / IMEI / Cliente...",
+      "placeholder": "Cerca N. Ordine / IMEI / Cliente...",
       "submitButton": "Cerca"
     },
     "stock_entries": {
-      "placeholder": "Cerca per ID (es. PO-2026...)",
+      "placeholder": "Cerca N. Riferimento...",
       "submitButton": "Cerca"
     },
     "warranty": {
-      "placeholder": "Cerca per cellulare utente...",
+      "placeholder": "Cerca Cellulare Cliente...",
       "submitButton": "Cerca"
     }
   },
@@ -184,10 +269,10 @@
       "id": "ID",
       "name": "Nome Categoria",
       "type": "Tipo",
-      "created_at": "Data Aggiunta"
+      "created_at": "Data creazione"
     },
     "titles": {
-      "list": "Elenco Categorie Prodotti",
+      "list": "Elenco Categorie",
       "create": "Nuova Categoria",
       "edit": "{{name}} | Modifica Categoria"
     }
@@ -199,11 +284,11 @@
       "phone": "Telefono",
       "email": "Email",
       "notes": "Note",
-      "created_at": "Data Registrazione"
+      "created_at": "Data inserimento"
     },
     "titles": {
       "list": "Anagrafica Clienti",
-      "create": "Nuova Scheda Cliente",
+      "create": "Nuovo Cliente",
       "edit": "{{name}} | Modifica Cliente",
       "show": "Scheda Cliente: {{name}}"
     },
@@ -212,7 +297,7 @@
       "historyTitle": "Storico Riparazioni",
       "no": "N. Ordine",
       "device": "Modello",
-      "problem": "Problema",
+      "problem": "Guasto",
       "status": "Stato",
       "total_price": "Totale",
       "date": "Data",
@@ -230,12 +315,16 @@
       "brandEdit": "Modifica Marca | {{name}}"
     },
     "models": {
-      "title": "Database Modelli",
+      "title": "Catalogo Modelli",
       "fields": {
         "name": "Modello",
-        "code": "Codice Modello",
-        "isTablet": "È un Tablet?",
-        "year": "Anno di Rilascio"
+        "code": "Codice",
+        "isTablet": "Tablet?",
+        "year": "Anno uscita"
+      },
+      "options": {
+        "tablet": "Tablet",
+        "phone": "Smartphone"
       },
       "form": {
         "create": {
@@ -243,7 +332,7 @@
           "fields": {
             "modelName": "Nome Modello",
             "code": "Codice",
-            "isTablet": "È un Tablet?",
+            "isTablet": "Tablet?",
             "year": "Anno"
           }
         },
@@ -252,7 +341,7 @@
           "fields": {
             "modelName": "Nome Modello",
             "code": "Codice",
-            "isTablet": "È un Tablet?",
+            "isTablet": "Tablet?",
             "year": "Anno"
           }
         }
@@ -264,10 +353,10 @@
       "id": "ID",
       "name": "Nome Guasto",
       "description": "Descrizione",
-      "created_at": "Data Aggiunta"
+      "created_at": "Aggiunto il"
     },
     "titles": {
-      "list": "Elenco Guasti Comuni",
+      "list": "Elenco Guasti",
       "create": "Aggiungi Guasto",
       "edit": "Modifica Guasto | {{name}}"
     }
@@ -281,10 +370,10 @@
       "supplier": "Fornitore",
       "quality": "Qualità",
       "stock": "Giacenza",
-      "cost": "Prezzo Acquisto",
+      "cost": "Prezzo d'Acquisto",
       "repair_price": "Prezzo Riparazione",
-      "partner_price": "Prezzo Partner/B2B",
-      "created_at": "Data Aggiunta",
+      "partner_price": "Prezzo Partner",
+      "created_at": "Data",
       "brand": "Marca",
       "model": "Modello",
       "inStock": "Disponibile",
@@ -294,22 +383,36 @@
       "label": {
         "query": "Cerca",
         "category": "Categoria",
-        "brand": "Marca",
-        "model": "Modello Compatibile",
+        "brand": "Filtra Marca",
+        "model": "Modello compatibile",
         "button": "Cerca"
       },
       "placeholder": {
-        "query": "Cerca per nome o SKU...",
-        "category": "Seleziona Categoria",
-        "brand": "Seleziona Marca",
-        "model": "Seleziona Modello",
-        "noModel": "Seleziona prima la marca"
+        "query": "Cerca nome o SKU...",
+        "category": "Scegli categoria",
+        "brand": "Scegli marca",
+        "model": "Scegli modello",
+        "noModel": "Seleziona prima la marca",
+        "supplier": "Scegli fornitore"
       }
     },
     "titles": {
-      "list": "Magazzino Ricambi",
+      "list": "Elenco Ricambi",
       "create": "Carico Ricambio",
-      "edit": "Modifica Ricambio | {{name}}"
+      "edit": "Modifica Ricambio | {{name}}",
+      "show": "Dettagli Ricambio",
+      "detail": "📦 Info Base",
+      "compatible_model": "📦 Modelli Compatibili",
+      "stock_price": "💰 Magazzino e Prezzi"
+    },
+    "labels": {
+      "models": "Modelli compatibili",
+      "cost_price": "Prezzo carico",
+      "suggested_repair_price": "Prezzo riparazione consigliato",
+      "partner_repair_price": "Prezzo partner"
+    },
+    "text": {
+      "sold_out": "Scorta limitata"
     }
   },
   "inventory_items": {
@@ -319,24 +422,36 @@
       "name": "Nome Prodotto",
       "category": "Categoria",
       "stock": "Giacenza",
-      "cost": "Prezzo Acquisto",
+      "cost": "Prezzo d'Acquisto",
       "retail_price": "Prezzo Vendita",
-      "created_at": "Data Aggiunta"
+      "created_at": "Data"
     },
     "search": {
       "label": {
-        "query": "Cerca Prodotto",
+        "query": "Cerca prodotto",
         "category": "Categoria"
       },
       "placeholder": {
-        "query": "Cerca per nome o SKU...",
-        "category": "Seleziona Categoria"
-      }
+        "query": "Cerca nome o SKU...",
+        "category": "Scegli categoria"
+      },
+      "button": "Cerca"
     },
     "titles": {
-      "list": "Catalogo Prodotti",
-      "create": "Nuovo Prodotto",
-      "edit": "Modifica Prodotto | {{name}}"
+      "list": "Elenco Prodotti Retail",
+      "create": "Inserimento Prodotto",
+      "edit": "Modifica Prodotto | {{name}}",
+      "show": "Dettagli Prodotto: {{name}}",
+      "information": "📦 Info Base",
+      "financial": "💰 Finanza e Stock"
+    },
+    "text": {
+      "lowStock": "Allerta scorte basse",
+      "profit": "Margine stimato"
+    },
+    "labels": {
+      "retail": "Prezzo vendita",
+      "cost": "Prezzo carico"
     }
   },
   "profiles": {
@@ -344,224 +459,285 @@
       "id": "ID",
       "email": "Email",
       "role": "Ruolo",
-      "full_name": "Nome Operatore",
-      "created_at": "Data Attivazione",
+      "full_name": "Nome Staff",
+      "created_at": "Attivato il",
       "password": "Password"
     },
     "list": {
-      "title": "Elenco Personale",
+      "title": "Account Personale",
       "button": {
-        "create": "Aggiungi Operatore"
+        "create": "Aggiungi"
       }
     },
     "form": {
       "create": {
-        "title": "Crea Account Personale",
-        "success": "Account creato correttamente",
-        "error": "Errore durante la creazione, riprova!"
+        "title": "Nuovo Account Staff",
+        "success": "Account creato con successo",
+        "error": "Errore nella creazione dell'account"
       },
       "edit": {
-        "title": "Modifica Profilo Operatore"
+        "title": "Modifica Profilo Staff"
       }
     }
   },
   "purchase_orders": {
     "fields": {
-      "readable_id": "ID Ordine",
+      "readable_id": "N. Ordine",
       "supplier": "Fornitore",
       "status": "Stato",
-      "total_estimated_cost": "Costo Tot. Stimato (€)",
-      "expected_arrival_date": "Arrivo Previsto"
+      "operator": "Creato da",
+      "total_estimated_cost": "Totale Stimato (€)",
+      "expected_arrival_date": "Arrivo previsto",
+      "created_at": "Data ordine"
     },
     "titles": {
-      "list": "Ordini di Acquisto",
-      "create": "Nuovo Ordine di Acquisto",
-      "edit": "Modifica Ordine | ID #{{id}}",
-      "show": "Dettagli Ordine | ID #{{id}}"
+      "list": "Ordini d'Acquisto",
+      "create": "Nuovo Ordine Acquisto",
+      "edit": "Modifica Ordine | #{{id}}",
+      "show": "Dettaglio Ordine | #{{id}}"
+    },
+    "status": {
+      "draft": "Bozza",
+      "ordered": "Ordinato",
+      "received": "Ricevuto",
+      "cancelled": "Annullato"
+    },
+    "placeholder": {
+      "supplier": "Scegli fornitore",
+      "component": "Cerca ricambio...",
+      "item": "Cerca prodotto...",
+      "category": "Scegli categoria"
+    },
+    "text": {
+      "list": "Lista d'acquisto",
+      "addButton": "Nuovo Ricambio",
+      "addComponent": "Aggiungi Ricambio",
+      "addItem": "Aggiungi Prodotto",
+      "total": "Totale",
+      "cost": "Subtotale",
+      "orderTotal": "💰 Totale Ordine",
+      "estimated_cost": "Costo totale stimato",
+      "purchased": "Carico completato",
+      "status": "Stato",
+      "tips": "Conferma ricezione per caricare a magazzino"
+    },
+    "rules": {
+      "name": "Scegli un articolo"
+    },
+    "labels": {
+      "name": "Nome Ricambio",
+      "itemName": "Nome Prodotto",
+      "quantity": "Qtà",
+      "unit_price": "Prezzo Unitario (€)",
+      "type": {
+        "title": "Tipo",
+        "component": "Ricambio",
+        "item": "Prodotto"
+      }
+    },
+    "message": {
+      "success": "Magazzino aggiornato",
+      "successDescription": "Scorte aumentate e prezzi d'acquisto aggiornati.",
+      "error": "Operazione fallita",
+      "errorDescription": "Controlla la rete o i permessi",
+      "locked": "Ordine bloccato (già ricevuto)"
+    },
+    "confirm": {
+      "title": "Confermare ricezione e carico?",
+      "description": "Questa azione aumenterà le scorte e aggiornerà i costi. Non reversibile.",
+      "okText": "Conferma Carico",
+      "cancelText": "Annulla",
+      "confirmText": "Ricevuto"
     }
   },
   "quote": {
-    "title": "Preventivo Lampo",
-    "description": "Inserisci il modello per ottenere i prezzi di riparazione",
+    "title": "Preventivo Rapido",
+    "description": "Inserisci il modello per i prezzi",
     "placeholder": "Cerca modello (es: iPhone 13...)",
-    "pendingSearch": "In attesa del modello...",
+    "pendingSearch": "In attesa di modello...",
     "emptyResult": "Nessun ricambio trovato per questo modello",
+    "copied": "Preventivo copiato",
     "fields": {
-      "name": "Nome Ricambio",
-      "quantity": "Disponibilità",
-      "retail_price": "Prezzo Retail",
-      "collabor_price": "Prezzo B2B",
-      "inStock": "Disponibile",
-      "outStock": "Esaurito"
+      "name": "Componente",
+      "quantity": "Stock",
+      "retail_price": "Privato",
+      "collabor_price": "Partner",
+      "inStock": "Sì",
+      "outStock": "No"
     }
   },
   "repair_orders": {
     "titles": {
       "list": "Gestione Riparazioni",
-      "create": "Crea Scheda di Riparazione",
+      "create": "Nuova Riparazione",
       "edit": "Modifica Riparazione | #{{id}}",
       "show": "Dettaglio Riparazione | #{{id}}"
     },
     "tabs": {
-      "active": "In Lavorazione",
-      "history": "Archivio"
+      "active": "In Corso",
+      "history": "Storico"
     },
     "fields": {
       "readable_id": "N. Riparazione",
       "device": "Dispositivo",
       "customer": "Cliente",
-      "status": "Stato Riparazione",
+      "status": "Stato",
       "total_price": "Costo Totale",
       "warranty": "Garanzia/Gratis",
-      "created_at": "Data Ricezione"
+      "created_at": "Accettazione"
     },
     "steps": {
       "customer": "Cliente",
-      "device": "Guasto",
-      "price": "Prezzi e Ricambi",
-      "check": "Riepilogo"
+      "device": "Dispositivo/Guasto",
+      "price": "Preventivo",
+      "check": "Verifica"
     },
     "form": {
       "customer": {
         "select": "Seleziona Cliente",
-        "errMessage": "Seleziona o crea un cliente",
-        "placeholder": "Cerca per nome o telefono...",
+        "errMessage": "Scegli o crea un cliente",
+        "placeholder": "Cerca nome o telefono...",
         "button": "Nuovo",
         "or": "oppure",
-        "tips": "Se il cliente non esiste, clicca il pulsante a destra"
+        "tips": "Se il cliente non esiste, crealo ora"
       },
       "device": {
-        "modelName": "Modello Dispositivo",
+        "modelName": "Modello",
         "modelPlaceholder": "Cerca modello (es. iPhone 13)",
-        "newModel": "Aggiungi nuovo modello",
-        "imei_sn": "IMEI / Numero di Serie",
+        "newModel": "Nuovo Modello",
+        "imei_sn": "IMEI / SN",
         "imeiPlaceholder": "Scansiona o inserisci IMEI/SN",
-        "problem": "Descrizione Guasto",
-        "problemPlaceholder": "Seleziona guasti (scelta multipla)",
-        "newProblem": "Aggiungi nuovo tipo di guasto",
+        "problem": "Guasto riscontrato",
+        "problemPlaceholder": "Scegli guasti (multiplo)",
+        "newProblem": "Nuovo tipo guasto",
         "notes": "Note aggiuntive",
-        "notesPlaceholder": "Esempio: pellicola presente, graffi sulla scocca..."
+        "notesPlaceholder": "es: pellicola presente, graffi scocca..."
       },
       "price": {
-        "status": "Stato Iniziale",
-        "statusPlaceholder": "Seleziona stato iniziale",
-        "totalPrice": "Prezzo Totale Riparazione (€)",
-        "ruleMessage": "Inserisci il prezzo della riparazione",
-        "help": "Il prezzo calcola i ricambi, puoi aggiungere manualmente la manodopera",
-        "pricePlaceholder": "Importo finale da addebitare",
+        "status": "Stato iniziale",
+        "statusPlaceholder": "Scegli stato",
+        "totalPrice": "Prezzo Riparazione (€)",
+        "ruleMessage": "Inserisci il prezzo",
+        "help": "Calcolato dai ricambi + manodopera (modificabile)",
+        "pricePlaceholder": "Totale da addebitare al cliente",
         "deposit": "Acconto ricevuto (€)",
-        "components": "Ricambi necessari (opzionale)",
-        "component": "Seleziona Ricambio",
-        "price": "Prezzo Unitario",
-        "quantity": "Quantità",
+        "components": "Ricambi necessari (Opzionale)",
+        "component": "Scegli ricambio",
+        "price": "Prezzo",
+        "quantity": "Qtà",
         "add": "Aggiungi Ricambio"
       },
       "check": {
-        "unkownComponent": "Ricambio Sconosciuto",
-        "no": "No",
-        "unkownModel": "Modello Sconosciuto",
-        "title": "Verifica Informazioni Riparazione",
+        "unkownComponent": "Ricambio sconosciuto",
+        "no": "Nessuno",
+        "unkownModel": "Modello sconosciuto",
+        "title": "Verifica Dati Riparazione",
         "customerName": "Nome Cliente",
-        "phone": "Contatto",
+        "phone": "Telefono",
         "device": "Modello",
         "imei": "IMEI / SN",
-        "problem": "Guasto",
+        "problem": "Guasti",
         "note": "Note",
-        "total_price": "Costo Riparazione",
-        "component": "Ricambi Utilizzati",
+        "total_price": "Costo Finale",
+        "component": "Ricambi",
         "deposit": "Acconto",
-        "status": "Stato Riparazione"
+        "status": "Stato"
       },
       "edit": {
         "repair_info": "Dettagli Riparazione",
         "component_list": "Lista Ricambi",
-        "checkout": "Cassa e Saldo",
+        "checkout": "Riepilogo Finanziario",
         "total_price": "Prezzo Totale (€)",
-        "help": "Calcolato sui ricambi + manodopera manuale",
-        "deposit": "Acconto già versato (€)",
-        "payment_method": "Metodo di Pagamento",
-        "tips": "* Il saldo verrà aggiornato dopo il salvataggio"
+        "help": "Modifica manualmente se necessario",
+        "deposit": "Acconto già pagato (€)",
+        "payment_method": "Metodo Pagamento",
+        "tips": "* Salva per aggiornare il saldo finale"
       }
     },
     "customerModal": {
-      "title": "Nuova Scheda Cliente Rapida",
+      "title": "Nuova Anagrafica Rapida",
       "name": "Nome",
       "phone": "Telefono"
     },
     "modelModal": {
-      "title": "Aggiungi Modello Dispositivo",
+      "title": "Aggiungi Modello",
       "modelName": "Modello",
-      "modelPlaceholder": "Es: iPhone 15 Pro",
+      "modelPlaceholder": "es. iPhone 15 Pro",
       "brandName": "Marca",
-      "brandPlaceholder": "Seleziona Marca"
+      "brandPlaceholder": "Scegli marca"
     },
     "faultModal": {
-      "title": "Nuovo Tipo di Guasto",
+      "title": "Nuovo Tipo Guasto",
       "name": "Nome Guasto",
-      "namePlaceholder": "Es: Vetro rotto",
+      "namePlaceholder": "es. Vetro rotto",
       "description": "Descrizione"
     },
     "info": {
       "device": {
-        "title": "Informazioni Dispositivo",
+        "title": "Info Dispositivo",
         "model": "Modello",
         "imei": "IMEI / SN",
-        "problem": "Guasto Riscontrato"
+        "problem": "Problemi"
       },
       "customer": {
-        "title": "Informazioni Cliente",
-        "name": "Cliente",
+        "title": "Info Cliente",
+        "name": "Nome",
         "phone": "Telefono"
       },
       "component": {
         "title": "Dettaglio Ricambi",
-        "name": "Articolo",
-        "unit_price": "Prezzo Unitario",
-        "quantity": "Quantità",
+        "name": "Ricambio",
+        "unit_price": "Unitario",
+        "quantity": "Qtà",
         "price": "Subtotale"
       },
       "order": {
         "title": "Stato Ordine",
-        "created_at": "Data Apertura",
+        "created_at": "Creato il",
         "tech": "Tecnico"
       },
       "checkout": {
-        "title": "Riepilogo Finanziario",
+        "title": "Chiusura Cassa",
         "payment_method": "Pagamento",
-        "total_price": "Totale Riparazione",
-        "deposit": "Acconto Versato",
-        "rest": "Residuo da Pagare"
+        "total_price": "Prezzo Riparazione",
+        "deposit": "Acconto",
+        "rest": "Saldo da pagare"
       }
+    },
+    "message": {
+      "customer": "Cliente creato e selezionato",
+      "model": "Modello creato",
+      "fault": "Guasto creato"
     }
   },
   "sales_orders": {
     "titles": {
       "list": "Vendite Retail",
-      "show": "Dettaglio Ordine"
+      "show": "Dettaglio Vendita"
     },
     "fields": {
-      "readable_id": "N. Ordine",
+      "readable_id": "N. Scontrino",
       "total_amount": "Importo",
-      "payment_method": "Metodo Pagamento",
+      "payment_method": "Pagamento",
       "profile": "Venditore",
-      "created_at": "Data Ora"
+      "created_at": "Data vendita"
     },
     "create": {
-      "placeholder": "Scansiona barcode o cerca per nome...",
+      "placeholder": "Scansiona barcode o cerca nome...",
       "stock": "Disp.",
-      "empty": "Prodotto non trovato",
-      "current_order": "Carrello Attuale",
-      "shopCartEmpty": "Carrello vuoto",
-      "total": "TOTALE",
-      "isLoading": "Elaborazione...",
-      "checkout": "Paga e Chiudi",
+      "empty": "Nessun articolo",
+      "current_order": "Carrello attuale",
+      "shopCartEmpty": "Il carrello è vuoto",
+      "total": "Totale",
+      "isLoading": "In corso...",
+      "checkout": "Paga ora",
       "message": {
-        "noStock": "Giacenza insufficiente",
-        "stockLimit": "Limite giacenza raggiunto!",
-        "empty": "Il carrello è vuoto",
-        "user": "Impossibile recuperare dati venditore",
-        "success": "Pagamento completato!",
-        "error": "Errore durante la creazione dell'ordine"
+        "noStock": "Scorte insufficienti",
+        "stockLimit": "Limite magazzino raggiunto!",
+        "empty": "Carrello vuoto",
+        "user": "Venditore non identificato",
+        "success": "Vendita completata!",
+        "error": "Errore nella creazione ordine"
       }
     },
     "show": {
@@ -570,60 +746,62 @@
   },
   "stock_entries": {
     "titles": {
-      "list": "Storico Carichi",
+      "list": "Lista Carichi",
       "create": "Carico Manuale",
       "show": "Dettaglio Carico | #{{id}}",
-      "detail": "Informazioni Documento"
+      "detail": "Info Documento"
     },
     "fields": {
-      "reference_number": "Riferimento / Note",
+      "reference_number": "N. Riferimento / Note",
       "type": "Tipo",
       "operator": "Operatore",
-      "created_at": "Data Ora"
+      "created_at": "Data carico"
     },
     "options": {
       "adjust": "Rettifica Inventario",
-      "return": "Reso da Cliente"
+      "return": "Reso Cliente",
+      "purchase": "Carico Acquisto",
+      "repair": "Ordine Riparazione"
     },
     "message": {
-      "success": "Documento di carico creato con successo!"
+      "success": "Carico registrato con successo!"
     },
     "rules": {
-      "reference_number": "Inserisci una nota, es. 'Inventario' o 'Reso n.'"
+      "reference_number": "Inserisci una nota (es. Rettifica o N. Reso)"
     },
     "help": {
-      "reference_number": "Esempio: ADJ-2026-001 o Reso-Mario"
+      "reference_number": "es: ADJ-2026-001 o Reso-Mario"
     },
     "placeholder": {
-      "reference_number": "Inserisci numero documento..."
+      "reference_number": "Inserisci riferimento..."
     },
     "detail": {
-      "title": "Dettaglio Carico",
-      "totalText": "Valore Totale Carico",
+      "title": "Dettagli Carico",
+      "totalText": "Valore totale carico",
       "buttons": {
-        "tool": "Ricambi Riparazione",
-        "shop": "Prodotti Retail",
+        "tool": "Ricambi",
+        "shop": "Prodotti",
         "addTool": "Aggiungi Ricambio",
         "addShop": "Aggiungi Prodotto"
       },
       "fields": {
-        "name": "Nome Prodotto",
-        "quantity": "Quantità Caricata",
-        "cost_price": "Prezzo di Costo (€)",
-        "unkown": "Articolo sconosciuto"
+        "name": "Nome Articolo",
+        "quantity": "Qtà Caricata",
+        "cost_price": "Prezzo Carico (€)",
+        "unkown": "Sconosciuto"
       },
       "rules": {
-        "name": "Inserisci il nome del prodotto"
+        "name": "Scegli un articolo"
       },
       "placeholder": {
-        "name": "Cerca prodotto..."
+        "name": "Cerca articolo..."
       }
     }
   },
   "suppliers": {
     "titles": {
       "list": "Elenco Fornitori",
-      "create": "Nuovo Fornitore",
+      "create": "Aggiungi Fornitore",
       "edit": "Modifica Fornitore | {{name}}"
     },
     "fields": {
@@ -631,7 +809,7 @@
       "name": "Nome Fornitore",
       "website": "Sito Web",
       "description": "Descrizione",
-      "created_at": "Data Aggiunta"
+      "created_at": "Data"
     },
     "form": {
       "create": {
@@ -641,50 +819,50 @@
   },
   "transactions": {
     "titles": {
-      "list": "Rendiconto Finanziario",
-      "create": "Nuova Registrazione (Manuale)"
+      "list": "Report Movimenti Cassa",
+      "create": "Nuovo Movimento (Manuale)"
     },
     "fields": {
-      "created_at": "Data Ora",
+      "created_at": "Data",
       "type": "Tipo",
       "amount": "Importo",
       "category": "Categoria",
       "payment_method": "Metodo",
       "description": "Note",
-      "profile": "Responsabile",
+      "profile": "Operatore",
       "repair": "Riparazione",
       "sale": "Vendita",
-      "associate": "Ordine Correlato"
+      "associate": "Ordine Coll."
     },
     "options": {
       "income": "Entrata",
       "expense": "Uscita",
       "rent": "Affitto",
-      "salary": "Stipendi",
-      "utilities": "Utenze (Luce/Gas)",
+      "salary": "Stipendio",
+      "utilities": "Bollette (Luce/Acqua/Web)",
       "purchase": "Acquisto Merce",
-      "refund": "Rimborsi",
+      "refund": "Rimborso",
       "other": "Altro"
     },
     "chart": {
       "empty": "Nessun dato",
       "month_income": "Entrate Mese",
       "month_expense": "Uscite Mese",
-      "year_income": "Entrate Tot. Anno",
-      "year_expense": "Uscite Tot. Anno",
-      "income_analysis": "Analisi Fonti di Entrata",
-      "expense_analys": "Analisi Voci di Uscita"
+      "year_income": "Totale Entrate Anno",
+      "year_expense": "Totale Uscite Anno",
+      "income_analysis": "Analisi Fonti Entrata",
+      "expense_analys": "Analisi Destinazione Uscite"
     },
     "rules": {
       "amount": "Inserisci importo",
-      "category": "Seleziona o scrivi categoria"
+      "category": "Scegli o scrivi categoria"
     },
     "help": {
-      "category": "Esempio: Affitto, Luce, Pranzo, Cancelleria..."
+      "category": "es: Affitto, Stipendio, Pranzo, Bolletta..."
     },
     "placeholder": {
-      "category": "Cerca o scrivi...",
-      "description": "Dettagli, es: Bolletta luce Gennaio"
+      "category": "Scegli o inserisci...",
+      "description": "Dettagli (es: Bolletta Luce Gennaio)"
     }
   },
   "warranty": {
@@ -693,23 +871,68 @@
       "show": "Dettaglio Garanzia | {{id}}"
     },
     "status": {
-      "active": "Attiva",
+      "active": "In vigore",
       "expired": "Scaduta",
       "void": "Annullata",
-      "claimed": "In Assistenza"
+      "claimed": "In assistenza"
     },
     "fields": {
-      "readable_id": "Cod. Garanzia",
-      "associate": "Riparazione Correlata",
+      "readable_id": "Codice Garanzia",
+      "associate": "Riparazione Orig.",
       "customer": "Cliente",
       "status": "Stato",
-      "duration": "Durata Garanzia",
-      "claim": "Interventi in Assistenza"
+      "duration": "Durata",
+      "claim": "Storico Interventi"
     },
     "text": {
       "count": "volte",
       "until": "Valida fino al",
-      "print": "Stampa Certificato"
+      "print": "Stampa Certificato",
+      "description": "[Rientro Garanzia] Intervento n. {{count}}. Rif. Orig: {{id}}"
+    },
+    "confirm": {
+      "title": "Confermare rientro in garanzia?",
+      "description": "Interventi già effettuati: {{count}}. Creare nuovo ordine di riparazione?",
+      "okText": "Crea",
+      "cancelText": "Annulla",
+      "confirmText": "Accetta"
+    },
+    "message": {
+      "success": "Ordine di rientro creato",
+      "error": "Errore: {{message}}",
+      "warning": "Pratica già aperta per questa garanzia."
+    }
+  },
+  "charts": {
+    "monthly": {
+      "total_revenue": "Entrate (€)",
+      "repair_count": "N. Riparazioni"
+    }
+  },
+  "modals": {
+    "models": {
+      "title": "Statistiche Modelli Riparati",
+      "columns": {
+        "rank": "Pos.",
+        "name": "Modello",
+        "repair_count": "Volte"
+      }
+    },
+    "monthly": {
+      "title": "Dettaglio mensile {{year}}",
+      "columns": {
+        "month": "Mese",
+        "repair_count": "Ordini",
+        "total_revenue": "Entrate"
+      }
+    },
+    "yearly": {
+      "title": "Storico Entrate Annuali",
+      "columns": {
+        "year": "Anno",
+        "repair_count": "Ordini Tot.",
+        "total_revenue": "Entrate Tot."
+      }
     }
   }
 }

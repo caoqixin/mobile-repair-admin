@@ -195,7 +195,11 @@ export const DeviceModelShow = () => {
         <Table.Column
           dataIndex="is_tablet"
           title={translate("brands.models.fields.isTablet")}
-          render={(val) => (val ? "平板" : "手机")}
+          render={(val) =>
+            val
+              ? translate("brands.models.options.tablet")
+              : translate("brands.models.options.phone")
+          }
         />
         <Table.Column
           title={translate("table.actions")}

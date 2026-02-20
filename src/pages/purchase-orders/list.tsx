@@ -10,6 +10,8 @@ import { Space, Table } from "antd";
 import { formatCurrency, getStatusColor } from "../../lib/utils";
 import { useTranslate } from "@refinedev/core";
 import { ListLoader } from "../../components/loadings";
+import { useMemo } from "react";
+import { PURCHASE_STATUS_OPTIONS } from "../../constants";
 
 export const PurchaseOrderList = () => {
   const translate = useTranslate();
@@ -30,6 +32,15 @@ export const PurchaseOrderList = () => {
       ],
     },
   });
+
+  const statusOptions = useMemo(
+    () =>
+      PURCHASE_STATUS_OPTIONS.map((o) => ({
+        ...o,
+        label: translate(o.label),
+      })),
+    [PURCHASE_STATUS_OPTIONS],
+  );
 
   if (isLoading) {
     return <ListLoader />;
@@ -53,7 +64,7 @@ export const PurchaseOrderList = () => {
           render={(value) => (
             <TagField
               color={getStatusColor(value)}
-              value={value.toUpperCase()}
+              value={statusOptions.find((o) => o.value === value)?.label}
             />
           )}
         />

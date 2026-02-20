@@ -174,7 +174,9 @@ export const InventoryComponentsEdit = () => {
               <Select
                 {...categorySelectProps}
                 allowClear
-                placeholder="全部分类"
+                placeholder={translate(
+                  "inventory_components.search.placeholder.category",
+                )}
               />
             </Form.Item>
           </Col>
@@ -191,7 +193,9 @@ export const InventoryComponentsEdit = () => {
               <Select
                 {...supplierSelectProps}
                 allowClear
-                placeholder="全部供应商"
+                placeholder={translate(
+                  "inventory_components.search.placeholder.supplier",
+                )}
               />
             </Form.Item>
           </Col>
@@ -208,7 +212,9 @@ export const InventoryComponentsEdit = () => {
               <Select
                 {...brandSelectProps}
                 allowClear
-                placeholder="先选品牌"
+                placeholder={translate(
+                  "inventory_components.search.placeholder.brand",
+                )}
                 onChange={(val) => {
                   handleBrandChange(val as unknown as number);
                   form?.setFieldValue("model_id", null);
@@ -230,7 +236,13 @@ export const InventoryComponentsEdit = () => {
                 {...modelSelectProps}
                 mode="multiple"
                 allowClear
-                placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
+                placeholder={
+                  selectedBrand
+                    ? translate("inventory_components.search.placeholder.model")
+                    : translate(
+                        "inventory_components.search.placeholder.noModel",
+                      )
+                }
                 disabled={!selectedBrand}
                 onChange={(val) => {
                   setSelectedModels(val as unknown as number[]);

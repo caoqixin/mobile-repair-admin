@@ -10,6 +10,7 @@ import {
 import { COLORS_BASE } from "../../constants";
 import { IYearlyStats } from "../../interface";
 import { formatCurrency } from "../../lib/utils";
+import { useTranslate } from "@refinedev/core";
 
 const { Text } = Typography;
 
@@ -23,9 +24,10 @@ export const YearlyDataModal = ({
   data,
   onCanel,
 }: YearlyDataModalProps) => {
+  const translate = useTranslate();
   return (
     <Modal
-      title="历年营收数据"
+      title={translate("modals.yearly.title")}
       open={open}
       onCancel={onCanel}
       footer={null}
@@ -37,10 +39,18 @@ export const YearlyDataModal = ({
         rowKey="year"
         pagination={false}
         columns={[
-          { title: "年份", dataIndex: "year", key: "year" },
-          { title: "维修单量", dataIndex: "repair_count", key: "count" },
           {
-            title: "总收入",
+            title: translate("modals.yearly.columns.year"),
+            dataIndex: "year",
+            key: "year",
+          },
+          {
+            title: translate("modals.yearly.columns.repair_count"),
+            dataIndex: "repair_count",
+            key: "count",
+          },
+          {
+            title: translate("modals.yearly.columns.total_revenue"),
             dataIndex: "total_revenue",
             key: "revenue",
             render: (val) => (

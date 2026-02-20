@@ -77,7 +77,7 @@ export const StockEntriesList = () => {
           title={translate("stock_entries.fields.type")}
           render={(val) => {
             const tag = getTypeTag(val);
-            return <Tag color={tag.color}>{tag.label}</Tag>;
+            return <Tag color={tag.color}>{translate(tag.label)}</Tag>;
           }}
         />
 

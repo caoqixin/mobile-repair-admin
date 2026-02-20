@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigation } from "@refinedev/core";
+import { useNavigation, useTranslate } from "@refinedev/core";
 import { Button, Space, Typography } from "antd";
 import {
   PlusCircleOutlined,
@@ -15,43 +15,44 @@ import {
 const { Text } = Typography;
 
 export const QuickActionsWidget = () => {
+  const translate = useTranslate();
   const { create, list } = useNavigation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // 动作配置列表
   const actions = [
     {
-      label: "新建维修",
+      label: translate("quick_actions.actions.repair"),
       sub: "New Repair",
       icon: <PlusCircleOutlined style={{ fontSize: 20, color: "#1890ff" }} />,
       onClick: () => create("repair_orders"),
     },
     {
-      label: "零售收银",
+      label: translate("quick_actions.actions.pos"),
       sub: "POS",
       icon: <ShoppingOutlined style={{ fontSize: 20, color: "#52c41a" }} />,
       onClick: () => create("sales_orders"), // 假设这是销售单路由
     },
     {
-      label: "配件查询",
+      label: translate("quick_actions.actions.parts"),
       sub: "Parts",
       icon: <ToolOutlined style={{ fontSize: 20, color: "#722ed1" }} />,
       onClick: () => list("inventory_components"),
     },
     {
-      label: "商品查询",
+      label: translate("quick_actions.actions.retail"),
       sub: "Retail",
       icon: <ScanOutlined style={{ fontSize: 20, color: "#eb2f96" }} />,
       onClick: () => list("inventory_items"),
     },
     {
-      label: "极速报价",
+      label: translate("quick_actions.actions.quote"),
       sub: "Quote",
       icon: <ThunderboltOutlined style={{ fontSize: 20, color: "#faad14" }} />,
       onClick: () => list("quote"),
     },
     {
-      label: "进货入库",
+      label: translate("quick_actions.actions.purchase"),
       sub: "Purchase",
       icon: <ImportOutlined style={{ fontSize: 20, color: "#13c2c2" }} />,
       onClick: () => create("stock_entries"),
@@ -91,7 +92,7 @@ export const QuickActionsWidget = () => {
             borderBottom: "1px solid #f0f0f0",
           }}
         >
-          <Text strong>快速操作</Text>
+          <Text strong>{translate("quick_actions.name")}</Text>
         </div>
 
         <div

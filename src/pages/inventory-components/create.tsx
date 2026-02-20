@@ -1,7 +1,7 @@
 import { Create, useForm, useSelect } from "@refinedev/antd";
 import { useCreateMany, useTranslate } from "@refinedev/core";
 import { Col, Form, Input, InputNumber, Row, Select } from "antd";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { IInventoryComponent } from "../../interface";
 import { useInventoryOptions } from "../../hooks/useInventoryOptions";
 import { QUALITY_OPTIONS } from "../../constants";
@@ -34,6 +34,18 @@ export const InventoryComponentsCreate = () => {
       mode: "off",
     },
   });
+
+  const options = useMemo(
+    () =>
+      QUALITY_OPTIONS.map((o) => ({
+        label: translate(o.label),
+        options: o.options.map((op) => ({
+          ...op,
+          label: translate(op.label),
+        })),
+      })),
+    [QUALITY_OPTIONS],
+  );
 
   const {
     categorySelectProps,
@@ -109,7 +121,9 @@ export const InventoryComponentsCreate = () => {
               <Select
                 {...categorySelectProps}
                 allowClear
-                placeholder="全部分类"
+                placeholder={translate(
+                  "inventory_components.search.placeholder.category",
+                )}
                 onSearch={undefined}
                 filterOption={true}
                 optionFilterProp="label"
@@ -129,7 +143,9 @@ export const InventoryComponentsCreate = () => {
               <Select
                 {...supplierSelectProps}
                 allowClear
-                placeholder="全部供应商"
+                placeholder={translate(
+                  "inventory_components.search.placeholder.supplier",
+                )}
                 onSearch={undefined}
                 filterOption={true}
                 optionFilterProp="label"
@@ -149,7 +165,9 @@ export const InventoryComponentsCreate = () => {
               <Select
                 {...brandSelectProps}
                 allowClear
-                placeholder="先选品牌"
+                placeholder={translate(
+                  "inventory_components.search.placeholder.brand",
+                )}
                 onSearch={undefined}
                 filterOption={true}
                 optionFilterProp="label"
@@ -174,7 +192,13 @@ export const InventoryComponentsCreate = () => {
                 {...modelSelectProps}
                 mode="multiple"
                 allowClear
-                placeholder={selectedBrand ? "选择机型" : "请先选择品牌"}
+                placeholder={
+                  selectedBrand
+                    ? translate("inventory_components.search.placeholder.model")
+                    : translate(
+                        "inventory_components.search.placeholder.noModel",
+                      )
+                }
                 disabled={!selectedBrand || isModelLoading}
                 onSearch={undefined}
                 filterOption={true}
@@ -197,7 +221,7 @@ export const InventoryComponentsCreate = () => {
           ]}
           initialValue="compatibile"
         >
-          <Select options={QUALITY_OPTIONS} />
+          <Select options={options} />
         </Form.Item>
         <Row gutter={24}>
           <Col span={6}>

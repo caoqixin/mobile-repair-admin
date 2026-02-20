@@ -76,7 +76,7 @@ export const CustomerShow = () => {
               <Space>
                 <MobileOutlined />
                 {/* 注意：这里的数据结构是 item.models.name */}
-                {item.models?.name || "未知设备"}
+                {item.models?.name}
               </Space>
             )}
           />
@@ -95,7 +95,7 @@ export const CustomerShow = () => {
             render={(val) => {
               const conf = getRepairStatusTag(val);
 
-              return <Tag color={conf.color}>{conf.label}</Tag>;
+              return <Tag color={conf.color}>{translate(conf.label)}</Tag>;
             }}
           />
 

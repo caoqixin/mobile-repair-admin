@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Create,
   useStepsForm,
@@ -6,7 +6,12 @@ import {
   useModalForm,
   SaveButton,
 } from "@refinedev/antd";
-import { useCreateMany, useGetIdentity, useTranslate } from "@refinedev/core";
+import {
+  useCreateMany,
+  useGetIdentity,
+  useNotification,
+  useTranslate,
+} from "@refinedev/core";
 import {
   Form,
   Input,
@@ -19,7 +24,6 @@ import {
   InputNumber,
   Divider,
   Modal,
-  message,
   Descriptions,
   Typography,
   Space,
@@ -41,6 +45,7 @@ import { CREATE_REPAIR_STATUS_OPTIONS } from "../../constants";
 
 export const RepairOrderCreate = () => {
   const translate = useTranslate();
+  const { open } = useNotification();
   const { data: userData } = useGetIdentity();
   const [newCustomerOption, setNewCustomerOption] = useState<{
     label: string;
@@ -156,7 +161,10 @@ export const RepairOrderCreate = () => {
         label: newCustomer.full_name, // 必须对应 optionLabel
         value: newCustomer.id as string, // 必须对应 optionValue
       });
-      message.success("客户创建成功并已选中");
+      open?.({
+        type: "success",
+        message: translate("repair_orders.message.customer"),
+      });
     },
   });
 
@@ -170,7 +178,10 @@ export const RepairOrderCreate = () => {
     action: "create",
     redirect: false,
     onMutationSuccess: () => {
-      message.success("型号创建成功");
+      open?.({
+        type: "success",
+        message: translate("repair_orders.message.model"),
+      });
     },
   });
 
@@ -184,7 +195,10 @@ export const RepairOrderCreate = () => {
     action: "create",
     redirect: false,
     onMutationSuccess: () => {
-      message.success("故障类型创建成功");
+      open?.({
+        type: "success",
+        message: translate("repair_orders.message.fault"),
+      });
     },
   });
 
@@ -247,6 +261,15 @@ export const RepairOrderCreate = () => {
       enabled: current === 2,
     },
   });
+
+  const status_options = useMemo(
+    () =>
+      CREATE_REPAIR_STATUS_OPTIONS.map((status) => ({
+        ...status,
+        label: translate(status.label),
+      })),
+    [CREATE_REPAIR_STATUS_OPTIONS],
+  );
 
   const CustomerForm = () => {
     return (
@@ -400,7 +423,7 @@ export const RepairOrderCreate = () => {
               rules={[{ required: true }]}
             >
               <Select
-                options={CREATE_REPAIR_STATUS_OPTIONS}
+                options={status_options}
                 placeholder={translate(
                   "repair_orders.form.price.statusPlaceholder",
                 )}
@@ -642,9 +665,8 @@ export const RepairOrderCreate = () => {
             label={translate("repair_orders.form.check.status")}
           >
             {
-              CREATE_REPAIR_STATUS_OPTIONS.find(
-                (option) => option.value == values?.status,
-              )?.label
+              status_options.find((option) => option.value == values?.status)
+                ?.label
             }
           </Descriptions.Item>
         </Descriptions>

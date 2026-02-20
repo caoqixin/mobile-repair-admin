@@ -15,6 +15,7 @@ import {
 import { ITransaction } from "../../interface";
 import { ListLoader } from "../../components/loadings";
 import { FinancialStats } from "../../components/stats";
+import { PAYMENT_OPTIONS } from "../../constants";
 
 const { Text } = Typography;
 
@@ -146,7 +147,13 @@ export const TransactionsList = () => {
           width={120}
           dataIndex="payment_method"
           title={translate("transactions.fields.payment_method")}
-          render={(value) => <Tag color="blue">{value}</Tag>}
+          render={(value) => (
+            <Tag color="blue">
+              {translate(
+                PAYMENT_OPTIONS.find((o) => o.value === value)?.label as string,
+              )}
+            </Tag>
+          )}
         />
 
         {/* 来源 (关联订单) */}

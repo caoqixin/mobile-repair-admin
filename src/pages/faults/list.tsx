@@ -52,7 +52,7 @@ export const FaultList = () => {
             <ExportButton
               onClick={triggerExport}
               loading={exportLoading}
-              children="导出"
+              children={translate("buttons.export")}
             />
           )}
           {defaultButtons}

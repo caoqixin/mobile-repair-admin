@@ -1,6 +1,11 @@
 import { useRef, useState } from "react";
 import { Create, useForm, useSelect } from "@refinedev/antd";
-import { useCreateMany, useGetIdentity, useTranslate } from "@refinedev/core";
+import {
+  useCreateMany,
+  useGetIdentity,
+  useNotification,
+  useTranslate,
+} from "@refinedev/core";
 import {
   Form,
   Input,
@@ -13,7 +18,6 @@ import {
   Divider,
   Radio,
   Flex,
-  message,
 } from "antd";
 import {
   PlusOutlined,
@@ -28,6 +32,7 @@ import { formatCurrency } from "../../lib/utils";
 
 export const StockEntriesCreate = () => {
   const translate = useTranslate();
+  const { open } = useNotification();
   const { data: user } = useGetIdentity();
   const [totalCost, setTotalCost] = useState(0);
   const itemsRef = useRef([]);
@@ -73,7 +78,10 @@ export const StockEntriesCreate = () => {
         },
         {
           onSuccess: () => {
-            message.success(translate("stock_entries.message.success"));
+            open?.({
+              type: "success",
+              message: translate("stock_entries.message.success"),
+            });
           },
         },
       );
