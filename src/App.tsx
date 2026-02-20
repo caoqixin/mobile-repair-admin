@@ -288,6 +288,19 @@ const AuthPage = React.lazy(() =>
   })),
 );
 
+// My Profile
+const MyProfile = React.lazy(() =>
+  import("./pages/my-profile").then((module) => ({
+    default: module.MyProfile,
+  })),
+);
+
+const MfaVerifyPage = React.lazy(() =>
+  import("./components/pages/auth/components/mfa-verify").then((module) => ({
+    default: module.MfaVerifyPage,
+  })),
+);
+
 function App() {
   const { t, i18n } = useTranslation();
 
@@ -440,6 +453,9 @@ function App() {
                   </Route>
                 </Route>
 
+                {/* 个人中心 */}
+                <Route path="/my" element={<MyProfile />} />
+
                 <Route path="*" element={<ErrorComponent />} />
               </Route>
               <Route
@@ -474,6 +490,7 @@ function App() {
                     <AuthPage title="Luna Tech Admin" type="updatePassword" />
                   }
                 />
+                <Route path="/mfa-verify" element={<MfaVerifyPage />} />
               </Route>
             </Routes>
 

@@ -75,6 +75,77 @@
       "title": "Accesso negato",
       "description": "Non hai i permessi per accedere a questa pagina",
       "backHome": "Torna alla Home"
+    },
+
+    "myProfile": {
+      "title": "Profilo Personale",
+      "menu": {
+        "my": "Il mio Profilo",
+        "logout": "Esci"
+      },
+      "tabs": {
+        "security": "Sicurezza"
+      },
+      "password": {
+        "title": "Cambia Password",
+        "new": "Nuova Password",
+        "confirm": "Conferma Nuova Password",
+        "rules": {
+          "new": "Inserire la nuova password",
+          "length": "La password deve contenere almeno 6 caratteri",
+          "confirm": "Inserire nuovamente la nuova password"
+        },
+        "placeholder": {
+          "new": "Inserisci nuova password",
+          "confirm": "Conferma nuova password"
+        }
+      },
+      "mfa": {
+        "title": "Autenticazione a due fattori (MFA)",
+        "dataTitle": "App di autenticazione",
+        "description": "Proteggi il tuo account utilizzando password temporanee (TOTP) per aumentare la sicurezza."
+      },
+      "verify": {
+        "title": "Verifica MFA",
+        "description": "Inserisci il codice a 6 cifre visualizzato nella tua app di autenticazione (Authenticator).",
+        "rules": {
+          "codeRequired": "Codice richiesto",
+          "codeLen": "Il codice deve essere di 6 cifre"
+        },
+        "placeholder": {
+          "code": "Es: 123456"
+        },
+        "button": {
+          "submit": "Verifica e Accedi"
+        }
+      },
+      "message": {
+        "confirm": "Le password non corrispondono",
+        "error": "Modifica password fallita: {{error}}",
+        "success": "Password aggiornata con successo! Accedi di Nuovo",
+        "verify_code_error": "Codice errato o scaduto",
+        "qr_code_error": "Errore nella generazione del codice QR",
+        "mfa_enable_success": "MFA attivata con successo! Accedi di Nuovo",
+        "mfa_enable_error": "Codice errato, riprova.",
+        "disable_success": "MFA disattivata",
+        "disable_error": "Errore nella disattivazione: {{error}}"
+      },
+      "buttons": {
+        "enable": "Attiva",
+        "disable": "Disattiva MFA"
+      },
+      "tags": {
+        "enabled": "Attivo",
+        "disabled": "Disattivato"
+      },
+      "modal": {
+        "title": "Configura MFA",
+        "first_desc": "1. Scansiona il codice QR qui sotto con la tua app di autenticazione (es. Google Authenticator, Microsoft Authenticator):",
+        "second_desc": "2. Una volta scansionato, inserisci il codice a 6 cifre mostrato nell'app per completare l'associazione:",
+        "rule": "Inserisci il codice di verifica",
+        "placeholder": "Codice a 6 cifre",
+        "button": "Verifica e Attiva"
+      }
     }
   },
   "actions": {
@@ -215,7 +286,11 @@
   },
   "documentTitle": {
     "default": "Luna Tech",
-    "suffix": " | Luna Tech"
+    "suffix": " | Luna Tech",
+    "management": "{{resource}}",
+    "new": "Nuovo {{resource}}",
+    "edit": "Modifica {{resource}}",
+    "details": "Dettagli {{resource}}"
   },
   "autoSave": {
     "success": "Salvato",

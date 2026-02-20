@@ -1,5 +1,5 @@
 import type { RefineThemedLayoutHeaderProps } from "@refinedev/antd";
-import { useGetIdentity, useTranslation } from "@refinedev/core";
+import { useGetIdentity, useLogout, useTranslation } from "@refinedev/core";
 import {
   Layout as AntdLayout,
   Avatar,
@@ -11,11 +11,12 @@ import {
   theme,
   Typography,
 } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
 import { useTranslation as usei18nextTranslation } from "react-i18next";
 import { IProfile } from "../../interface";
+import { Link } from "react-router";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -27,8 +28,9 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
   const { data: user } = useGetIdentity<IProfile>();
   const { mode, setMode } = useContext(ColorModeContext);
   const { i18n } = usei18nextTranslation();
-  const { changeLocale } = useTranslation();
+  const { changeLocale, translate } = useTranslation();
   const currentLocale = i18n.language;
+  const { mutate: logout } = useLogout();
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
@@ -58,6 +60,24 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
       label: lang === "it" ? "Italiano" : "简体中文",
     }));
 
+  // 用户下拉菜单
+  const userMenuItems: MenuProps["items"] = [
+    {
+      key: "profile",
+      icon: <UserOutlined />,
+      label: <Link to="/my">{translate("pages.myProfile.menu.my")}</Link>,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: translate("pages.myProfile.menu.logout"),
+      onClick: () => logout(), // 触发退出
+    },
+  ];
+
   return (
     <AntdLayout.Header style={headerStyles}>
       <Space>
@@ -83,7 +103,16 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
         </Dropdown>
 
         <Space style={{ marginLeft: "8px" }} size="middle">
-          {user && <Text strong>{user.full_name || user.email}</Text>}
+          {user && (
+            <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
+              <Button type="text" style={{ padding: "0 8px" }}>
+                <Space size="small">
+                  <Text strong>{user.full_name || user.email}</Text>
+                  <DownOutlined style={{ fontSize: "12px" }} />
+                </Space>
+              </Button>
+            </Dropdown>
+          )}
         </Space>
       </Space>
     </AntdLayout.Header>

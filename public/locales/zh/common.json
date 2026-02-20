@@ -73,8 +73,78 @@
     },
     "authorization": {
       "title": "访问被拒",
-      "description": "你没有权限范文该页面",
+      "description": "你没有权限访问该页面",
       "backHome": "返回首页"
+    },
+    "myProfile": {
+      "title": "个人中心",
+      "menu": {
+        "my": "个人中心",
+        "logout": "退出登录"
+      },
+      "tabs": {
+        "security": "安全设置"
+      },
+      "password": {
+        "title": "修改密码",
+        "new": "新密码",
+        "confirm": "确认新密码",
+        "rules": {
+          "new": "请输入新密码",
+          "length": "密码长度不能小于6位",
+          "confirm": "请再次输入新密码"
+        },
+        "placeholder": {
+          "new": "请输入新密码",
+          "confirm": "请确认新密码"
+        }
+      },
+      "mfa": {
+        "title": "两步验证 (MFA)",
+        "dataTitle": "身份验证器应用",
+        "description": "使用基于时间的一次性密码 (TOTP) 保护您的账号，提高安全性。"
+      },
+      "verify": {
+        "title": "两步验证 (MFA)",
+        "description": "请输入您手机身份验证器 (Authenticator) 中的 6 位数字验证码。",
+        "rules": {
+          "codeRequired": "请输入验证码",
+          "codeLen": "验证码必须为6位数字"
+        },
+        "placeholder": {
+          "code": "例如: 123456"
+        },
+        "button": {
+          "submit": "验证并登录"
+        }
+      },
+      "message": {
+        "confirm": "两次输入的密码不一致",
+        "error": "修改密码失败: {{error}}",
+        "success": "密码修改成功! 请重新登录",
+        "verify_code_error": "验证码错误或已过期",
+        "qr_code_error": "生成二维码失败",
+        "mfa_enable_success": "两步验证 (MFA) 已成功启用！请重新登录",
+        "mfa_enable_error": "验证码错误，请重试。",
+        "disable_success": "两步验证已关闭",
+        "disable_error": "关闭失败: {{error}}"
+      },
+      "buttons": {
+        "enable": "启用",
+        "disable": "关闭 MFA"
+      },
+      "tags": {
+        "enabled": "已启用",
+        "disabled": "未启用"
+      },
+      "modal": {
+        "title": "设置两步验证",
+        "first_desc": "1. 请使用您的身份验证器 App (如 Google Authenticato,Microsoft Authenticator) 扫描下方二维码：",
+        "second_desc": "2. 扫描成功后，在下方输入 App 中显示的 6 位验证码以完成绑定：",
+        "rule": "请输入验证码",
+        "placeholder": "6位数验证码",
+        "button": "验证并开启"
+      }
     }
   },
   "actions": {
@@ -216,7 +286,11 @@
   },
   "documentTitle": {
     "default": "Luna Tech",
-    "suffix": " | Luna Tech"
+    "suffix": " | Luna Tech",
+    "management": "{{resource}}",
+    "new": "新建 {{resource}}",
+    "edit": "编辑 {{resource}}",
+    "details": "详情 {{resource}}"
   },
   "autoSave": {
     "success": "已保存",

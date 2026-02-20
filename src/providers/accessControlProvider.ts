@@ -93,6 +93,10 @@ export const accessControlProvider: AccessControlProvider = {
       };
     }
 
+    if (!resource || resource === "my") {
+      return { can: true };
+    }
+
     // 2. 针对当前角色生成 Ability 实例
     // 注意：如果是大型应用，可以将 ability 实例存在 Store 或 Context 中以避免重复创建
     // 但对于 AccessControlProvider 这种异步调用，即时创建也是性能可接受的

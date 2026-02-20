@@ -21,6 +21,17 @@ const authProvider: AuthProvider = {
       }
 
       if (data?.user) {
+        // 检查 MFA 状态 (AAL级别)
+        const { data: aal } =
+          await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+        // 如果 nextLevel 是 aal2 (启用了MFA)，但当前只是 aal1 (刚通过密码)，则拦截跳转
+        if (aal?.nextLevel === "aal2" && aal?.currentLevel === "aal1") {
+          return {
+            success: true,
+            redirectTo: "/mfa-verify", // 重定向到输入验证码页面
+          };
+        }
+
         // 登录成功，查询 profiles 表获取角色
         const { data: profile } = await supabaseClient
           .from("profiles")
@@ -210,6 +221,17 @@ const authProvider: AuthProvider = {
           },
           logout: true,
           redirectTo: "/login",
+        };
+      }
+
+      // 🔥 再次验证会话的 MFA 级别，防止用户手动绕过路由
+      const { data: aal } =
+        await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aal?.nextLevel === "aal2" && aal?.currentLevel === "aal1") {
+        return {
+          authenticated: false,
+          logout: false, // 不要登出！只拦截。因为他们正在等待输入验证码。
+          redirectTo: "/mfa-verify",
         };
       }
 
