@@ -46,6 +46,16 @@ export const RepairOrderEdit = () => {
     [REPAIR_STATUS_OPTIONS, translate],
   );
 
+  // 手机型号
+  const { selectProps: modelSelectProps } = useSelect({
+    resource: "models",
+    defaultValue: [record?.model_id],
+    optionLabel: "name",
+    optionValue: "id",
+    onSearch: (value) => [{ field: "name", operator: "contains", value }],
+    pagination: { mode: "off" },
+  });
+
   // 获取 Form 实例用于监听
   // 🔥 监听配件变化，实现自动计算总价
   const parts = Form.useWatch("parts", form);
@@ -110,6 +120,7 @@ export const RepairOrderEdit = () => {
       total_price: values.total_price,
       problem_description: values.problem_description,
       deposit: values.deposit,
+      model_id: values.model_id,
     });
 
     // B. 处理配件 (全删全加策略)
@@ -167,6 +178,24 @@ export const RepairOrderEdit = () => {
               variant="borderless"
               style={{ marginBottom: 24 }}
             >
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    label={translate("repair_orders.form.device.modelName")}
+                    name="model_id"
+                    rules={[{ required: true }]}
+                  >
+                    <Select
+                      {...modelSelectProps}
+                      showSearch
+                      placeholder={translate(
+                        "repair_orders.form.device.modelPlaceholder",
+                      )}
+                      size="large"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item

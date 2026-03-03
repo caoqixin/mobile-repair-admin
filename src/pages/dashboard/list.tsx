@@ -292,7 +292,7 @@ export const Dashboard = () => {
           <KpiCard
             loading={monthlyLoading}
             title={translate("dashboard.monthly", {
-              month: dayjs().month(),
+              month: dayjs().month() + 1,
             })}
             value={currentMonthStats.total_revenue}
             prefix="€"

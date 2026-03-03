@@ -8,6 +8,7 @@ interface RepairStatusStatsProps {
 const CustomPieShape = (props: any) => {
   // 从 props 中解构出原始数据 payload，里面包含我们在 pieChartData 里定义的 color
   const { payload, ...rest } = props;
+
   return (
     <Sector
       {...rest}
@@ -25,9 +26,16 @@ export const RepairStatusStats = ({ chartData }: RepairStatusStatsProps) => {
       <PieChart>
         <Pie
           data={chartData}
-          innerRadius={55}
-          outerRadius={75}
-          paddingAngle={4}
+          cx="50%"
+          cy="50%"
+          innerRadius="80%"
+          outerRadius="100%"
+          // Corner radius is the rounded edge of each pie slice
+          cornerRadius="50%"
+          fill="#8884d8"
+          // padding angle is the gap between each pie slice
+          paddingAngle={5}
+          label
           dataKey="value"
           shape={CustomPieShape}
           isAnimationActive={true}
