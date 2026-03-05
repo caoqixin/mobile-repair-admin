@@ -121,6 +121,7 @@ export const RepairOrderEdit = () => {
       problem_description: values.problem_description,
       deposit: values.deposit,
       model_id: values.model_id,
+      payment_method: values.payment_method,
     });
 
     // B. 处理配件 (全删全加策略)
