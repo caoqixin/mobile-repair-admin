@@ -26,3 +26,12 @@ export const COLORS_BASE = {
   cyan: "#13c2c2",
   pink: "#eb2f96",
 };
+
+export const FAULT_COLORS = [
+  "#1677ff", // 蓝
+  "#52c41a", // 绿
+  "#faad14", // 黄
+  "#f5222d", // 红
+  "#722ed1", // 紫
+  "#13c2c2", // 青
+];

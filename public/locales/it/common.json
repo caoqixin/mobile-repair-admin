@@ -249,6 +249,16 @@
     "year_statistic": "Trend dell'anno",
     "top": "Top 5 Modelli Riparati",
     "rank": "Vedi classifica completa",
+    "fault_stats": "Statistiche guasti comuni",
+    "view_details": "Visualizza dettagli",
+    "fault_details": "Statistiche dettagliate riparazioni",
+    "fault_rank": "Posizione",
+    "fault_name": "Nome guasto",
+    "fault_count": "{{count}} volte",
+    "model_breakdown": "Dettaglio modelli interessati dal guasto:",
+    "model_name": "Modello smartphone",
+    "repair_count": "Numero riparazioni",
+    "others": "Altri",
     "kpi": {
       "title": {
         "active": "Ordini in corso",

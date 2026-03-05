@@ -345,3 +345,15 @@ export interface IRepairStatusStats {
   value: number;
   color: string;
 }
+
+export interface IFaultModelBreakdown {
+  model_name: string;
+  count: number;
+}
+
+export interface IFaultStats {
+  fault_name: string;
+  repair_count: number;
+  models_breakdown: IFaultModelBreakdown[];
+  parsed_breakdown: IFaultModelBreakdown[];
+}

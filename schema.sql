@@ -434,6 +434,39 @@ GROUP BY type, category
 ORDER BY total_amount DESC;
 
 
+-- 6.8 统计维修故障
+CREATE OR REPLACE VIEW public.dashboard_fault_stats 
+with (security_invoker = on) AS
+WITH unnested_faults AS (
+ -- 拆分逗号
+  SELECT 
+    ro.id AS order_id,
+    trim(unnest(string_to_array(ro.problem_description, ','))) AS fault_name,
+    m.name AS model_name
+  FROM public.repair_orders ro
+  JOIN public.models m ON ro.model_id = m.id
+  WHERE ro.problem_description IS NOT NULL AND ro.problem_description != ''
+),
+fault_models_count AS (
+  -- 统计 [故障] + [机型] 的组合次数
+  SELECT 
+    fault_name, 
+    model_name, 
+    COUNT(order_id)::integer AS model_repair_count
+  FROM unnested_faults
+  WHERE fault_name != ''
+  GROUP BY fault_name, model_name
+)
+-- 汇总为最终格式，将机型明细打包成 JSON 数组返回给前端
+SELECT 
+  fmc.fault_name,
+  SUM(fmc.model_repair_count)::integer AS repair_count,
+  json_agg(json_build_object('model_name', fmc.model_name, 'count', fmc.model_repair_count)) AS models_breakdown
+FROM fault_models_count fmc
+GROUP BY fmc.fault_name
+ORDER BY repair_count DESC;
+
+
 
 -- ==============================================================================
 -- 7. Partner 视图表

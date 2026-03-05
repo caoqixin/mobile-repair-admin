@@ -77,6 +77,12 @@ const RepairStatusStats = React.lazy(() =>
     default: module.RepairStatusStats,
   })),
 );
+
+const FaultStats = React.lazy(() =>
+  import("../../components/charts").then((module) => ({
+    default: module.FaultStats,
+  })),
+);
 const { Text } = Typography;
 
 export const Dashboard = () => {
@@ -506,6 +512,19 @@ export const Dashboard = () => {
               )}
             </Skeleton>
           </Card>
+        </Col>
+
+        <Col xs={24} lg={12}>
+          {/* 使用 Suspense 包裹，在图表代码块加载完成前显示骨架屏或 Loading 卡片 */}
+          <Suspense
+            fallback={
+              <Card style={{ height: "100%" }} loading={true}>
+                {translate("loading")}
+              </Card>
+            }
+          >
+            <FaultStats />
+          </Suspense>
         </Col>
       </Row>
 
