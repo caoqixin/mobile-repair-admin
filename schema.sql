@@ -959,7 +959,7 @@ BEGIN
             ) VALUES (
                 'income',                -- 固定为收入
                 'Repair Service',        -- 分类
-                NEW.final_price,         -- 金额 (维修单的最终价格)
+                NEW.total_price,         -- 金额 (维修单的最终价格)
                 trans_desc,              -- 描述
                 NEW.payment_method,                  -- 默认支付方式 (建议维修单表加 payment_method 字段来动态获取)
                 NEW.id,                  -- 关联维修单ID
