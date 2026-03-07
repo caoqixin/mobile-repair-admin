@@ -13,6 +13,7 @@ import { IComponentCompatibility } from "../../interface";
 import { useInventoryOptions } from "../../hooks/useInventoryOptions";
 
 export const InventoryComponentsEdit = () => {
+  const [isInitialized, setIsInitialized] = useState(false);
   const translate = useTranslate();
   const { id } = useParsed();
   // 获取component_compatibility
@@ -39,6 +40,7 @@ export const InventoryComponentsEdit = () => {
       select:
         "*, categories(id, name), component_compatibility!inner(model_id,models!inner(brand_id))",
     },
+    redirect: "list",
     onMutationSuccess: (data) => {
       const fetchedModelIds = result.data.map((res) => res.model_id);
 
@@ -87,26 +89,30 @@ export const InventoryComponentsEdit = () => {
   });
 
   useEffect(() => {
-    const modelId = Data?.component_compatibility.map(
-      (com: { model_id: number }) => com.model_id,
-    );
+    if (Data && !isInitialized) {
+      const modelId = Data?.component_compatibility.map(
+        (com: { model_id: number }) => com.model_id,
+      );
 
-    const brandId: number[] = Array.from(
-      new Set(
-        Data?.component_compatibility.map(
-          (com: { models: { brand_id: number } }) => com.models.brand_id,
+      const brandId: number[] = Array.from(
+        new Set(
+          Data?.component_compatibility.map(
+            (com: { models: { brand_id: number } }) => com.models.brand_id,
+          ),
         ),
-      ),
-    );
+      );
 
-    handleBrandChange(brandId[0]);
-    setSelectedModels(modelId);
+      handleBrandChange(brandId[0]);
+      setSelectedModels(modelId);
 
-    form?.setFieldsValue({
-      brand_id: brandId[0],
-      model_id: modelId,
-    });
-  }, [Data, form, handleBrandChange]);
+      form?.setFieldsValue({
+        brand_id: brandId[0],
+        model_id: modelId,
+      });
+
+      setIsInitialized(true);
+    }
+  }, [Data, form, handleBrandChange, isInitialized]);
 
   const handleFinish = (values: any) => {
     const componentForm = {

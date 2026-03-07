@@ -59,7 +59,7 @@ export const InventoryComponentsShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={translate("inventory_components.title.show")}
+      title={translate("inventory_components.titles.show")}
     >
       {/* 顶部：核心识别信息 */}
       <div style={{ marginBottom: 24 }}>
@@ -85,7 +85,7 @@ export const InventoryComponentsShow = () => {
           >
             <Descriptions
               column={1}
-              labelStyle={{ width: "120px", fontWeight: "bold" }}
+              styles={{ label: { width: "120px", fontWeight: "bold" } }}
             >
               <Descriptions.Item
                 label={translate("inventory_components.fields.category")}
@@ -143,7 +143,7 @@ export const InventoryComponentsShow = () => {
           >
             <Descriptions
               column={1}
-              labelStyle={{ width: "120px", fontWeight: "bold" }}
+              styles={{ label: { width: "120px", fontWeight: "bold" } }}
             >
               <Descriptions.Item
                 label={translate("inventory_components.labels.models")}

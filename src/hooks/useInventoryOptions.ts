@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useSelect } from "@refinedev/antd";
 import { CategoryType } from "../interface";
 
@@ -66,9 +66,9 @@ export const useInventoryOptions = ({
 
   // 4. 封装一个处理函数：当品牌改变时，更新内部状态
   // 注意：在 UI 组件中，你需要手动调用这个 onChange 或者结合 Form 的联动
-  const handleBrandChange = (value: string | number) => {
+  const handleBrandChange = useCallback((value: string | number) => {
     setSelectedBrand(value);
-  };
+  }, []);
 
   return {
     categorySelectProps,
