@@ -102,11 +102,11 @@ export const InventoryComponentsEdit = () => {
         ),
       );
 
-      handleBrandChange(brandId[0]);
+      handleBrandChange(brandId);
       setSelectedModels(modelId);
 
       form?.setFieldsValue({
-        brand_id: brandId[0],
+        brand_id: brandId,
         model_id: modelId,
       });
 
@@ -134,6 +134,7 @@ export const InventoryComponentsEdit = () => {
       saveButtonProps={saveButtonProps}
       title={translate("inventory_components.titles.edit", {
         name: Data?.name,
+        interpolation: { escapeValue: false },
       })}
     >
       <Form {...formProps} onFinish={handleFinish} layout="vertical">
@@ -218,12 +219,22 @@ export const InventoryComponentsEdit = () => {
               <Select
                 {...brandSelectProps}
                 allowClear
+                mode="multiple"
                 placeholder={translate(
                   "inventory_components.search.placeholder.brand",
                 )}
                 onChange={(val) => {
-                  handleBrandChange(val as unknown as number);
-                  form?.setFieldValue("model_id", null);
+                  // 1. 将 onChange 传出的最新值转换为数组
+                  const newBrandIds = (val || []) as unknown as number[];
+
+                  // 2. 更新品牌状态
+                  handleBrandChange(newBrandIds);
+
+                  // 3. 使用最新传入的 newBrandIds 来判断，完美避开 state 异步导致的数据不同步
+                  if (newBrandIds.length === 0) {
+                    form?.setFieldValue("model_id", []); // Antd 多选推荐重置为空数组
+                    setSelectedModels([]); // 别忘了把你自己维护的 selectedModels 状态也同步清空
+                  }
                 }}
               />
             </Form.Item>
@@ -243,13 +254,13 @@ export const InventoryComponentsEdit = () => {
                 mode="multiple"
                 allowClear
                 placeholder={
-                  selectedBrand
+                  selectedBrand?.length !== 0
                     ? translate("inventory_components.search.placeholder.model")
                     : translate(
                         "inventory_components.search.placeholder.noModel",
                       )
                 }
-                disabled={!selectedBrand}
+                disabled={selectedBrand?.length === 0}
                 onChange={(val) => {
                   setSelectedModels(val as unknown as number[]);
                 }}

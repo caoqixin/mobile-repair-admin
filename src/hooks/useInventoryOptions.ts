@@ -6,7 +6,7 @@ type UseInventoryOptionsProps = {
   // 可选：分类的类型过滤，默认为 'component'
   categoryType?: CategoryType;
   // 可选：编辑模式下的初始品牌ID (用于回显机型列表)
-  initialBrandId?: number | string;
+  initialBrandId?: number[] | string[];
 };
 
 export const useInventoryOptions = ({
@@ -15,7 +15,7 @@ export const useInventoryOptions = ({
 }: UseInventoryOptionsProps = {}) => {
   // 内部状态：用于控制机型数据的加载
   const [selectedBrand, setSelectedBrand] = useState<
-    string | number | undefined
+    string[] | number[] | undefined
   >(initialBrandId);
 
   // 1. 获取分类 (Categories)
@@ -48,25 +48,24 @@ export const useInventoryOptions = ({
     optionLabel: "name",
     optionValue: "id",
     // 级联核心逻辑
-    filters: selectedBrand
-      ? [
-          {
-            field: "brand_id",
-            operator: "eq",
-            value: selectedBrand,
-          },
-        ]
-      : [],
+    filters: [
+      {
+        field: "brand_id",
+        operator: "in",
+        value:
+          selectedBrand && selectedBrand.length > 0 ? selectedBrand : undefined,
+      },
+    ],
     pagination: { mode: "off" },
     // 只有选中品牌后才发起请求
     queryOptions: {
-      enabled: !!selectedBrand,
+      enabled: !!selectedBrand && selectedBrand.length > 0,
     },
   });
 
   // 4. 封装一个处理函数：当品牌改变时，更新内部状态
   // 注意：在 UI 组件中，你需要手动调用这个 onChange 或者结合 Form 的联动
-  const handleBrandChange = useCallback((value: string | number) => {
+  const handleBrandChange = useCallback((value: string[] | number[]) => {
     setSelectedBrand(value);
   }, []);
 
