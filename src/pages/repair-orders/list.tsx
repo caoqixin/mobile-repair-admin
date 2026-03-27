@@ -52,14 +52,9 @@ export const RepairOrderList = () => {
         // 排除已完成 (Completed)
         {
           field: "status",
-          operator: "ne", // neq = Not Equal
-          value: activeTab === "active" ? "delivered" : undefined,
-        },
-        // 且 排除已取消 (Cancelled)
-        {
-          field: "status",
-          operator: "ne",
-          value: activeTab === "active" ? "cancelled" : undefined,
+          operator: "nin", // neq = Not Equal
+          value:
+            activeTab === "active" ? ["delivered", "cancelled"] : undefined,
         },
 
         // 2. [历史 Tab] 逻辑:
@@ -239,7 +234,8 @@ export const RepairOrderList = () => {
           title={translate("table.actions")}
           render={(_, record: any) => (
             <Space>
-              {record.status != "delivered" && (
+              {(record.status != "delivered" ||
+                record.status != "cancelled") && (
                 <EditButton hideText size="small" recordItemId={record.id} />
               )}
               <ShowButton hideText size="small" recordItemId={record.id} />
