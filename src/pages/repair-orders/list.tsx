@@ -52,18 +52,18 @@ export const RepairOrderList = () => {
         // 排除已完成 (Completed)
         {
           field: "status",
-          operator: "nin", // neq = Not Equal
+          operator: "in",
           value:
-            activeTab === "active" ? ["delivered", "cancelled"] : undefined,
-        },
-
-        // 2. [历史 Tab] 逻辑:
-        // 只看 已完成 或 已取消
-        {
-          field: "status",
-          operator: "in", // in 操作符通常比较稳定
-          value:
-            activeTab === "history" ? ["delivered", "cancelled"] : undefined,
+            activeTab === "active"
+              ? [
+                  "pending_check",
+                  "pending_quote",
+                  "approved",
+                  "repairing",
+                  "waiting_parts",
+                  "completed",
+                ]
+              : ["delivered", "cancelled"],
         },
       ],
     },
@@ -234,8 +234,9 @@ export const RepairOrderList = () => {
           title={translate("table.actions")}
           render={(_, record: any) => (
             <Space>
-              {(record.status != "delivered" ||
-                record.status != "cancelled") && (
+              {!(
+                record.status == "delivered" || record.status == "cancelled"
+              ) && (
                 <EditButton hideText size="small" recordItemId={record.id} />
               )}
               <ShowButton hideText size="small" recordItemId={record.id} />
